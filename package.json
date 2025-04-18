@@ -7,12 +7,12 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "format": "prettier --write \"api/**/*.ts\" \"test/**/*.ts\"",
+    "format": "prettier --write 'api/**/*.ts' 'app/**/*.{ts,vue}' 'test/**/*.ts'",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "lint": "eslint \"{api,apps,libs,test}/**/*.ts\" --fix",
+    "lint": "eslint '{api,app,apps,libs,test}/**/*.ts' --fix",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -21,10 +21,12 @@
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "vue": "^3.5.13"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
@@ -38,6 +40,7 @@
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.7",
     "@types/supertest": "^6.0.2",
+    "@vitejs/plugin-vue": "^5.2.3",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-import-resolver-typescript": "^4.3.2",

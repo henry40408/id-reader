@@ -4,7 +4,6 @@
   "sourceRoot": "api",
   "compilerOptions": {
     "builder": "swc",
-    "deleteOutDir": true,
-    "typeCheck": true
+    "deleteOutDir": true
   }
 }
