@@ -1,24 +1,25 @@
-import { DataSource, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Test } from '@nestjs/testing';
 import { UserEntity } from './user.entity';
 
 describe('UserEntity', () => {
-  let dataSource: DataSource;
   let repository: Repository<UserEntity>;
 
   beforeEach(async () => {
-    dataSource = new DataSource({
-      type: 'better-sqlite3',
-      database: ':memory:',
-      entities: [UserEntity],
-      synchronize: true,
-    });
-    await dataSource.initialize();
-    repository = dataSource.getRepository(UserEntity);
-  });
-
-  afterEach(async () => {
-    await dataSource.destroy();
+    const app = await Test.createTestingModule({
+      imports: [
+        TypeOrmModule.forRoot({
+          database: ':memory:',
+          entities: [UserEntity],
+          synchronize: true,
+          type: 'better-sqlite3',
+        }),
+        TypeOrmModule.forFeature([UserEntity]),
+      ],
+    }).compile();
+    repository = app.get(getRepositoryToken(UserEntity));
   });
 
   it('should be defined', () => {
