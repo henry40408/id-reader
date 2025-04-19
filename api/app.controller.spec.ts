@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { createMock } from '@golevelup/ts-jest';
 import { HealthCheckService } from '@nestjs/terminus';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ViteService } from './vite.service';
 
 const mockHealthCheckService = createMock<HealthCheckService>();
@@ -14,7 +13,6 @@ describe('AppController', () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [AppController],
       providers: [
-        AppService,
         { provide: HealthCheckService, useValue: mockHealthCheckService },
         { provide: ViteService, useValue: {} },
       ],

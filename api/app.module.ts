@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
 import { LoggerModule } from 'nestjs-pino';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ViteService } from './vite.service';
 import { AppConfigModule } from './app-config.module';
 import { AppConfigService } from './app-config.service';
@@ -25,6 +24,6 @@ import { AppConfigService } from './app-config.service';
     TerminusModule.forRoot(),
   ],
   controllers: [AppController],
-  providers: [AppService, ViteService],
+  providers: [ViteService],
 })
 export class AppModule {}
