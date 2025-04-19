@@ -12,6 +12,7 @@ export class AppController {
   ) {}
 
   @Get('healthz')
+  @ApiOperation({ summary: 'check health' })
   @HealthCheck()
   async healthz(): Promise<HealthCheckResult> {
     return await this.healthCheckService.check([]);
