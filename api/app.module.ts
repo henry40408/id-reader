@@ -1,14 +1,30 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { TerminusModule } from '@nestjs/terminus';
+import { LoggerModule } from 'nestjs-pino';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AppConfigService } from './app-config.service';
 import { ViteService } from './vite.service';
+import { AppConfigModule } from './app-config.module';
+import { AppConfigService } from './app-config.service';
 
 @Module({
-  imports: [ConfigModule.forRoot(), TerminusModule.forRoot()],
+  imports: [
+    AppConfigModule,
+    LoggerModule.forRootAsync({
+      imports: [AppConfigModule],
+      inject: [AppConfigService],
+      useFactory: (configService: AppConfigService) => ({
+        pinoHttp: {
+          level: configService.config.is.development ? 'debug' : 'info',
+          formatters: {
+            level: (label) => ({ label }),
+          },
+        },
+      }),
+    }),
+    TerminusModule.forRoot(),
+  ],
   controllers: [AppController],
-  providers: [AppConfigService, AppService, ViteService],
+  providers: [AppService, ViteService],
 })
 export class AppModule {}
