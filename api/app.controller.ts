@@ -1,17 +1,20 @@
 import { All, Controller, Get, NotFoundException, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiOperation } from '@nestjs/swagger';
+import { HealthCheck, HealthCheckResult, HealthCheckService } from '@nestjs/terminus';
 import { ViteService } from './vite.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly viteService: ViteService) {}
+  constructor(
+    private readonly healthCheckService: HealthCheckService,
+    private readonly viteService: ViteService,
+  ) {}
 
-  @ApiOperation({ summary: 'check health' })
-  @ApiOkResponse({ description: 'service is up' })
   @Get('healthz')
-  healthz() {
-    return '';
+  @HealthCheck()
+  async healthz(): Promise<HealthCheckResult> {
+    return await this.healthCheckService.check([]);
   }
 
   @ApiOperation({ summary: 'catch-all endpoint to Vite dev server in development environment' })
