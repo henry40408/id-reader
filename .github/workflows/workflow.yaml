@@ -1,0 +1,26 @@
+on: [push, pull_request]
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4.1.1
+      - uses: actions/setup-node@v4.4.0
+        with:
+          cache: 'npm'
+          node-version: 20
+      - run: npm ci
+      - shell: bash
+        run: |
+          npm run format:check &
+          npm run lint &
+          wait
+      - run: npm run test:e2e
+      - run: npm run test:cov
+      - uses: codecov/codecov-action@v4.4.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/lcov.info

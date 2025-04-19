@@ -8,6 +8,7 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write 'api/**/*.ts' 'app/**/*.{ts,vue}' 'test/**/*.ts'",
+    "format:check": "prettier --check 'api/**/*.ts' 'app/**/*.{ts,vue}' 'test/**/*.ts'",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
