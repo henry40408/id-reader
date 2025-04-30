@@ -1,25 +1,26 @@
 import fs from 'node:fs/promises';
-import { Inject, Logger, Module, OnModuleDestroy, Provider } from '@nestjs/common';
+import { Inject, Logger, Module, OnModuleDestroy, OnModuleInit, Provider } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
 import * as knex from 'knex';
+import { AppConfigModule } from '../app-config/app-config.module';
+import { AppConfigService } from '../app-config/app-config.service';
 import { KNEX } from './knex.constant';
 import { KnexHealthIndicator } from './knex.health-check.service';
 import { ConfigModuleOptions } from './knex.interface';
 import { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } from './knex.module-definition';
-import { AppConfigService } from 'src/app-config/app-config.service';
 
-const provider: Provider = {
+const connectionProvider: Provider = {
   provide: KNEX,
   inject: [MODULE_OPTIONS_TOKEN],
   useFactory: (config: ConfigModuleOptions) => knex.default(config.knex),
 };
 
 @Module({
-  imports: [TerminusModule],
-  providers: [provider, KnexHealthIndicator],
-  exports: [KnexHealthIndicator],
+  imports: [AppConfigModule, TerminusModule],
+  providers: [connectionProvider, KnexHealthIndicator],
+  exports: [connectionProvider, KnexHealthIndicator],
 })
-export class KnexModule extends ConfigurableModuleClass implements OnModuleDestroy {
+export class KnexModule extends ConfigurableModuleClass implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(KnexModule.name);
 
   constructor(

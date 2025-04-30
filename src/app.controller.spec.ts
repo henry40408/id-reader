@@ -1,9 +1,8 @@
 import { TerminusModule } from '@nestjs/terminus';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppConfigModule } from './app-config/app-config.module';
-import { AppConfigService } from './app-config/app-config.service';
 import { AppController } from './app.controller';
-import { KnexModule } from './knex/knex.module';
+import { testKnexModule } from './test.helper';
 import { ViteService } from './vite/vite.service';
 
 describe('AppController', () => {
@@ -12,21 +11,7 @@ describe('AppController', () => {
 
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
-      imports: [
-        AppConfigModule,
-        KnexModule.registerAsync({
-          imports: [AppConfigModule],
-          inject: [AppConfigService],
-          useFactory: (configService: AppConfigService) => ({
-            knex: {
-              client: 'better-sqlite3',
-              connection: { filename: configService.config.databaseUrl },
-              useNullAsDefault: true,
-            },
-          }),
-        }),
-        TerminusModule,
-      ],
+      imports: [AppConfigModule, testKnexModule(), TerminusModule],
       controllers: [AppController],
       providers: [ViteService],
     }).compile();
@@ -34,7 +19,7 @@ describe('AppController', () => {
   });
 
   afterEach(async () => {
-    await moduleRef.close();
+    if (moduleRef) await moduleRef.close();
   });
 
   describe('healthz', () => {
