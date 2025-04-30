@@ -8,7 +8,7 @@ describe('UserRepository', () => {
 
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
-      imports: [testKnexModule()],
+      imports: [testKnexModule],
       providers: [UserRepository],
     }).compile();
     await moduleRef.init();

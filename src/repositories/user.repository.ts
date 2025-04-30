@@ -1,24 +1,31 @@
 import { Inject, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { Knex } from 'knex';
-import { Tables } from 'knex/types/tables';
-import { BaseRepository } from '../knex/base-repository';
+import { User } from 'knex/types/tables';
 import { KNEX } from '../knex/knex.constant';
 
-export type CreateUser = Omit<Tables['users_composite']['insert'], 'password_hash'> & { password: string };
+export type CreateUser = Knex.DbRecordArr<User> & { password: string };
 
 @Injectable()
-export class UserRepository extends BaseRepository<'users', 'users_composite'> {
-  constructor(@Inject(KNEX) knex: Knex) {
-    super(knex, 'users', 'users_composite');
+export class UserRepository {
+  static SALT_ROUNDS = 10;
+
+  constructor(@Inject(KNEX) private readonly knex: Knex) {}
+
+  async createUser(dto: CreateUser): Promise<User> {
+    const { password, ...rest } = dto;
+    const data: Knex.DbRecordArr<User> = {
+      ...rest,
+      password_hash: await bcrypt.hash(password, UserRepository.SALT_ROUNDS),
+    };
+    return await this.knex<User>('users').insert(data);
   }
 
-  async createUser(dto: CreateUser): Promise<Tables['users']> {
-    const { password, ...rest } = dto;
-    const data: Tables['users_composite']['insert'] = {
-      ...rest,
-      password_hash: await bcrypt.hash(password, 10),
-    };
-    return this.create(data);
+  async findByUsername(username: string): Promise<User | undefined> {
+    return await this.knex<User>('users').where({ username }).first();
+  }
+
+  async hash(password: string): Promise<string> {
+    return await bcrypt.hash(password, UserRepository.SALT_ROUNDS);
   }
 }

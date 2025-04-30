@@ -11,7 +11,7 @@ describe('AppController', () => {
 
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
-      imports: [AppConfigModule, testKnexModule(), TerminusModule],
+      imports: [AppConfigModule, testKnexModule, TerminusModule],
       controllers: [AppController],
       providers: [ViteService],
     }).compile();
