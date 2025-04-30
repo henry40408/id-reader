@@ -2,11 +2,13 @@ import { All, Controller, Get, Next, Req, Res } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { HealthCheck, HealthCheckService, HealthCheckResult } from '@nestjs/terminus';
 import { NextFunction, Request, Response } from 'express';
+import { KnexHealthIndicator } from './knex/knex.health-check.service';
 import { ViteService } from './vite/vite.service';
 
 @Controller()
 export class AppController {
   constructor(
+    private readonly db: KnexHealthIndicator,
     private readonly health: HealthCheckService,
     private readonly vite: ViteService,
   ) {}
@@ -15,7 +17,7 @@ export class AppController {
   @Get('healthz')
   @HealthCheck()
   healthz(): Promise<HealthCheckResult> {
-    return this.health.check([]);
+    return this.health.check([() => this.db.check('db')]);
   }
 
   @ApiOperation({ summary: 'catch-all route handled by vite dev server' })

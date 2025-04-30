@@ -8,6 +8,7 @@ export class AppConfigService {
 
   get config(): AppConfig {
     return {
+      databaseUrl: this.databaseUrl,
       env: this.appEnv,
     };
   }
@@ -18,6 +19,13 @@ export class AppConfigService {
       test: this.env === 'test',
       production: this.env === 'production',
     };
+  }
+
+  private get databaseUrl() {
+    const key = 'DATABASE_URL';
+    if (this.appEnv.test) return ':memory:';
+    if (this.appEnv.production) return this.configService.getOrThrow<string>(key);
+    return this.configService.getOrThrow<string>(key, '.temp/development.sqlite3');
   }
 
   private get env() {
