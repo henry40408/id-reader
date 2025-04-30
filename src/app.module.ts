@@ -5,6 +5,7 @@ import { AppConfigModule } from './app-config/app-config.module';
 import { AppConfigService } from './app-config/app-config.service';
 import { AppController } from './app.controller';
 import { KnexModule } from './knex/knex.module';
+import { MyMigrationSource } from './migrations';
 import { ViteService } from './vite/vite.service';
 
 @Module({
@@ -20,6 +21,9 @@ import { ViteService } from './vite/vite.service';
             filename: configService.config.databaseUrl,
           },
           useNullAsDefault: true,
+          migrations: {
+            migrationSource: new MyMigrationSource(),
+          },
         },
       }),
     }),

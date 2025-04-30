@@ -1,6 +1,8 @@
 import { Knex } from 'knex';
 
-export function up(knex: Knex): Promise<void> {
+export const name = '20250430115720_initial';
+
+export function up(knex: Knex) {
   return knex.schema.createTable('users', (table) => {
     table.increments('id').primary();
     table.string('username').notNullable();
@@ -9,6 +11,6 @@ export function up(knex: Knex): Promise<void> {
   });
 }
 
-export function down(knex: Knex): Promise<void> {
+export function down(knex: Knex) {
   return knex.schema.dropTable('users');
 }
