@@ -1,18 +1,15 @@
 import { Module } from '@nestjs/common';
 import { SwaggerModule } from '@nestjs/swagger';
 import { TerminusModule } from '@nestjs/terminus';
-import { AppConfigModule } from './app-config/app-config.module';
 import { AppConfigService } from './app-config/app-config.service';
 import { AppController } from './app.controller';
 import { KnexModule } from './knex/knex.module';
 import { MyMigrationSource } from './migrations';
-import { ViteService } from './vite/vite.service';
+import { ViteModule } from './vite/vite.module';
 
 @Module({
   imports: [
-    AppConfigModule,
     KnexModule.registerAsync({
-      imports: [AppConfigModule],
       inject: [AppConfigService],
       useFactory: (configService: AppConfigService) => ({
         knex: {
@@ -29,8 +26,8 @@ import { ViteService } from './vite/vite.service';
     }),
     SwaggerModule,
     TerminusModule,
+    ViteModule,
   ],
   controllers: [AppController],
-  providers: [ViteService],
 })
 export class AppModule {}

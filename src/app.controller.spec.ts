@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppConfigModule } from './app-config/app-config.module';
 import { AppController } from './app.controller';
 import { testKnexModule } from './test.helper';
-import { ViteService } from './vite/vite.service';
+import { ViteModule } from './vite/vite.module';
 
 describe('AppController', () => {
   let moduleRef: TestingModule;
@@ -11,9 +11,9 @@ describe('AppController', () => {
 
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
-      imports: [AppConfigModule, testKnexModule, TerminusModule],
+      imports: [AppConfigModule, testKnexModule, TerminusModule, ViteModule],
       controllers: [AppController],
-      providers: [ViteService],
+      providers: [],
     }).compile();
     controller = moduleRef.get<AppController>(AppController);
   });

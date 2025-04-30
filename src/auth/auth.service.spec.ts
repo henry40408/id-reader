@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserRepository } from '../repositories/user.repository';
 import { testKnexModule } from '../test.helper';
+import { AuthModule } from './auth.module';
 import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
@@ -10,8 +11,7 @@ describe('AuthService', () => {
 
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
-      imports: [testKnexModule],
-      providers: [UserRepository, AuthService],
+      imports: [testKnexModule, AuthModule],
     }).compile();
     await moduleRef.init();
     repository = moduleRef.get<UserRepository>(UserRepository);
@@ -30,5 +30,11 @@ describe('AuthService', () => {
     await repository.createUser({ username: 'test', password: 'test' });
     const user = await service.validate({ username: 'test', password: 'test' });
     expect(user).toBeDefined();
+  });
+
+  it('should not validate user', async () => {
+    await repository.createUser({ username: 'test', password: 'test' });
+    const user = await service.validate({ username: 'test', password: 'wrong' });
+    expect(user).toBeUndefined();
   });
 });
