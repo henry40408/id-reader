@@ -8,8 +8,10 @@ export class FeedRepository {
   constructor(@Inject(KNEX) private readonly knex: Knex) {}
 
   async create(dto: Knex.DbRecordArr<Feed>): Promise<Feed> {
-    const [id] = await this.knex<Feed>('feeds').insert(dto);
-    const feed = await this.knex<Feed>('feeds').where('id', id).first();
-    return feed!;
+    return this.knex.transaction(async (tx) => {
+      const [id] = await tx<Feed>('feeds').insert(dto);
+      const feed = await tx<Feed>('feeds').where('id', id).first();
+      return feed!;
+    });
   }
 }

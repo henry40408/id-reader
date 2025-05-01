@@ -22,9 +22,11 @@ export class UserRepository {
       ...rest,
       password_hash: await bcrypt.hash(password, UserRepository.SALT_ROUNDS),
     };
-    const [id] = await this.knex<User>('users').insert(data);
-    const user = await this.knex<User>('users').where('id', id).first();
-    return user!;
+    return this.knex.transaction(async (tx) => {
+      const [id] = await tx<User>('users').insert(data);
+      const user = await tx<User>('users').where('id', id).first();
+      return user!;
+    });
   }
 
   async findByUsername(username: string): Promise<User | undefined> {

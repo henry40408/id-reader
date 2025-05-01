@@ -9,17 +9,21 @@ export class CategoryRepository {
   constructor(@Inject(KNEX) private readonly knex: Knex) {}
 
   async create(dto: Knex.DbRecordArr<Category>): Promise<Category> {
-    const [id] = await this.knex<Category>('categories').insert(dto);
-    const category = await this.knex<Category>('categories').where('id', id).first();
-    return category!;
+    return this.knex.transaction(async (tx) => {
+      const [id] = await tx<Category>('categories').insert(dto);
+      const category = await tx<Category>('categories').where('id', id).first();
+      return category!;
+    });
   }
 
   async findOrCreateDefaultCategory(userId: number): Promise<Category> {
-    const [id] = await this.knex<Category>('categories')
-      .insert({ user_id: userId, name: DEFAULT_CATEGORY_NAME })
-      .onConflict(['user_id', 'name'])
-      .ignore();
-    const category = await this.knex<Category>('categories').where('id', id).first();
-    return category!;
+    return this.knex.transaction(async (tx) => {
+      const [id] = await tx<Category>('categories')
+        .insert({ user_id: userId, name: DEFAULT_CATEGORY_NAME })
+        .onConflict(['user_id', 'name'])
+        .ignore();
+      const category = await tx<Category>('categories').where('id', id).first();
+      return category!;
+    });
   }
 }
