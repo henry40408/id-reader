@@ -15,6 +15,17 @@ declare module 'knex/types/tables' {
     updated_at: string;
   }
 
+  interface Feed {
+    id: number;
+    category_id: number;
+    title: string;
+    description?: string;
+    xml_url: string;
+    html_url?: string;
+    created_at: string;
+    updated_at: string;
+  }
+
   interface Tables {
     users: User;
     users_composite: Knex.CompositeTableType<
@@ -27,6 +38,13 @@ declare module 'knex/types/tables' {
       Category,
       Pick<Category, 'user_id' | 'name'> & Partial<Pick<Category, 'created_at' | 'updated_at'>>,
       Partial<Omit<Category, 'id'>>
+    >;
+    feeds: Feed;
+    feeds_composite: Knex.CompositeTableType<
+      Feed,
+      Pick<Feed, 'category_id' | 'title' | 'xml_url'> &
+        Partial<Pick<Feed, 'description' | 'html_url' | 'created_at' | 'updated_at'>>,
+      Partial<Omit<Feed, 'id'>>
     >;
   }
 }

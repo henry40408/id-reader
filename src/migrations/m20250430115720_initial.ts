@@ -20,10 +20,27 @@ export function up(knex: Knex) {
       t.foreign('user_id').references('id').inTable('users').onDelete('CASCADE');
       t.unique(['user_id', 'name']);
     });
+
+    await tx.schema.createTable('feeds', (t) => {
+      t.increments('id').primary();
+
+      t.integer('category_id').notNullable();
+      t.string('title').notNullable();
+      t.string('xml_url').notNullable();
+
+      t.string('description').nullable();
+      t.string('html_url').nullable();
+
+      t.timestamps(true, true);
+
+      t.foreign('category_id').references('id').inTable('categories').onDelete('CASCADE');
+      t.unique(['category_id', 'xml_url']);
+    });
   });
 }
 export function down(knex: Knex) {
   return knex.transaction(async (tx) => {
+    await tx.schema.dropTable('feeds');
     await tx.schema.dropTable('categories');
     await tx.schema.dropTable('users');
   });
