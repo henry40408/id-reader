@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import * as bcrypt from 'bcrypt';
 import { testKnexModule } from '../test.helper';
 import { UserRepository } from './user.repository';
 
@@ -25,7 +26,9 @@ describe('UserRepository', () => {
 
   it('should encrypt password before saving', async () => {
     const user = await userRepository.create({ username: 'test', password: 'test' });
-    expect(user.username).toBe('test');
-    expect(user.password_hash).not.toBe('test');
+    expect(user.username).toEqual('test');
+    expect(user.password_hash).not.toEqual('test');
+
+    await expect(bcrypt.compare('test', user.password_hash)).resolves.toBe(true);
   });
 });

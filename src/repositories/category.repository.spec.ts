@@ -1,4 +1,7 @@
 import { TestingModule, Test } from '@nestjs/testing';
+import { Knex } from 'knex';
+import { Category } from 'knex/types/tables';
+import { KNEX } from '../knex/knex.constant';
 import { testKnexModule } from '../test.helper';
 import { CategoryRepository } from './category.repository';
 import { UserRepository } from './user.repository';
@@ -30,7 +33,7 @@ describe('CategoryRepository', () => {
     const user = await userRepository.create({ username: 'test', password: 'test' });
     const category = await categoryRepository.create({ user_id: user.id, name: 'Test Category' });
     expect(category).toBeDefined();
-    expect(category.name).toBe('Test Category');
+    expect(category.name).toEqual('Test Category');
   });
 
   it('should not create a category with the same name', async () => {
@@ -38,5 +41,24 @@ describe('CategoryRepository', () => {
     const data = { user_id: user.id, name: 'Test Category' };
     await categoryRepository.create(data);
     await expect(categoryRepository.create(data)).rejects.toThrow('UNIQUE constraint failed');
+  });
+
+  it('should create a default category', async () => {
+    const knex = moduleRef.get<Knex>(KNEX);
+
+    expect(await knex<Category>('categories').count('id', { as: 'count' })).toEqual([{ count: 0 }]);
+
+    const user = await userRepository.create({ username: 'test', password: 'test' });
+
+    const category = await categoryRepository.findOrCreateDefaultCategory(user.id);
+    expect(await knex<Category>('categories').count('id', { as: 'count' })).toEqual([{ count: 1 }]);
+
+    expect(category).toBeDefined();
+    expect(category.name).toEqual(CategoryRepository.DEFAULT_CATEGORY_NAME);
+
+    const category2 = await categoryRepository.findOrCreateDefaultCategory(user.id);
+    expect(category2).toEqual(category);
+
+    expect(await knex<Category>('categories').count('id', { as: 'count' })).toEqual([{ count: 1 }]);
   });
 });

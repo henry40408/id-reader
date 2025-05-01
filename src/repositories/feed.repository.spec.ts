@@ -38,8 +38,8 @@ describe('FeedRepository', () => {
       xml_url: 'https://test.com/feed',
     });
     expect(feed).toBeDefined();
-    expect(feed.title).toBe('Test Feed');
-    expect(feed.xml_url).toBe('https://test.com/feed');
+    expect(feed.title).toEqual('Test Feed');
+    expect(feed.xml_url).toEqual('https://test.com/feed');
   });
 
   it('should not create a feed with the same xml_url', async () => {
