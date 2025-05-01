@@ -4,6 +4,7 @@ import { Readable } from 'node:stream';
 import { TestingModule, Test } from '@nestjs/testing';
 import { Knex } from 'knex';
 import { Category, Feed } from 'knex/types/tables';
+import * as lodash from 'lodash';
 import { KNEX } from '../knex/knex.constant';
 import { DEFAULT_CATEGORY_NAME } from '../repositories/category.constants';
 import { UserRepository } from '../repositories/user.repository';
@@ -45,9 +46,9 @@ describe('OpmlService', () => {
     expect(category).toBeDefined();
     expect(category?.name).toEqual('Test Category');
 
-    const feeds = await knex<Feed>('feeds').where('category_id', category?.id).orderBy('id', 'asc');
+    const feeds = await knex<Feed>('feeds').where('category_id', category?.id).orderBy('title', 'asc');
     expect(feeds).toHaveLength(2);
-    expect(feeds.map((f) => f.title)).toEqual(['Test Feed', 'Test Feed 2']);
+    expect(lodash.map(feeds, 'title')).toEqual(['Test Feed', 'Test Feed 2']);
   });
 
   it('should parse OPML file', async () => {

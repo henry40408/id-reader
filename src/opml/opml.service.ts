@@ -23,27 +23,36 @@ export class OpmlService {
 
   async importFeeds(userId: number, categories: ParsedCategory[]) {
     return await this.knex.transaction(async (tx) => {
+      const categoryPromises: Promise<void>[] = [];
       for (const category of categories) {
-        const [categoryId] = await tx<Category>('categories')
-          .insert({
-            name: category.name,
-            user_id: userId,
-          })
-          .onConflict(['user_id', 'name'])
-          .ignore();
-
-        for (const feed of category.feeds) {
-          await tx<Feed>('feeds')
+        const task = async () => {
+          const [categoryId] = await tx<Category>('categories')
             .insert({
-              category_id: categoryId,
-              title: feed.title,
-              xml_url: feed.xmlUrl,
-              html_url: feed.htmlUrl,
+              name: category.name,
+              user_id: userId,
             })
-            .onConflict(['category_id', 'xml_url'])
+            .onConflict(['user_id', 'name'])
             .ignore();
-        }
+          const feedPromises: Promise<void>[] = [];
+          for (const feed of category.feeds) {
+            const task = async () => {
+              await tx<Feed>('feeds')
+                .insert({
+                  category_id: categoryId,
+                  title: feed.title,
+                  xml_url: feed.xmlUrl,
+                  html_url: feed.htmlUrl,
+                })
+                .onConflict(['category_id', 'xml_url'])
+                .ignore();
+            };
+            feedPromises.push(task());
+          }
+          await Promise.all(feedPromises);
+        };
+        categoryPromises.push(task());
       }
+      await Promise.all(categoryPromises);
     });
   }
 
