@@ -1,4 +1,6 @@
+import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
+import { JwtPayload } from '../dtos';
 import { UserRepository } from '../repositories/user.repository';
 import { testKnexModule } from '../test.helper';
 import { AuthModule } from './auth.module';
@@ -36,5 +38,18 @@ describe('AuthService', () => {
     await repository.createUser({ username: 'test', password: 'test' });
     const user = await service.validate({ username: 'test', password: 'wrong' });
     expect(user).toBeUndefined();
+  });
+
+  it('should sign JSON web token', async () => {
+    const user = await repository.createUser({ username: 'test', password: 'test' });
+
+    const token = service.sign(user);
+    expect(token).toBeDefined();
+
+    const jwtService = moduleRef.get<JwtService>(JwtService);
+    const payload = jwtService.verify<JwtPayload>(token);
+    expect(payload).toBeDefined();
+    expect(payload.sub).toBe(user.id);
+    expect(payload.username).toBe(user.username);
   });
 });

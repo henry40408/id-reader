@@ -17,7 +17,7 @@ describe('AppController (e2e)', () => {
   });
 
   afterEach(async () => {
-    await moduleRef.close();
+    if (app) await app.close();
   });
 
   it('/healthz (GET)', () => {

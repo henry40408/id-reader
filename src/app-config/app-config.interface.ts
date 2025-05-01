@@ -5,4 +5,8 @@ export interface AppConfig {
     test: boolean;
     production: boolean;
   };
+  jwt: {
+    secret: string;
+    expiresInSeconds: number;
+  };
 }

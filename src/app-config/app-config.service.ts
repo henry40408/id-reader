@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { millisecondsToSeconds, milliseconds } from 'date-fns';
 import { AppConfig } from './app-config.interface';
 
 @Injectable()
@@ -10,6 +11,10 @@ export class AppConfigService {
     return {
       databaseUrl: this.databaseUrl,
       env: this.appEnv,
+      jwt: {
+        secret: this.jwtSecret,
+        expiresInSeconds: this.jwtExpiresInSeconds,
+      },
     };
   }
 
@@ -30,5 +35,18 @@ export class AppConfigService {
 
   private get env() {
     return this.configService.getOrThrow<string>('NODE_ENV', 'development');
+  }
+
+  private get jwtSecret() {
+    const key = 'JWT_SECRET';
+    if (this.appEnv.production) return this.configService.getOrThrow<string>(key);
+    return this.configService.getOrThrow<string>(key, 'secret');
+  }
+
+  private get jwtExpiresInSeconds() {
+    return this.configService.getOrThrow<number>(
+      'JWT_EXPIRES_IN_SECONDS',
+      millisecondsToSeconds(milliseconds({ days: 7 })),
+    );
   }
 }
