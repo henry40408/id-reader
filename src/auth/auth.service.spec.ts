@@ -1,4 +1,4 @@
-import { JwtService } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtPayload } from '../dtos';
 import { UserRepository } from '../repositories/user.repository';
@@ -13,7 +13,7 @@ describe('AuthService', () => {
 
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
-      imports: [testKnexModule, AuthModule],
+      imports: [testKnexModule, JwtModule.register({ global: true, secret: 'secret' }), AuthModule],
     }).compile();
     await moduleRef.init();
     repository = moduleRef.get<UserRepository>(UserRepository);
@@ -43,7 +43,7 @@ describe('AuthService', () => {
   it('should sign JSON web token', async () => {
     const user = await repository.create({ username: 'test', password: 'test' });
 
-    const token = service.sign(user);
+    const token = service.sign({ sub: user.id, username: user.username });
     expect(token).toBeDefined();
 
     const jwtService = moduleRef.get<JwtService>(JwtService);

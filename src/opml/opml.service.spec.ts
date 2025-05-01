@@ -39,7 +39,9 @@ describe('OpmlService', () => {
   it('should import feeds', async () => {
     const user = await userRepository.create({ username: 'test', password: 'test' });
 
-    const categories = await service.parseOPML(fs.createReadStream(path.join(__dirname, 'test.opml')));
+    const categories = await service.parseOPML(
+      fs.createReadStream(path.resolve(__dirname, '../../fixtures/test.opml')),
+    );
     await service.importFeeds(user.id, categories);
 
     const category = await knex<Category>('categories').where('user_id', user.id).first();
@@ -52,7 +54,7 @@ describe('OpmlService', () => {
   });
 
   it('should parse OPML file', async () => {
-    const readable = fs.createReadStream(path.join(__dirname, 'test.opml'));
+    const readable = fs.createReadStream(path.resolve(__dirname, '../../fixtures/test.opml'));
     const opml = await service.parseOPML(readable);
     expect(opml).toEqual([
       {
@@ -81,7 +83,7 @@ describe('OpmlService', () => {
   });
 
   it('should parse OPML file with no category', async () => {
-    const readable = fs.createReadStream(path.join(__dirname, 'no-category.opml'));
+    const readable = fs.createReadStream(path.resolve(__dirname, '../../fixtures/no-category.opml'));
     const opml = await service.parseOPML(readable);
     expect(opml).toEqual([
       {

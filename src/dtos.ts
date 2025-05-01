@@ -1,4 +1,5 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { ApiProperty } from '@nestjs/swagger';
 
 @ObjectType()
 export class JwtPayload {
@@ -16,4 +17,9 @@ export class SignInInput {
 
   @Field({ description: 'password' })
   password!: string;
+}
+
+export class UploadedFileDTO {
+  @ApiProperty({ type: 'string', format: 'binary', description: 'OPML file' })
+  file: Buffer;
 }

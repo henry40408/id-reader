@@ -26,13 +26,18 @@ export class OpmlService {
       const categoryPromises: Promise<void>[] = [];
       for (const category of categories) {
         const task = async () => {
-          const [categoryId] = await tx<Category>('categories')
+          await tx<Category>('categories')
             .insert({
               name: category.name,
               user_id: userId,
             })
             .onConflict(['user_id', 'name'])
             .ignore();
+
+          const [{ id: categoryId }] = await tx<Category>('categories')
+            .where({ user_id: userId, name: category.name })
+            .select('id');
+
           const feedPromises: Promise<void>[] = [];
           for (const feed of category.feeds) {
             const task = async () => {

@@ -12,8 +12,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  sign(user: User) {
-    const payload: JwtPayload = { sub: user.id, username: user.username };
+  sign(payload: JwtPayload) {
     return this.jwtService.sign(payload);
   }
 

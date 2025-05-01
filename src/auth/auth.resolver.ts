@@ -22,20 +22,21 @@ export class AuthResolver {
     return context.req.jwtPayload;
   }
 
-  @Mutation(() => Boolean, { description: 'sign in' })
+  @Mutation(() => JwtPayload, { description: 'sign in' })
   async signIn(@Args('input') input: SignInInput, @Context() context: GqlContext) {
     const user = await this.authService.validate(input);
     if (!user) {
       throw new BadRequestException('Invalid credentials');
     }
-    const accessToken = this.authService.sign(user);
+    const payload: JwtPayload = { sub: user.id, username: user.username };
+    const accessToken = this.authService.sign(payload);
     context.res.cookie(COOKIE_ACCESS_TOKEN, accessToken, {
       httpOnly: true,
       maxAge: secondsToMilliseconds(this.appConfigService.config.jwt.expiresInSeconds),
       sameSite: 'lax',
       secure: this.appConfigService.config.env.production,
     });
-    return true;
+    return payload;
   }
 
   @Mutation(() => Boolean, { description: 'sign out' })

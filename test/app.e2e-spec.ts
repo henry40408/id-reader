@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 import { App } from 'supertest/types';
@@ -23,7 +23,7 @@ describe('AppController (e2e)', () => {
   it('/healthz (GET)', () => {
     return request(app.getHttpServer())
       .get('/healthz')
-      .expect(200)
+      .expect(HttpStatus.OK)
       .expect({
         status: 'ok',
         details: { db: { status: 'up' } },
