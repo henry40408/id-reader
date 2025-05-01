@@ -1,7 +1,10 @@
 import { Readable } from 'node:stream';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { Knex } from 'knex';
+import { Category, Feed } from 'knex/types/tables';
 import sax from 'sax';
 import { DEFAULT_CATEGORY_NAME } from '../repositories/category.constants';
+import { KNEX } from 'src/knex/knex.constant';
 
 export interface ParsedFeed {
   title: string;
@@ -16,6 +19,34 @@ export interface ParsedCategory {
 
 @Injectable()
 export class OpmlService {
+  constructor(@Inject(KNEX) private readonly knex: Knex) {}
+
+  async importFeeds(userId: number, categories: ParsedCategory[]) {
+    return await this.knex.transaction(async (tx) => {
+      for (const category of categories) {
+        const [categoryId] = await tx<Category>('categories')
+          .insert({
+            name: category.name,
+            user_id: userId,
+          })
+          .onConflict(['user_id', 'name'])
+          .ignore();
+
+        for (const feed of category.feeds) {
+          await tx<Feed>('feeds')
+            .insert({
+              category_id: categoryId,
+              title: feed.title,
+              xml_url: feed.xmlUrl,
+              html_url: feed.htmlUrl,
+            })
+            .onConflict(['category_id', 'xml_url'])
+            .ignore();
+        }
+      }
+    });
+  }
+
   async parseOPML(readable: Readable) {
     return new Promise<ParsedCategory[]>((resolve, reject) => {
       const parser = sax.createStream(true);
