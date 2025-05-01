@@ -3,6 +3,7 @@ import { Knex } from 'knex';
 import { Category } from 'knex/types/tables';
 import { KNEX } from '../knex/knex.constant';
 import { testKnexModule } from '../test.helper';
+import { DEFAULT_CATEGORY_NAME } from './category.constants';
 import { CategoryRepository } from './category.repository';
 import { UserRepository } from './user.repository';
 
@@ -54,7 +55,7 @@ describe('CategoryRepository', () => {
     expect(await knex<Category>('categories').count('id', { as: 'count' })).toEqual([{ count: 1 }]);
 
     expect(category).toBeDefined();
-    expect(category.name).toEqual(CategoryRepository.DEFAULT_CATEGORY_NAME);
+    expect(category.name).toEqual(DEFAULT_CATEGORY_NAME);
 
     const category2 = await categoryRepository.findOrCreateDefaultCategory(user.id);
     expect(category2).toEqual(category);
