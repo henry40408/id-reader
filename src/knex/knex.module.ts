@@ -1,4 +1,4 @@
-import fs from 'node:fs/promises';
+import * as fs from 'node:fs/promises';
 import { Inject, Logger, Module, OnModuleDestroy, OnModuleInit, Provider } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
 import * as knex from 'knex';

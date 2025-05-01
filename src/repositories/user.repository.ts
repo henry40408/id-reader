@@ -12,6 +12,10 @@ export class UserRepository {
 
   constructor(@Inject(KNEX) private readonly knex: Knex) {}
 
+  async clear() {
+    await this.knex<User>('users').delete();
+  }
+
   async createUser(dto: CreateUser): Promise<User> {
     const { password, ...rest } = dto;
     const data: Knex.DbRecordArr<User> = {
