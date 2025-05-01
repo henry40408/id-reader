@@ -29,19 +29,19 @@ describe('AuthService', () => {
   });
 
   it('should validate user', async () => {
-    await repository.createUser({ username: 'test', password: 'test' });
+    await repository.create({ username: 'test', password: 'test' });
     const user = await service.validate({ username: 'test', password: 'test' });
     expect(user).toBeDefined();
   });
 
   it('should not validate user', async () => {
-    await repository.createUser({ username: 'test', password: 'test' });
+    await repository.create({ username: 'test', password: 'test' });
     const user = await service.validate({ username: 'test', password: 'wrong' });
     expect(user).toBeUndefined();
   });
 
   it('should sign JSON web token', async () => {
-    const user = await repository.createUser({ username: 'test', password: 'test' });
+    const user = await repository.create({ username: 'test', password: 'test' });
 
     const token = service.sign(user);
     expect(token).toBeDefined();

@@ -24,7 +24,7 @@ describe('AuthResolver (e2e)', () => {
 
   it('should sign in, get current user, then sign out', async () => {
     const repository = app.get(UserRepository);
-    await repository.createUser({ username: 'test', password: 'test' });
+    await repository.create({ username: 'test', password: 'test' });
 
     const response = await request(app.getHttpServer())
       .post('/graphql')

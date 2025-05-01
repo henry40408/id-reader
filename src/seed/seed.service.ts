@@ -17,7 +17,7 @@ export class SeedService {
     await this.userRepository.clear();
     this.logger.log('users table cleared');
 
-    await this.userRepository.createUser({
+    await this.userRepository.create({
       username: 'admin',
       password: 'password',
     });

@@ -16,20 +16,18 @@ export class UserRepository {
     await this.knex<User>('users').delete();
   }
 
-  async createUser(dto: CreateUser): Promise<User> {
+  async create(dto: CreateUser): Promise<User> {
     const { password, ...rest } = dto;
     const data: Knex.DbRecordArr<User> = {
       ...rest,
       password_hash: await bcrypt.hash(password, UserRepository.SALT_ROUNDS),
     };
-    return await this.knex<User>('users').insert(data);
+    const [id] = await this.knex<User>('users').insert(data);
+    const user = await this.knex<User>('users').where('id', id).first();
+    return user!;
   }
 
   async findByUsername(username: string): Promise<User | undefined> {
     return await this.knex<User>('users').where({ username }).first();
-  }
-
-  async hash(password: string): Promise<string> {
-    return await bcrypt.hash(password, UserRepository.SALT_ROUNDS);
   }
 }
