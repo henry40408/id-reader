@@ -6,22 +6,22 @@ import sax from 'sax';
 import { DEFAULT_CATEGORY_NAME } from '../repositories/category.constants';
 import { KNEX } from 'src/knex/knex.constant';
 
-export interface ParsedFeed {
+export interface IParsedFeed {
   title: string;
   xmlUrl: string;
   htmlUrl?: string;
 }
 
-export interface ParsedCategory {
+export interface IParsedCategory {
   name: string;
-  feeds: ParsedFeed[];
+  feeds: IParsedFeed[];
 }
 
 @Injectable()
 export class OpmlService {
   constructor(@Inject(KNEX) private readonly knex: Knex) {}
 
-  async importFeeds(userId: number, categories: ParsedCategory[]) {
+  async importFeeds(userId: number, categories: IParsedCategory[]) {
     return await this.knex.transaction(async (tx) => {
       const categoryPromises: Promise<void>[] = [];
       for (const category of categories) {
@@ -62,11 +62,11 @@ export class OpmlService {
   }
 
   async parseOPML(readable: Readable) {
-    return new Promise<ParsedCategory[]>((resolve, reject) => {
+    return new Promise<IParsedCategory[]>((resolve, reject) => {
       const parser = sax.createStream(true);
 
-      const categories: ParsedCategory[] = [];
-      let currentCategory: ParsedCategory | undefined;
+      const categories: IParsedCategory[] = [];
+      let currentCategory: IParsedCategory | undefined;
 
       parser.on('opentag', (node) => {
         if (node.name === 'outline') {

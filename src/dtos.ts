@@ -1,5 +1,6 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
+import { Category, User } from 'knex/types/tables';
 
 @ObjectType()
 export class JwtPayload {
@@ -22,4 +23,44 @@ export class SignInInput {
 export class UploadedFileDTO {
   @ApiProperty({ type: 'string', format: 'binary', description: 'OPML file' })
   file: Buffer;
+}
+
+@ObjectType()
+export class UserObject implements User {
+  @Field({ description: 'user ID' })
+  id!: number;
+
+  @Field({ description: 'user username' })
+  username!: string;
+
+  password_hash!: string;
+
+  @Field({ description: 'user created at' })
+  created_at!: string;
+
+  @Field({ description: 'user updated at' })
+  updated_at!: string;
+}
+
+@ObjectType()
+export class CategoryObject implements Category {
+  @Field({ description: 'category ID' })
+  id!: number;
+
+  user_id!: number;
+
+  @Field({ description: 'category name' })
+  name!: string;
+
+  @Field({ description: 'category description' })
+  description!: string;
+
+  @Field({ description: 'category created at' })
+  created_at!: string;
+
+  @Field({ description: 'category updated at' })
+  updated_at!: string;
+
+  @Field(() => UserObject, { description: 'category user' })
+  user!: UserObject;
 }

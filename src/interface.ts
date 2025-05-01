@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
+import { IDataLoaders } from './dataloaders/dataloader.interface';
 
-/* istanbul ignore next */
-export interface GqlContext<T extends Request = Request> {
+export interface IGqlContext<T extends Request = Request> {
   req: T;
   res: Response;
+  loaders: IDataLoaders;
 }

@@ -5,12 +5,16 @@ import { JwtModule } from '@nestjs/jwt';
 import { MulterModule } from '@nestjs/platform-express';
 import { SwaggerModule } from '@nestjs/swagger';
 import { TerminusModule } from '@nestjs/terminus';
+import { Request, Response } from 'express';
 import { AppConfigModule } from './app-config/app-config.module';
 import { AppConfigService } from './app-config/app-config.service';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
+import { CategoriesResolver } from './categories.resolver';
+import { DataloaderModule } from './dataloaders/dataloader.module';
+import { DataloaderService } from './dataloaders/dataloader.service';
 import { FeedsController } from './feeds.controller';
-import { GqlContext } from './interface';
+import { IGqlContext } from './interface';
 import { KnexModule } from './knex/knex.module';
 import { MyMigrationSource } from './migrations';
 import { OpmlModule } from './opml/opml.module';
@@ -35,17 +39,25 @@ import { ViteModule } from './vite/vite.module';
     }),
     SwaggerModule,
     TerminusModule,
-    GraphQLModule.forRoot<ApolloDriverConfig>({
-      autoSchemaFile: true,
-      context: ({ req, res }: GqlContext): GqlContext => ({ req, res }),
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
+      imports: [DataloaderModule],
+      inject: [DataloaderService],
       driver: ApolloDriver,
-      formatError: (error) => ({
-        ...error,
-        extensions: {
-          code: error.extensions?.code,
-        },
+      useFactory: (dataloaderService: DataloaderService) => ({
+        autoSchemaFile: true,
+        context: ({ req, res }: { req: Request; res: Response }): IGqlContext => ({
+          req,
+          res,
+          loaders: dataloaderService.loaders,
+        }),
+        formatError: (error) => ({
+          ...error,
+          extensions: {
+            code: error.extensions?.code,
+          },
+        }),
+        graphiql: true,
       }),
-      graphiql: true,
     }),
     JwtModule.registerAsync({
       global: true, // initialize in module results in multiple instances
@@ -64,5 +76,6 @@ import { ViteModule } from './vite/vite.module';
     OpmlModule,
   ],
   controllers: [FeedsController, AppController],
+  providers: [CategoriesResolver],
 })
 export class AppModule {}

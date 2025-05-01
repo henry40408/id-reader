@@ -6,13 +6,13 @@ import { AppConfigModule } from '../app-config/app-config.module';
 import { AppConfigService } from '../app-config/app-config.service';
 import { KNEX } from './knex.constant';
 import { KnexHealthIndicator } from './knex.health-check.service';
-import { ConfigModuleOptions } from './knex.interface';
+import { IConfigModuleOptions } from './knex.interface';
 import { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } from './knex.module-definition';
 
 const connectionProvider: Provider = {
   provide: KNEX,
   inject: [MODULE_OPTIONS_TOKEN],
-  useFactory: (config: ConfigModuleOptions) => knex.default(config.knex),
+  useFactory: (config: IConfigModuleOptions) => knex.default(config.knex),
 };
 
 @Module({

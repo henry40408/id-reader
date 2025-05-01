@@ -4,7 +4,7 @@ import { secondsToMilliseconds } from 'date-fns';
 import { AppConfigService } from '../app-config/app-config.service';
 import { COOKIE_ACCESS_TOKEN } from '../constants';
 import { JwtPayload, SignInInput } from '../dtos';
-import { GqlContext } from '../interface';
+import { IGqlContext } from '../interface';
 import { Authenticated } from './access-token.guard';
 import { RequestWithJwtPayload } from './auth.interface';
 import { AuthService } from './auth.service';
@@ -18,12 +18,12 @@ export class AuthResolver {
 
   @Query(() => JwtPayload, { description: 'get current user' })
   @Authenticated()
-  currentUser(@Context() context: GqlContext<RequestWithJwtPayload>) {
+  currentUser(@Context() context: IGqlContext<RequestWithJwtPayload>) {
     return context.req.jwtPayload;
   }
 
   @Mutation(() => JwtPayload, { description: 'sign in' })
-  async signIn(@Args('input') input: SignInInput, @Context() context: GqlContext) {
+  async signIn(@Args('input') input: SignInInput, @Context() context: IGqlContext) {
     const user = await this.authService.validate(input);
     if (!user) {
       throw new BadRequestException('Invalid credentials');
@@ -41,7 +41,7 @@ export class AuthResolver {
 
   @Mutation(() => Boolean, { description: 'sign out' })
   @Authenticated()
-  signOut(@Context() context: GqlContext) {
+  signOut(@Context() context: IGqlContext) {
     context.res.clearCookie(COOKIE_ACCESS_TOKEN);
     return true;
   }

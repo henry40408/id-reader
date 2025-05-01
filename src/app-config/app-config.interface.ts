@@ -1,4 +1,4 @@
-export interface AppConfig {
+export interface IAppConfig {
   databaseUrl: string;
   env: {
     development: boolean;

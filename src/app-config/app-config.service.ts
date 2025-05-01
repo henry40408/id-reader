@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { millisecondsToSeconds, milliseconds } from 'date-fns';
-import { AppConfig } from './app-config.interface';
+import { IAppConfig } from './app-config.interface';
 
 @Injectable()
 export class AppConfigService {
   constructor(private readonly configService: ConfigService) {}
 
-  get config(): AppConfig {
+  get config(): IAppConfig {
     return {
       databaseUrl: this.databaseUrl,
       env: this.appEnv,

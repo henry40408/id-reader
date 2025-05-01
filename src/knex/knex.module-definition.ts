@@ -1,7 +1,7 @@
 import { ConfigurableModuleBuilder } from '@nestjs/common';
-import { ConfigModuleOptions } from './knex.interface';
+import { IConfigModuleOptions } from './knex.interface';
 
-export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } = new ConfigurableModuleBuilder<ConfigModuleOptions>()
+export const { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } = new ConfigurableModuleBuilder<IConfigModuleOptions>()
   .setExtras(
     {
       isGlobal: true,
