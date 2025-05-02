@@ -25,6 +25,24 @@ describe('UserRepository', () => {
     expect(userRepository).toBeDefined();
   });
 
+  it('should create a user', async () => {
+    const user = await userRepository.create({ username: 'test', password: 'test' });
+    expect(user).toBeDefined();
+    expect(user.username).toEqual('test');
+  });
+
+  it('should not create a user with the same username', async () => {
+    await userRepository.create({ username: 'test', password: 'test' });
+    await expect(userRepository.create({ username: 'test', password: 'test' })).rejects.toThrow();
+  });
+
+  it('should find a user by username', async () => {
+    await userRepository.create({ username: 'test', password: 'test' });
+    const user = await userRepository.findByUsername('test');
+    expect(user).toBeDefined();
+    expect(user?.username).toEqual('test');
+  });
+
   it('should encrypt password before saving', async () => {
     const user = await userRepository.create({ username: 'test', password: 'test' });
     expect(user.username).toEqual('test');
