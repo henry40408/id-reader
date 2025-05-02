@@ -14,7 +14,7 @@ import { SeedService } from './seed.service';
       inject: [AppConfigService],
       useFactory: (configService: AppConfigService) => ({
         knex: {
-          client: 'better-sqlite3',
+          client: 'sqlite3',
           connection: {
             filename: configService.config.databaseUrl,
           },
