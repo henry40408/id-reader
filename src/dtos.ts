@@ -1,6 +1,6 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
-import { Category, User } from 'knex/types/tables';
+import { Category, Feed, User } from 'knex/types/tables';
 
 @ObjectType()
 export class JwtPayload {
@@ -63,4 +63,30 @@ export class CategoryObject implements Category {
 
   @Field(() => UserObject, { description: 'category user' })
   user!: UserObject;
+}
+
+@ObjectType()
+export class FeedObject implements Feed {
+  @Field({ description: 'feed ID' })
+  id!: number;
+
+  category_id!: number;
+
+  @Field({ description: 'feed title' })
+  title!: string;
+
+  @Field({ description: 'feed description', nullable: true })
+  description: string;
+
+  @Field({ description: 'feed URL' })
+  xml_url!: string;
+
+  @Field({ description: 'feed URL', nullable: true })
+  html_url: string;
+
+  @Field({ description: 'feed created at' })
+  created_at!: string;
+
+  @Field({ description: 'feed updated at' })
+  updated_at!: string;
 }

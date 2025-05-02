@@ -14,6 +14,7 @@ import { CategoriesResolver } from './categories.resolver';
 import { DataloaderModule } from './dataloaders/dataloader.module';
 import { DataloaderService } from './dataloaders/dataloader.service';
 import { FeedsController } from './feeds.controller';
+import { FeedsResolver } from './feeds.resolver';
 import { IGqlContext } from './interface';
 import { KnexModule } from './knex/knex.module';
 import { MyMigrationSource } from './migrations';
@@ -76,6 +77,6 @@ import { ViteModule } from './vite/vite.module';
     OpmlModule,
   ],
   controllers: [FeedsController, AppController],
-  providers: [CategoriesResolver],
+  providers: [CategoriesResolver, FeedsResolver],
 })
 export class AppModule {}

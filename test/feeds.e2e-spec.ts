@@ -6,11 +6,10 @@ import cookieParser from 'cookie-parser';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
-import { UserRepository } from 'src/repositories/user.repository';
+import { createUserAndSignIn } from './test.helper';
 
 describe('FeedsController (e2e)', () => {
   let app: INestApplication<App>;
-  let userRepository: UserRepository;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -19,7 +18,6 @@ describe('FeedsController (e2e)', () => {
     app = moduleRef.createNestApplication();
     app.use(cookieParser());
     await app.init();
-    userRepository = moduleRef.get<UserRepository>(UserRepository);
   });
 
   afterEach(async () => {
@@ -27,23 +25,36 @@ describe('FeedsController (e2e)', () => {
   });
 
   it('should import feeds', async () => {
-    await userRepository.create({ username: 'test', password: 'test' });
+    const cookie = await createUserAndSignIn(app);
+    const buffer = fs.readFileSync(path.resolve(__dirname, '../fixtures/test.opml'));
+    const response = await request(app.getHttpServer())
+      .post('/feeds/import')
+      .set('Cookie', cookie)
+      .attach('file', buffer, 'test.opml');
+    expect(response.status).toEqual(HttpStatus.CREATED);
+  });
 
-    const response = await request(app.getHttpServer()).post('/graphql').send({
-      query: `mutation { signIn(input: { username: "test", password: "test" }) { sub username } }`,
-    });
-    expect(response.status).toEqual(HttpStatus.OK);
-    expect(response.body).toMatchObject({ data: { signIn: { sub: 1, username: 'test' } } });
+  it('should get categories', async () => {
+    const cookie = await createUserAndSignIn(app);
+    await request(app.getHttpServer())
+      .post('/graphql')
+      .send({
+        query: `query { categories { id name } }`,
+      })
+      .set('Cookie', cookie)
+      .expect(HttpStatus.OK)
+      .expect({ data: { categories: [] } });
+  });
 
-    const cookie = response.headers['set-cookie'];
-
-    {
-      const buffer = fs.readFileSync(path.resolve(__dirname, '../fixtures/test.opml'));
-      const response = await request(app.getHttpServer())
-        .post('/feeds/import')
-        .set('Cookie', cookie)
-        .attach('file', buffer, 'test.opml');
-      expect(response.status).toEqual(HttpStatus.CREATED);
-    }
+  it('should get feeds', async () => {
+    const cookie = await createUserAndSignIn(app);
+    await request(app.getHttpServer())
+      .post('/graphql')
+      .send({
+        query: `query { feeds { id title } }`,
+      })
+      .set('Cookie', cookie)
+      .expect(HttpStatus.OK)
+      .expect({ data: { feeds: [] } });
   });
 });
