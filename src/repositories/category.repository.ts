@@ -8,6 +8,14 @@ import { DEFAULT_CATEGORY_NAME } from './category.constants';
 export class CategoryRepository {
   constructor(@Inject(KNEX) private readonly knex: Knex) {}
 
+  async count(userId: number): Promise<number> {
+    return this.knex<Category>('categories')
+      .where('user_id', userId)
+      .count('id', { as: 'count' })
+      .first()
+      .then((res) => Number(res?.count ?? 0));
+  }
+
   async create(dto: Knex.DbRecordArr<Category>): Promise<Category> {
     return this.knex.transaction(async (tx) => {
       const [id] = await tx<Category>('categories').insert(dto);

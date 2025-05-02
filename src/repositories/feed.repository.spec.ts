@@ -30,6 +30,14 @@ describe('FeedRepository', () => {
     expect(repository).toBeDefined();
   });
 
+  it('should count feeds', async () => {
+    const user = await userRepository.create({ username: 'test', password: 'test' });
+    const category = await categoryRepository.create({ user_id: user.id, name: 'Test Category' });
+    await repository.create({ category_id: category.id, title: 'Test Feed', xml_url: 'https://test.com/feed' });
+    const count = await repository.count(user.id);
+    expect(count).toEqual(1);
+  });
+
   it('should create a feed', async () => {
     const user = await userRepository.create({ username: 'test', password: 'test' });
     const category = await categoryRepository.create({ user_id: user.id, name: 'Test Category' });

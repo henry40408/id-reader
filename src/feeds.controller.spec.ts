@@ -9,6 +9,8 @@ import { FeedsController } from './feeds.controller';
 import { KNEX } from './knex/knex.constant';
 import { KnexModule } from './knex/knex.module';
 import { OpmlService } from './opml/opml.service';
+import { CategoryRepository } from './repositories/category.repository';
+import { FeedRepository } from './repositories/feed.repository';
 import { UserRepository } from './repositories/user.repository';
 import { knexConfig } from './test.helper';
 
@@ -21,7 +23,7 @@ describe('FeedsController', () => {
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
       imports: [KnexModule.register(knexConfig), JwtModule],
-      providers: [OpmlService, UserRepository],
+      providers: [OpmlService, UserRepository, CategoryRepository, FeedRepository],
       controllers: [FeedsController],
     }).compile();
     await moduleRef.init();
@@ -59,14 +61,6 @@ describe('FeedsController', () => {
     }
 
     const result = await controller.importFeeds(mockReq, file);
-    expect(result).toEqual({});
-
-    {
-      const rows = await knex<Feed>('feeds')
-        .count('feeds.id', { as: 'count' })
-        .join('categories', 'feeds.category_id', 'categories.id')
-        .where('categories.user_id', user.id);
-      expect(rows).toEqual([{ count: 2 }]);
-    }
+    expect(result).toEqual({ categoryCount: 1, feedCount: 2 });
   });
 });

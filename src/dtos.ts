@@ -90,3 +90,11 @@ export class FeedObject implements Feed {
   @Field({ description: 'feed updated at' })
   updated_at!: string;
 }
+
+export class ImportFeedsResponse {
+  @ApiProperty({ type: Number, description: 'category count' })
+  categoryCount!: number;
+
+  @ApiProperty({ type: Number, description: 'feed count' })
+  feedCount!: number;
+}

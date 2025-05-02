@@ -19,6 +19,8 @@ import { IGqlContext } from './interface';
 import { KnexModule } from './knex/knex.module';
 import { MyMigrationSource } from './migrations';
 import { OpmlModule } from './opml/opml.module';
+import { CategoryRepository } from './repositories/category.repository';
+import { FeedRepository } from './repositories/feed.repository';
 import { ViteModule } from './vite/vite.module';
 
 @Module({
@@ -77,6 +79,6 @@ import { ViteModule } from './vite/vite.module';
     OpmlModule,
   ],
   controllers: [FeedsController, AppController],
-  providers: [CategoriesResolver, FeedsResolver],
+  providers: [CategoriesResolver, CategoryRepository, FeedRepository, FeedsResolver],
 })
 export class AppModule {}
