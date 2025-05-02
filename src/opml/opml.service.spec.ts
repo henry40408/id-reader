@@ -8,8 +8,9 @@ import * as lodash from 'lodash';
 import { KNEX } from '../knex/knex.constant';
 import { DEFAULT_CATEGORY_NAME } from '../repositories/category.constants';
 import { UserRepository } from '../repositories/user.repository';
-import { testKnexModule } from '../test.helper';
+import { knexConfig } from '../test.helper';
 import { OpmlService } from './opml.service';
+import { KnexModule } from 'src/knex/knex.module';
 
 describe('OpmlService', () => {
   let moduleRef: TestingModule;
@@ -19,7 +20,7 @@ describe('OpmlService', () => {
 
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
-      imports: [testKnexModule],
+      imports: [KnexModule.register(knexConfig)],
       providers: [OpmlService, UserRepository],
     }).compile();
     await moduleRef.init();

@@ -1,8 +1,9 @@
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtPayload } from '../dtos';
+import { KnexModule } from '../knex/knex.module';
 import { UserRepository } from '../repositories/user.repository';
-import { testKnexModule } from '../test.helper';
+import { knexConfig } from '../test.helper';
 import { AuthModule } from './auth.module';
 import { AuthService } from './auth.service';
 
@@ -13,7 +14,7 @@ describe('AuthService', () => {
 
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
-      imports: [testKnexModule, JwtModule.register({ global: true, secret: 'secret' }), AuthModule],
+      imports: [KnexModule.register(knexConfig), JwtModule.register({ global: true, secret: 'secret' }), AuthModule],
     }).compile();
     await moduleRef.init();
     repository = moduleRef.get<UserRepository>(UserRepository);

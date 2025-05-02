@@ -7,9 +7,10 @@ import { Feed } from 'knex/types/tables';
 import { RequestWithJwtPayload } from './auth/auth.interface';
 import { FeedsController } from './feeds.controller';
 import { KNEX } from './knex/knex.constant';
+import { KnexModule } from './knex/knex.module';
 import { OpmlService } from './opml/opml.service';
 import { UserRepository } from './repositories/user.repository';
-import { testKnexModule } from './test.helper';
+import { knexConfig } from './test.helper';
 
 describe('FeedsController', () => {
   let moduleRef: TestingModule;
@@ -19,7 +20,7 @@ describe('FeedsController', () => {
 
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
-      imports: [testKnexModule, JwtModule],
+      imports: [KnexModule.register(knexConfig), JwtModule],
       providers: [OpmlService, UserRepository],
       controllers: [FeedsController],
     }).compile();

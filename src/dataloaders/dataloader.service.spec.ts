@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { KnexModule } from '../knex/knex.module';
 import { UserRepository } from '../repositories/user.repository';
-import { testKnexModule } from '../test.helper';
+import { knexConfig } from '../test.helper';
 import { DataloaderService } from './dataloader.service';
 
 describe('DataloaderService', () => {
@@ -10,7 +11,7 @@ describe('DataloaderService', () => {
 
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
-      imports: [testKnexModule],
+      imports: [KnexModule.register(knexConfig)],
       providers: [DataloaderService, UserRepository],
     }).compile();
     await moduleRef.init();

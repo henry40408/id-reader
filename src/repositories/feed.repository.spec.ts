@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { testKnexModule } from '../test.helper';
+import { KnexModule } from '../knex/knex.module';
+import { knexConfig } from '../test.helper';
 import { CategoryRepository } from './category.repository';
 import { FeedRepository } from './feed.repository';
 import { UserRepository } from './user.repository';
@@ -12,7 +13,7 @@ describe('FeedRepository', () => {
 
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
-      imports: [testKnexModule],
+      imports: [KnexModule.register(knexConfig)],
       providers: [FeedRepository, CategoryRepository, UserRepository],
     }).compile();
     await moduleRef.init();

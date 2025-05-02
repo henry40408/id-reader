@@ -2,7 +2,8 @@ import { TestingModule, Test } from '@nestjs/testing';
 import { Knex } from 'knex';
 import { Category } from 'knex/types/tables';
 import { KNEX } from '../knex/knex.constant';
-import { testKnexModule } from '../test.helper';
+import { KnexModule } from '../knex/knex.module';
+import { knexConfig } from '../test.helper';
 import { DEFAULT_CATEGORY_NAME } from './category.constants';
 import { CategoryRepository } from './category.repository';
 import { UserRepository } from './user.repository';
@@ -14,7 +15,7 @@ describe('CategoryRepository', () => {
 
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
-      imports: [testKnexModule],
+      imports: [KnexModule.register(knexConfig)],
       providers: [CategoryRepository, UserRepository],
     }).compile();
     await moduleRef.init();

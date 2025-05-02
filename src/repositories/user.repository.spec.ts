@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
-import { testKnexModule } from '../test.helper';
+import { KnexModule } from '../knex/knex.module';
+import { knexConfig } from '../test.helper';
 import { UserRepository } from './user.repository';
 
 describe('UserRepository', () => {
@@ -9,7 +10,7 @@ describe('UserRepository', () => {
 
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
-      imports: [testKnexModule],
+      imports: [KnexModule.register(knexConfig)],
       providers: [UserRepository],
     }).compile();
     await moduleRef.init();
