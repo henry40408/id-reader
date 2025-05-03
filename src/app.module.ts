@@ -33,10 +33,10 @@ import { ViteModule } from './vite/vite.module';
           connection: {
             filename: configService.config.databaseUrl,
           },
-          useNullAsDefault: true,
           migrations: {
             migrationSource: new MyMigrationSource(),
           },
+          useNullAsDefault: true,
         },
       }),
     }),

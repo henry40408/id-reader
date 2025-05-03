@@ -18,10 +18,10 @@ import { SeedService } from './seed.service';
           connection: {
             filename: configService.config.databaseUrl,
           },
-          useNullAsDefault: true,
           migrations: {
             migrationSource: new MyMigrationSource(),
           },
+          useNullAsDefault: true,
         },
       }),
     }),

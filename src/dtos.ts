@@ -2,6 +2,14 @@ import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
 import { Category, Feed, User } from 'knex/types/tables';
 
+export class ImportFeedsResponse {
+  @ApiProperty({ type: Number, description: 'category count' })
+  categoryCount!: number;
+
+  @ApiProperty({ type: Number, description: 'feed count' })
+  feedCount!: number;
+}
+
 @ObjectType()
 export class JwtPayload {
   @Field({ description: 'user ID' })
@@ -89,12 +97,4 @@ export class FeedObject implements Feed {
 
   @Field({ description: 'feed updated at' })
   updated_at!: string;
-}
-
-export class ImportFeedsResponse {
-  @ApiProperty({ type: Number, description: 'category count' })
-  categoryCount!: number;
-
-  @ApiProperty({ type: Number, description: 'feed count' })
-  feedCount!: number;
 }
