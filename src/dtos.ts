@@ -1,6 +1,6 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
-import { Category, Feed, User } from 'knex/types/tables';
+import { Category, Feed, Image, User } from 'knex/types/tables';
 
 export class ImportFeedsResponse {
   @ApiProperty({ type: Number, description: 'category count' })
@@ -33,6 +33,22 @@ export class UploadedFileDTO {
   file: Buffer;
 }
 
+@ObjectType()
+export class ImageObject implements Image {
+  @Field({ description: 'image ID' })
+  id!: number;
+
+  @Field({ description: 'image URL' })
+  url!: string;
+
+  blob!: ArrayBuffer;
+
+  @Field({ description: 'image created at' })
+  created_at!: string;
+
+  @Field({ description: 'image updated at' })
+  updated_at!: string;
+}
 @ObjectType()
 export class UserObject implements User {
   @Field({ description: 'user ID' })
@@ -84,13 +100,15 @@ export class FeedObject implements Feed {
   title!: string;
 
   @Field({ description: 'feed description', nullable: true })
-  description: string;
+  description?: string;
 
   @Field({ description: 'feed URL' })
   xml_url!: string;
 
   @Field({ description: 'feed URL', nullable: true })
-  html_url: string;
+  html_url?: string;
+
+  image_id?: number;
 
   @Field({ description: 'feed created at' })
   created_at!: string;

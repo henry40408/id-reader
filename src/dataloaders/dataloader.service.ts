@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import DataLoader from 'dataloader';
 import { Knex } from 'knex';
-import { Category, User } from 'knex/types/tables';
+import { Category, Image, User } from 'knex/types/tables';
 import { KNEX } from '../knex/knex.constant';
 import { IDataLoaders } from './dataloader.interface';
 
@@ -14,6 +14,10 @@ export class DataloaderService {
       categoriesLoader: new DataLoader(async (categoryIds: number[]) => {
         const categories = await this.knex<Category>('categories').whereIn('id', categoryIds);
         return this.reorder(categories, categoryIds);
+      }),
+      imagesLoader: new DataLoader(async (imageIds: number[]) => {
+        const images = await this.knex<Image>('images').whereIn('id', imageIds);
+        return this.reorder(images, imageIds);
       }),
       usersLoader: new DataLoader(async (userIds: number[]) => {
         const users = await this.knex<User>('users').whereIn('id', userIds);

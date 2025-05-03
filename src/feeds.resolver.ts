@@ -4,7 +4,7 @@ import { Knex } from 'knex';
 import { Feed } from 'knex/types/tables';
 import { Authenticated } from './auth/access-token.guard';
 import { RequestWithJwtPayload } from './auth/auth.interface';
-import { CategoryObject, FeedObject } from './dtos';
+import { CategoryObject, FeedObject, ImageObject } from './dtos';
 import { IGqlContext } from './interface';
 import { KNEX } from './knex/knex.constant';
 
@@ -25,5 +25,11 @@ export class FeedsResolver {
   @ResolveField(() => CategoryObject)
   async category(@Parent() feed: FeedObject, @Context() context: IGqlContext<RequestWithJwtPayload>) {
     return context.loaders.categoriesLoader.load(feed.category_id);
+  }
+
+  @ResolveField(() => ImageObject, { nullable: true })
+  async image(@Parent() feed: FeedObject, @Context() context: IGqlContext<RequestWithJwtPayload>) {
+    if (!feed.image_id) return null;
+    return context.loaders.imagesLoader.load(feed.image_id);
   }
 }
