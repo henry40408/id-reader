@@ -29,7 +29,8 @@ declare module 'knex/types/tables' {
   interface Image {
     id: number;
     url: string;
-    blob: ArrayBuffer;
+    blob: Buffer;
+    content_type: string;
     created_at: string;
     updated_at: string;
   }

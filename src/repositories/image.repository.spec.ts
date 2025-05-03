@@ -1,4 +1,3 @@
-import { HttpModule } from '@nestjs/axios';
 import { Test, TestingModule } from '@nestjs/testing';
 import nock from 'nock';
 import { KnexModule } from '../knex/knex.module';
@@ -16,7 +15,7 @@ describe('ImageRepository', () => {
 
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
-      imports: [KnexModule.register(knexConfig), HttpModule],
+      imports: [KnexModule.register(knexConfig)],
       providers: [ImageRepository],
     }).compile();
     await moduleRef.init();
@@ -32,7 +31,7 @@ describe('ImageRepository', () => {
   });
 
   it('should create an image', async () => {
-    nock('https://example.com').get('/image.png').reply(200, IMAGE_1x1);
+    nock('https://example.com').get('/image.png').reply(200, IMAGE_1x1, { 'Content-Type': 'image/png' });
 
     const image = await repository.create('https://example.com/image.png');
     expect(image).toBeDefined();
@@ -41,7 +40,7 @@ describe('ImageRepository', () => {
   });
 
   it('should find an image by URL', async () => {
-    nock('https://example.com').get('/image.png').reply(200, IMAGE_1x1);
+    nock('https://example.com').get('/image.png').reply(200, IMAGE_1x1, { 'Content-Type': 'image/png' });
 
     await repository.create('https://example.com/image.png');
     const foundImage = await repository.findByUrl('https://example.com/image.png');

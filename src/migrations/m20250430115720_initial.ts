@@ -42,6 +42,7 @@ export function up(knex: Knex) {
       t.increments('id').primary();
       t.string('url').notNullable();
       t.binary('blob').notNullable();
+      t.string('content_type').notNullable();
       t.timestamps(true, true);
 
       t.unique('url');
