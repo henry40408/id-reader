@@ -76,7 +76,10 @@
       "^.+\\.(t|j)s$": "@swc/jest"
     },
     "collectCoverageFrom": [
-      "**/*.(t|j)s"
+      "**/*.(t|j)s",
+      "!**/*.d.ts",
+      "!**/*.interface.ts",
+      "!main.ts"
     ],
     "coverageProvider": "v8",
     "coverageDirectory": "../coverage",
