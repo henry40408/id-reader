@@ -1,50 +1,31 @@
-import { Inject, Logger, Module, OnModuleDestroy, OnModuleInit, Provider } from '@nestjs/common';
+import { Module, Provider } from '@nestjs/common';
 import knex, { Knex } from 'knex';
 import { TerminusModule } from '@nestjs/terminus';
 import { KNEX } from './knex.constant';
 import { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } from './knex.module-definition';
 import { ConfigModuleOptions } from './knex.interface';
 import { KnexHealthIndicator } from './knex.health';
+import { MyMigrationSource } from './migrations/source';
+import { PragmaService } from './pragma.service';
+import { MigrationService } from './migration.service';
+import { UserRepository } from './repository/user.repository';
+
+const repositories: Provider[] = [UserRepository];
 
 const connectionProvider: Provider = {
   provide: KNEX,
   inject: [MODULE_OPTIONS_TOKEN],
-  useFactory: (options: ConfigModuleOptions) => {
-    return knex.default(options.knex);
+  useFactory: (_options: ConfigModuleOptions) => {
+    const options: Knex.Config = _options.knex;
+    if (!options.migrations) options.migrations = {};
+    if (!options.migrations.migrationSource) options.migrations.migrationSource = new MyMigrationSource();
+    return knex.default(options);
   },
 };
 
 @Module({
   imports: [TerminusModule],
-  providers: [connectionProvider, KnexHealthIndicator],
+  providers: [connectionProvider, KnexHealthIndicator, MigrationService, PragmaService, ...repositories],
   exports: [KNEX, KnexHealthIndicator],
 })
-export class KnexModule extends ConfigurableModuleClass implements OnModuleInit, OnModuleDestroy {
-  private readonly logger = new Logger(KnexModule.name);
-
-  constructor(@Inject(KNEX) private readonly knex: Knex) {
-    super();
-  }
-
-  async onModuleInit() {
-    await this.knex.raw('PRAGMA foreign_keys = ON');
-    this.logger.log('Foreign keys enabled');
-
-    await this.knex.raw('PRAGMA journal_mode = WAL');
-    this.logger.log('Journal mode set to WAL');
-
-    await this.knex.raw('PRAGMA synchronous = NORMAL');
-    this.logger.log('Synchronous mode set to NORMAL');
-  }
-
-  async onModuleDestroy() {
-    await this.knex.raw('PRAGMA analysis_limit = 400');
-    this.logger.log('Analysis limit set to 400');
-
-    await this.knex.raw('PRAGMA optimize');
-    this.logger.log('Optimized database');
-
-    await this.knex.destroy();
-    this.logger.log('Knex connection closed');
-  }
-}
+export class KnexModule extends ConfigurableModuleClass {}
