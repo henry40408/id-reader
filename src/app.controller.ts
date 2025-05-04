@@ -1,12 +1,17 @@
 import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import {
+  HealthCheck,
+  HealthCheckResult,
+  HealthCheckService,
+} from '@nestjs/terminus';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private health: HealthCheckService) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @Get('healthz')
+  @HealthCheck()
+  async healthz(): Promise<HealthCheckResult> {
+    return await this.health.check([]);
   }
 }
