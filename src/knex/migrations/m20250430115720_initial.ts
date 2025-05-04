@@ -3,14 +3,27 @@ import { Knex } from 'knex';
 export const name = 'm20250430115720_initial';
 
 export const up = async (knex: Knex) => {
-  await knex.schema.createTable('users', (table) => {
-    table.increments('id').primary();
-    table.string('username').notNullable().unique();
-    table.string('password_hash').notNullable();
-    table.timestamps(true, true);
+  return knex.transaction(async (tx) => {
+    await tx.schema.createTable('users', (t) => {
+      t.increments('id').primary();
+      t.string('username').notNullable().unique();
+      t.string('password_hash').notNullable();
+      t.timestamps(true, true);
+    });
+
+    await tx.schema.createTable('categories', (t) => {
+      t.increments('id').primary();
+      t.integer('user_id').notNullable().references('id').inTable('users').onDelete('CASCADE');
+      t.string('name').notNullable();
+      t.timestamps(true, true);
+      t.unique(['user_id', 'name']);
+    });
   });
 };
 
 export const down = async (knex: Knex) => {
-  await knex.schema.dropTable('users');
+  return knex.transaction(async (tx) => {
+    await tx.schema.dropTable('categories');
+    await tx.schema.dropTable('users');
+  });
 };

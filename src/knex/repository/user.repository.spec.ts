@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
 import { KnexModule } from '../knex.module';
+import { knexConfig } from '../../test.helper';
 import { UserRepository } from './user.repository';
-import { knexConfig } from 'src/test.helper';
 
 describe('UserRepository', () => {
   let moduleRef: TestingModule;
