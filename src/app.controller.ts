@@ -1,4 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
+import { ApiOperation } from '@nestjs/swagger';
 import {
   HealthCheck,
   HealthCheckResult,
@@ -11,6 +12,7 @@ export class AppController {
 
   @Get('healthz')
   @HealthCheck()
+  @ApiOperation({ summary: 'Check health' })
   async healthz(): Promise<HealthCheckResult> {
     return await this.health.check([]);
   }
