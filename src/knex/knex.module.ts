@@ -1,5 +1,5 @@
-import { Module, Provider } from '@nestjs/common';
-import knex from 'knex';
+import { Inject, Logger, Module, OnModuleDestroy, OnModuleInit, Provider } from '@nestjs/common';
+import knex, { Knex } from 'knex';
 import { TerminusModule } from '@nestjs/terminus';
 import { KNEX } from './knex.constant';
 import { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } from './knex.module-definition';
@@ -19,4 +19,32 @@ const connectionProvider: Provider = {
   providers: [connectionProvider, KnexHealthIndicator],
   exports: [KNEX, KnexHealthIndicator],
 })
-export class KnexModule extends ConfigurableModuleClass {}
+export class KnexModule extends ConfigurableModuleClass implements OnModuleInit, OnModuleDestroy {
+  private readonly logger = new Logger(KnexModule.name);
+
+  constructor(@Inject(KNEX) private readonly knex: Knex) {
+    super();
+  }
+
+  async onModuleInit() {
+    await this.knex.raw('PRAGMA foreign_keys = ON');
+    this.logger.log('Foreign keys enabled');
+
+    await this.knex.raw('PRAGMA journal_mode = WAL');
+    this.logger.log('Journal mode set to WAL');
+
+    await this.knex.raw('PRAGMA synchronous = NORMAL');
+    this.logger.log('Synchronous mode set to NORMAL');
+  }
+
+  async onModuleDestroy() {
+    await this.knex.raw('PRAGMA analysis_limit = 400');
+    this.logger.log('Analysis limit set to 400');
+
+    await this.knex.raw('PRAGMA optimize');
+    this.logger.log('Optimized database');
+
+    await this.knex.destroy();
+    this.logger.log('Knex connection closed');
+  }
+}
