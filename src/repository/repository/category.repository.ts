@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Knex } from 'knex';
 import { Category } from 'knex/types/tables';
-import { KNEX } from '../knex.constant';
+import { Knex } from 'knex';
+import { KNEX } from '../../knex/knex.constant';
 
 @Injectable()
 export class CategoryRepository {

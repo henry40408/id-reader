@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Knex } from 'knex';
-import { KNEX } from './knex.constant';
+import { KNEX } from '../knex/knex.constant';
 
 @Injectable()
 export class MigrationService implements OnModuleInit {

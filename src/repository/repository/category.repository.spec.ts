@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { KnexModule } from '../knex.module';
-import { knexConfig, createUser } from '../../test.helper';
+import { AppConfigModule } from '../../app-config/app-config.module';
+import { createUser } from '../../test.helper';
+import { RepositoryModule } from '../repository.module';
 import { CategoryRepository } from './category.repository';
 
 describe('CategoryRepository', () => {
@@ -9,7 +10,7 @@ describe('CategoryRepository', () => {
 
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
-      imports: [KnexModule.register(knexConfig)],
+      imports: [AppConfigModule, RepositoryModule],
       providers: [CategoryRepository],
     }).compile();
     await moduleRef.init();

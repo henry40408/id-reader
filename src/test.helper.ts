@@ -1,16 +1,5 @@
 import { TestingModule } from '@nestjs/testing';
-import { ConfigModuleOptions } from './knex/knex.interface';
-import { UserRepository } from './knex/repository/user.repository';
-
-export const knexConfig: ConfigModuleOptions = {
-  knex: {
-    client: 'sqlite',
-    connection: {
-      filename: ':memory:',
-    },
-    useNullAsDefault: true,
-  },
-};
+import { UserRepository } from './repository/repository/user.repository';
 
 let userCount = 0;
 export async function createUser(moduleRef: TestingModule) {

@@ -1,9 +1,9 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { Knex } from 'knex';
 import { KNEX } from './knex.constant';
 
 @Injectable()
-export class PragmaService {
+export class PragmaService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(PragmaService.name);
 
   constructor(@Inject(KNEX) private readonly knex: Knex) {}

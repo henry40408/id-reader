@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Knex } from 'knex';
-import { knexConfig } from '../test.helper';
 import { KnexModule } from './knex.module';
 import { KNEX } from './knex.constant';
 
@@ -10,7 +9,17 @@ describe('KnexModule', () => {
 
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
-      imports: [KnexModule.register(knexConfig)],
+      imports: [
+        KnexModule.register({
+          knex: {
+            client: 'sqlite',
+            connection: {
+              filename: ':memory:',
+            },
+            useNullAsDefault: true,
+          },
+        }),
+      ],
     }).compile();
     await moduleRef.init();
     knex = moduleRef.get<Knex>(KNEX);

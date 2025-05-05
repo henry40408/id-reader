@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Knex } from 'knex';
 import * as bcrypt from 'bcrypt';
 import { User } from 'knex/types/tables';
-import { KNEX } from '../knex.constant';
+import { Knex } from 'knex';
+import { KNEX } from '../../knex/knex.constant';
 
 export type CreateUser = Pick<User, 'username'> & { password: string };
 

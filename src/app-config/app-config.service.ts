@@ -23,6 +23,7 @@ export class AppConfigService {
 
   private get databaseUrl(): string {
     const key = 'DATABASE_URL';
+    if (this.appEnv.test) return ':memory:';
     if (this.appEnv.production) return this.configService.getOrThrow<string>(key);
     return this.configService.getOrThrow<string>(key, 'development.sqlite3');
   }
