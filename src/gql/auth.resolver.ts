@@ -3,11 +3,11 @@ import { JwtService } from '@nestjs/jwt';
 import { milliseconds } from 'date-fns';
 import { UnauthorizedException } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
+import { AppConfigService } from '../app-config/app-config.service';
 import { JwtPayload, RequestWithPayload, SignInInput } from './dtos';
 import { GqlContext } from './gql.interface';
 import { Authenticated } from './access-token.guard';
 import { COOKIE_ACCESS_TOKEN } from './auth.constant';
-import { AppConfigService } from 'src/app-config/app-config.service';
 
 @Resolver()
 export class AuthResolver {
@@ -31,7 +31,7 @@ export class AuthResolver {
     const user = await this.authService.signIn(input);
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
-    const payload: JwtPayload = { sub: user.id.toString(), username: user.username };
+    const payload: JwtPayload = { sub: String(user.id), username: user.username };
     const token = this.jwtService.sign(payload);
     context.res.cookie(COOKIE_ACCESS_TOKEN, token, {
       httpOnly: true,

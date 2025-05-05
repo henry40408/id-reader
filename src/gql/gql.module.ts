@@ -6,9 +6,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { GraphQLFormattedError } from 'graphql';
 import { AuthModule } from '../auth/auth.module';
 import { AppConfigModule } from '../app-config/app-config.module';
+import { AppConfigService } from '../app-config/app-config.service';
 import { AuthResolver } from './auth.resolver';
 import { GqlContext } from './gql.interface';
-import { AppConfigService } from 'src/app-config/app-config.service';
 
 @Module({
   imports: [
