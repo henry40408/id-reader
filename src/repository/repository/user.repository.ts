@@ -12,6 +12,10 @@ export class UserRepository {
 
   constructor(@Inject(KNEX) private readonly knex: Knex) {}
 
+  async clear() {
+    await this.knex('users_composite').delete().from('users');
+  }
+
   async create(_data: CreateUser): Promise<User> {
     const { password, ...data } = _data;
     const passwordHash = await bcrypt.hash(password, UserRepository.SALT_ROUNDS);
