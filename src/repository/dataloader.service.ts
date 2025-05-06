@@ -10,9 +10,13 @@ export class DataLoaderService {
 
   get loaders(): IDataLoaders {
     return {
-      usersLoader: new DataLoader(async (ids: number[]) => {
+      userLoader: new DataLoader(async (ids: number[]) => {
         const users = await this.knex('users').whereIn('id', ids);
         return this.reorder(ids, users);
+      }),
+      categoryLoader: new DataLoader(async (ids: number[]) => {
+        const categories = await this.knex('categories').whereIn('id', ids);
+        return this.reorder(ids, categories);
       }),
     };
   }

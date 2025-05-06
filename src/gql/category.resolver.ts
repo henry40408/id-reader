@@ -19,7 +19,7 @@ export class CategoryResolver {
   }
 
   @ResolveField(() => UserObject, { description: 'Get user' })
-  async user(@Parent() category: CategoryObject, @Context() ctx: IGqlContext<RequestWithJwtPayload>) {
-    return await ctx.loaders.usersLoader.load(category.user_id);
+  async user(@Parent() category: CategoryObject, @Context() context: IGqlContext<RequestWithJwtPayload>) {
+    return await context.loaders.userLoader.load(category.user_id);
   }
 }

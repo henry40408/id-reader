@@ -1,6 +1,6 @@
 import { ObjectType, Field, InputType } from '@nestjs/graphql';
 import { Request } from 'express';
-import { Category, User } from 'knex/types/tables';
+import { Category, Feed, User } from 'knex/types/tables';
 
 @ObjectType({ description: 'User object' })
 export class UserObject implements User {
@@ -28,6 +28,32 @@ export class CategoryObject implements Category {
 
   @Field(() => String, { description: 'Category name' })
   name!: string;
+
+  @Field(() => Date, { description: 'Created at' })
+  created_at: string;
+
+  @Field(() => Date, { description: 'Updated at' })
+  updated_at: string;
+}
+
+@ObjectType({ description: 'Feed object' })
+export class FeedObject implements Feed {
+  @Field(() => Number, { description: 'Feed ID' })
+  id!: number;
+
+  category_id!: number;
+
+  @Field(() => String, { description: 'Title' })
+  title!: string;
+
+  @Field(() => String, { description: 'Description', nullable: true })
+  description?: string | undefined;
+
+  @Field(() => String, { description: 'XML URL' })
+  xml_url!: string;
+
+  @Field(() => String, { description: 'HTML URL', nullable: true })
+  html_url?: string | undefined;
 
   @Field(() => Date, { description: 'Created at' })
   created_at: string;
