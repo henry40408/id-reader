@@ -4,7 +4,7 @@
     <title>Test OPML (no category)</title>
   </head>
   <body>
-    <outline text="Test Feed" title="Test Feed" type="rss" xmlUrl="http://test.invalid/feed" htmlUrl="http://test.invalid" />
+    <outline text="Test Feed 1" title="Test Feed 1" type="rss" xmlUrl="http://test.invalid/feed" htmlUrl="http://test.invalid" />
     <outline text="Test Feed 2" title="Test Feed 2" type="atom" xmlUrl="http://blog.test.invalid/feed" htmlUrl="http://blog.test.invalid" />
   </body>
 </opml>

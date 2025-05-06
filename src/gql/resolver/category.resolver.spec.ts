@@ -1,10 +1,10 @@
 import { JwtModule } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { RepositoryModule } from '../../repository/repository.module';
-import { CategoryResolver } from './category.resolver';
-import { IGqlContext } from '../gql.interface';
 import { createMock } from '@golevelup/ts-jest';
+import { RepositoryModule } from '../../repository/repository.module';
+import { IGqlContext } from '../gql.interface';
 import { RequestWithJwtPayload } from '../dtos.interface';
+import { CategoryResolver } from './category.resolver';
 import { createUser } from 'src/test.helper';
 
 describe('CategoryResolver', () => {

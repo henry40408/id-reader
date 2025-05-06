@@ -2,6 +2,7 @@ import * as path from 'node:path';
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtModule } from '@nestjs/jwt';
 import { createMock } from '@golevelup/ts-jest';
+import { Response } from 'express';
 import { FeedsController } from './feeds.controller';
 import { RepositoryModule } from './repository/repository.module';
 import { OpmlModule } from './opml/opml.module';
@@ -38,6 +39,16 @@ describe('FeedsController', () => {
       path: path.resolve(__dirname, '../fixtures/test.opml'),
     });
     const result = await controller.importFeeds(req, file);
-    expect(result).toEqual({ categoryCount: 1, feedCount: 2 });
+    expect(result).toEqual({ categoryCount: 2, feedCount: 4 });
+  });
+
+  it('should export feeds', async () => {
+    const user = await createUser(moduleRef);
+    const req = createMock<RequestWithJwtPayload>({
+      jwtPayload: { sub: user.id, username: user.username },
+    });
+    const res = createMock<Response>();
+    await controller.exportFeeds(req, res);
+    expect(res.send).toHaveBeenCalledWith(expect.any(String));
   });
 });

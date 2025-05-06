@@ -1,7 +1,8 @@
 import fs from 'node:fs';
-import { Controller, Inject, Logger, Post, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Inject, Logger, Post, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBody, ApiConsumes, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import { Response } from 'express';
+import { ApiBody, ApiConsumes, ApiForbiddenResponse, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { Knex } from 'knex';
 import { ImportFeedsDTO, ImportFeedsResponse } from './dtos.interface';
 import { ImportFeedCount, OpmlService } from './opml/opml.service';
@@ -21,10 +22,14 @@ export class FeedsController {
   @Post('import')
   @UseInterceptors(FileInterceptor('file'))
   @Authenticated()
-  @ApiOperation({ summary: 'import feeds' })
+  @ApiOperation({
+    summary: 'import feeds',
+    description: 'Import feeds from OPML file. Existing categories and feeds will be ignored.',
+  })
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: ImportFeedsDTO })
-  @ApiOkResponse({ type: ImportFeedCount })
+  @ApiOkResponse({ type: ImportFeedCount, description: 'count of imported categories and feeds' })
+  @ApiForbiddenResponse({ description: 'user not found' })
   async importFeeds(
     @Req() req: RequestWithJwtPayload,
     @UploadedFile('file') file: Express.Multer.File,
@@ -34,5 +39,18 @@ export class FeedsController {
     const { categoryCount, feedCount } = await this.opmlService.importFeeds(userId, parsed);
     this.logger.log(`user #${userId}: ${categoryCount} categories and ${feedCount} feeds imported`);
     return { categoryCount, feedCount };
+  }
+
+  @Get('export')
+  @Authenticated()
+  @ApiOperation({ summary: 'export feeds', description: 'Export feeds and download as an OPML file.' })
+  @ApiOkResponse({ type: String, description: 'exported OPML file' })
+  @ApiForbiddenResponse({ description: 'user not found' })
+  async exportFeeds(@Req() req: RequestWithJwtPayload, @Res() res: Response): Promise<void> {
+    const userId = req.jwtPayload.sub;
+    const opml = await this.opmlService.exportOPML(userId);
+    res.setHeader('Content-Type', 'text/x-opml; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename="feeds.opml"');
+    res.send(opml);
   }
 }
