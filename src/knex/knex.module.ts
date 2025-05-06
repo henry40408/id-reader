@@ -4,7 +4,7 @@ import knex from 'knex';
 import { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } from './knex.module-definition';
 import { KnexHealthIndicator } from './knex.health';
 import { PragmaService } from './pragma.service';
-import { ConfigModuleOptions } from './knex.interface';
+import { IConfigModuleOptions } from './knex.interface';
 import { KNEX } from './knex.constant';
 
 @Module({
@@ -13,7 +13,7 @@ import { KNEX } from './knex.constant';
     {
       provide: KNEX,
       inject: [MODULE_OPTIONS_TOKEN],
-      useFactory: (config: ConfigModuleOptions) => knex.default(config.knex),
+      useFactory: (config: IConfigModuleOptions) => knex.default(config.knex),
     },
     KnexHealthIndicator,
     PragmaService,

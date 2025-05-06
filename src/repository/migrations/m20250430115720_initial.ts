@@ -18,11 +18,23 @@ export const up = async (knex: Knex) => {
       t.timestamps(true, true);
       t.unique(['user_id', 'name']);
     });
+
+    await tx.schema.createTable('feeds', (t) => {
+      t.increments('id').primary();
+      t.integer('category_id').notNullable().references('id').inTable('categories').onDelete('CASCADE');
+      t.string('title').notNullable();
+      t.string('description');
+      t.string('xml_url').notNullable();
+      t.string('html_url');
+      t.timestamps(true, true);
+      t.unique(['category_id', 'xml_url']);
+    });
   });
 };
 
 export const down = async (knex: Knex) => {
   return knex.transaction(async (tx) => {
+    await tx.schema.dropTable('feeds');
     await tx.schema.dropTable('categories');
     await tx.schema.dropTable('users');
   });

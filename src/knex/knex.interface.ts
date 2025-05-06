@@ -1,5 +1,5 @@
 import { Knex } from 'knex';
 
-export interface ConfigModuleOptions {
+export interface IConfigModuleOptions {
   knex: Knex.Config;
 }

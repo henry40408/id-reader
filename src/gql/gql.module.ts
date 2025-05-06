@@ -8,7 +8,7 @@ import { AuthModule } from '../auth/auth.module';
 import { AppConfigModule } from '../app-config/app-config.module';
 import { AppConfigService } from '../app-config/app-config.service';
 import { AuthResolver } from './auth.resolver';
-import { GqlContext } from './gql.interface';
+import { IGqlContext } from './gql.interface';
 
 @Module({
   imports: [
@@ -30,7 +30,7 @@ import { GqlContext } from './gql.interface';
       inject: [AppConfigService],
       useFactory: (config: AppConfigService) => ({
         autoSchemaFile: true,
-        context: ({ req, res }: { req: Request; res: Response }): GqlContext => ({ req, res }),
+        context: ({ req, res }: { req: Request; res: Response }): IGqlContext => ({ req, res }),
         formatError: (error) => {
           const err: GraphQLFormattedError = {
             message: error.message,

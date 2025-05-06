@@ -1,7 +1,7 @@
 import { applyDecorators, CanActivate, ExecutionContext, Injectable, Logger, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { GqlContext } from './gql.interface';
+import { IGqlContext } from './gql.interface';
 import { JwtPayload, RequestWithPayload } from './dtos';
 import { COOKIE_ACCESS_TOKEN } from './auth.constant';
 
@@ -27,7 +27,7 @@ export class AccessTokenGuard implements CanActivate {
 
   private getRequest(context: ExecutionContext): RequestWithPayload {
     if (context.getType() === 'http') return context.switchToHttp().getRequest();
-    return GqlExecutionContext.create(context).getContext<GqlContext<RequestWithPayload>>().req;
+    return GqlExecutionContext.create(context).getContext<IGqlContext<RequestWithPayload>>().req;
   }
 }
 

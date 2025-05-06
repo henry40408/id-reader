@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-export interface GqlContext<T = Request> {
+export interface IGqlContext<T = Request> {
   req: T;
   res: Response;
 }

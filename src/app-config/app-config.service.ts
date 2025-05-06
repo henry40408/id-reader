@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { millisecondsToSeconds, milliseconds } from 'date-fns';
-import { AppConfig, AppEnv, JwtConfig } from './app-config.interface';
+import { IAppConfig, IAppEnv, IJwtConfig } from './app-config.interface';
 
 @Injectable()
 export class AppConfigService {
   constructor(private configService: ConfigService) {}
 
-  get config(): AppConfig {
+  get config(): IAppConfig {
     return {
       databaseUrl: this.databaseUrl,
       env: this.appEnv,
@@ -15,7 +15,7 @@ export class AppConfigService {
     };
   }
 
-  private get appEnv(): AppEnv {
+  private get appEnv(): IAppEnv {
     return {
       development: this.env === 'development',
       test: this.env === 'test',
@@ -34,7 +34,7 @@ export class AppConfigService {
     return this.configService.get('NODE_ENV', 'development');
   }
 
-  private get jwtConfig(): JwtConfig {
+  private get jwtConfig(): IJwtConfig {
     return {
       secret: this.jwtSecret,
       expiresInSeconds: this.jwtExpiresInSeconds,

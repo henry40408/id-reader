@@ -1,16 +1,16 @@
-export interface AppConfig {
+export interface IAppConfig {
   databaseUrl: string;
-  env: AppEnv;
-  jwt: JwtConfig;
+  env: IAppEnv;
+  jwt: IJwtConfig;
 }
 
-export interface AppEnv {
+export interface IAppEnv {
   development: boolean;
   test: boolean;
   production: boolean;
 }
 
-export interface JwtConfig {
+export interface IJwtConfig {
   secret: string;
   expiresInSeconds: number;
 }

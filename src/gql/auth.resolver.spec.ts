@@ -5,7 +5,7 @@ import { AuthModule } from '../auth/auth.module';
 import { AppConfigModule } from '../app-config/app-config.module';
 import { createUser } from '../test.helper';
 import { AuthResolver } from './auth.resolver';
-import { GqlContext } from './gql.interface';
+import { IGqlContext } from './gql.interface';
 import { RequestWithPayload } from './dtos';
 
 describe('AuthResolver', () => {
@@ -31,7 +31,7 @@ describe('AuthResolver', () => {
 
   it('should sign in', async () => {
     const user = await createUser(moduleRef);
-    const context = createMock<GqlContext<RequestWithPayload>>({
+    const context = createMock<IGqlContext<RequestWithPayload>>({
       req: {
         jwtPayload: {
           sub: String(user.id),
