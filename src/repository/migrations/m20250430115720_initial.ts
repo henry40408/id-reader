@@ -4,6 +4,14 @@ export const name = 'm20250430115720_initial';
 
 export const up = async (knex: Knex) => {
   return knex.transaction(async (tx) => {
+    await tx.schema.createTable('images', (t) => {
+      t.increments('id').primary();
+      t.string('url').notNullable().unique();
+      t.binary('blob').notNullable();
+      t.string('content_type').notNullable();
+      t.timestamps(true, true);
+    });
+
     await tx.schema.createTable('users', (t) => {
       t.increments('id').primary();
       t.string('username').notNullable().unique();
@@ -37,5 +45,6 @@ export const down = async (knex: Knex) => {
     await tx.schema.dropTable('feeds');
     await tx.schema.dropTable('categories');
     await tx.schema.dropTable('users');
+    await tx.schema.dropTable('images');
   });
 };

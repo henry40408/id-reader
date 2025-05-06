@@ -28,6 +28,15 @@ declare module 'knex/types/tables' {
     updated_at: string;
   }
 
+  interface Image {
+    id: number;
+    url: string;
+    blob: Buffer;
+    content_type: string;
+    created_at: string;
+    updated_at: string;
+  }
+
   interface Tables {
     users: User;
     users_composite: Knex.CompositeTableType<
@@ -47,6 +56,12 @@ declare module 'knex/types/tables' {
       Pick<Feed, 'category_id' | 'xml_url'> &
         Partial<Pick<Feed, 'title' | 'description' | 'xml_url' | 'html_url' | 'created_at' | 'updated_at'>>,
       Partial<Omit<Feed, 'id'>>
+    >;
+    images: Image;
+    images_composite: Knex.CompositeTableType<
+      Image,
+      Pick<Image, 'url' | 'blob' | 'content_type'> & Partial<Pick<Image, 'created_at' | 'updated_at'>>,
+      Partial<Omit<Image, 'id'>>
     >;
   }
 }
