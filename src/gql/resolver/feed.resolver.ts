@@ -3,7 +3,7 @@ import { Knex } from 'knex';
 import { Inject } from '@nestjs/common';
 import { KNEX } from '../../knex/knex.constant';
 import { IGqlContext } from '../gql.interface';
-import { CategoryObject, FeedObject, RequestWithJwtPayload } from '../dtos';
+import { CategoryObject, FeedObject, RequestWithJwtPayload } from '../dtos.interface';
 import { Authenticated } from '../access-token.guard';
 
 @Resolver(() => FeedObject)

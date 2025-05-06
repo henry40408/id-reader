@@ -4,7 +4,7 @@ import { milliseconds } from 'date-fns';
 import { UnauthorizedException } from '@nestjs/common';
 import { AuthService } from '../../auth/auth.service';
 import { AppConfigService } from '../../app-config/app-config.service';
-import { JwtPayload, RequestWithJwtPayload, SignInInput } from '../dtos';
+import { JwtPayload, RequestWithJwtPayload, SignInInput } from '../dtos.interface';
 import { IGqlContext } from '../gql.interface';
 import { Authenticated } from '../access-token.guard';
 import { COOKIE_ACCESS_TOKEN } from '../auth.constant';

@@ -6,7 +6,7 @@ import { AppConfigModule } from '../../app-config/app-config.module';
 import { createUser } from '../../test.helper';
 import { AuthResolver } from './auth.resolver';
 import { IGqlContext } from '../gql.interface';
-import { RequestWithJwtPayload } from '../dtos';
+import { RequestWithJwtPayload } from '../dtos.interface';
 
 describe('AuthResolver', () => {
   let moduleRef: TestingModule;

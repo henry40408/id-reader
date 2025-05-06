@@ -3,10 +3,10 @@ import { Controller, Inject, Logger, Post, Req, UploadedFile, UseInterceptors } 
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { Knex } from 'knex';
-import { ImportFeedsDTO, ImportFeedsResponse } from './dtos';
+import { ImportFeedsDTO, ImportFeedsResponse } from './dtos.interface';
 import { ImportFeedCount, OpmlService } from './opml/opml.service';
 import { Authenticated } from './gql/access-token.guard';
-import { RequestWithJwtPayload } from './gql/dtos';
+import { RequestWithJwtPayload } from './gql/dtos.interface';
 import { KNEX } from './knex/knex.constant';
 
 @Controller({ version: '1', path: 'feeds' })

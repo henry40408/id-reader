@@ -3,7 +3,7 @@ import { Inject } from '@nestjs/common';
 import { Knex } from 'knex';
 import { Category } from 'knex/types/tables';
 import { KNEX } from '../../knex/knex.constant';
-import { CategoryObject, RequestWithJwtPayload, UserObject } from '../dtos';
+import { CategoryObject, RequestWithJwtPayload, UserObject } from '../dtos.interface';
 import { IGqlContext } from '../gql.interface';
 import { Authenticated } from '../access-token.guard';
 

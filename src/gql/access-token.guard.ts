@@ -2,7 +2,7 @@ import { applyDecorators, CanActivate, ExecutionContext, Injectable, Logger, Use
 import { JwtService } from '@nestjs/jwt';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { IGqlContext } from './gql.interface';
-import { JwtPayload, RequestWithJwtPayload } from './dtos';
+import { JwtPayload, RequestWithJwtPayload } from './dtos.interface';
 import { COOKIE_ACCESS_TOKEN } from './auth.constant';
 
 @Injectable()
