@@ -2,12 +2,12 @@ import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { JwtService } from '@nestjs/jwt';
 import { milliseconds } from 'date-fns';
 import { UnauthorizedException } from '@nestjs/common';
-import { AuthService } from '../auth/auth.service';
-import { AppConfigService } from '../app-config/app-config.service';
-import { JwtPayload, RequestWithJwtPayload, SignInInput } from './dtos';
-import { IGqlContext } from './gql.interface';
-import { Authenticated } from './access-token.guard';
-import { COOKIE_ACCESS_TOKEN } from './auth.constant';
+import { AuthService } from '../../auth/auth.service';
+import { AppConfigService } from '../../app-config/app-config.service';
+import { JwtPayload, RequestWithJwtPayload, SignInInput } from '../dtos';
+import { IGqlContext } from '../gql.interface';
+import { Authenticated } from '../access-token.guard';
+import { COOKIE_ACCESS_TOKEN } from '../auth.constant';
 
 @Resolver()
 export class AuthResolver {

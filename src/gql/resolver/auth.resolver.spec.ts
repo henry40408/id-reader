@@ -1,12 +1,12 @@
 import { TestingModule, Test } from '@nestjs/testing';
 import { JwtModule } from '@nestjs/jwt';
 import { createMock } from '@golevelup/ts-jest';
-import { AuthModule } from '../auth/auth.module';
-import { AppConfigModule } from '../app-config/app-config.module';
-import { createUser } from '../test.helper';
+import { AuthModule } from '../../auth/auth.module';
+import { AppConfigModule } from '../../app-config/app-config.module';
+import { createUser } from '../../test.helper';
 import { AuthResolver } from './auth.resolver';
-import { IGqlContext } from './gql.interface';
-import { RequestWithJwtPayload } from './dtos';
+import { IGqlContext } from '../gql.interface';
+import { RequestWithJwtPayload } from '../dtos';
 
 describe('AuthResolver', () => {
   let moduleRef: TestingModule;

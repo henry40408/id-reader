@@ -2,10 +2,10 @@ import { Context, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { Inject } from '@nestjs/common';
 import { Knex } from 'knex';
 import { Category } from 'knex/types/tables';
-import { KNEX } from '../knex/knex.constant';
-import { CategoryObject, RequestWithJwtPayload, UserObject } from './dtos';
-import { IGqlContext } from './gql.interface';
-import { Authenticated } from './access-token.guard';
+import { KNEX } from '../../knex/knex.constant';
+import { CategoryObject, RequestWithJwtPayload, UserObject } from '../dtos';
+import { IGqlContext } from '../gql.interface';
+import { Authenticated } from '../access-token.guard';
 
 @Resolver(() => CategoryObject)
 export class CategoryResolver {

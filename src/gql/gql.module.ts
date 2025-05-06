@@ -7,13 +7,13 @@ import { GraphQLFormattedError } from 'graphql';
 import { AuthModule } from '../auth/auth.module';
 import { AppConfigModule } from '../app-config/app-config.module';
 import { AppConfigService } from '../app-config/app-config.service';
-import { DataLoaderModule } from '../repository/dataloader.module';
-import { DataLoaderService } from '../repository/dataloader.service';
+import { DataLoaderModule } from '../dataloader/dataloader.module';
+import { DataLoaderService } from '../dataloader/dataloader.service';
 import { RepositoryModule } from '../repository/repository.module';
-import { AuthResolver } from './auth.resolver';
+import { AuthResolver } from './resolver/auth.resolver';
 import { IGqlContext } from './gql.interface';
-import { CategoryResolver } from './category.resolver';
-import { FeedResolver } from './feed.resolver';
+import { CategoryResolver } from './resolver/category.resolver';
+import { FeedResolver } from './resolver/feed.resolver';
 
 @Module({
   imports: [

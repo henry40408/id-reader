@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { DataLoaderService } from './dataloader.service';
-import { RepositoryModule } from './repository.module';
+import { RepositoryModule } from '../repository/repository.module';
 
 @Module({
   imports: [RepositoryModule],
