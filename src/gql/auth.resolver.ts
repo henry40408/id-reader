@@ -32,7 +32,9 @@ export class AuthResolver {
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
     const payload: JwtPayload = { sub: String(user.id), username: user.username };
-    const token = this.jwtService.sign(payload);
+    const token = this.jwtService.sign(payload,{
+      expiresIn: this.appConfigService.config.jwt.expiresInSeconds,
+    });
     context.res.cookie(COOKIE_ACCESS_TOKEN, token, {
       httpOnly: true,
       maxAge: milliseconds({ seconds: this.appConfigService.config.jwt.expiresInSeconds }),
