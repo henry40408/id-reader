@@ -34,7 +34,7 @@ describe('AuthResolver', () => {
     const context = createMock<IGqlContext<RequestWithPayload>>({
       req: {
         jwtPayload: {
-          sub: String(user.id),
+          sub: user.id,
           username: user.username,
         },
       },

@@ -12,6 +12,7 @@ export class AppConfigService {
       databaseUrl: this.databaseUrl,
       env: this.appEnv,
       jwt: this.jwtConfig,
+      uploads: '/tmp',
     };
   }
 

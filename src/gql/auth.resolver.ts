@@ -31,7 +31,7 @@ export class AuthResolver {
     const user = await this.authService.signIn(input);
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
-    const payload: JwtPayload = { sub: String(user.id), username: user.username };
+    const payload: JwtPayload = { sub: user.id, username: user.username };
     const token = this.jwtService.sign(payload, {
       expiresIn: this.appConfigService.config.jwt.expiresInSeconds,
     });

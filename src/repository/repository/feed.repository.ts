@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Knex } from 'knex';
 import { Feed } from 'knex/types/tables';
-import { KNEX } from 'src/knex/knex.constant';
+import { KNEX } from '../../knex/knex.constant';
 
 export type CreateFeed = Omit<Feed, 'id' | 'created_at' | 'updated_at'>;
 

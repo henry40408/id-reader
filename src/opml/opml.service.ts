@@ -3,8 +3,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Knex } from 'knex';
 import { Category, Feed } from 'knex/types/tables';
 import sax from 'sax';
+import { ApiProperty } from '@nestjs/swagger';
+import { KNEX } from '../knex/knex.constant';
 import { DEFAULT_CATEGORY_NAME } from './opml.constant';
-import { KNEX } from 'src/knex/knex.constant';
 
 export interface IParsedFeed {
   title: string;
@@ -17,14 +18,19 @@ export interface IParsedCategory {
   feeds: IParsedFeed[];
 }
 
+export class ImportFeedCount {
+  @ApiProperty({ description: 'category count' })
+  categoryCount!: number;
+
+  @ApiProperty({ description: 'feed count' })
+  feedCount!: number;
+}
+
 @Injectable()
 export class OpmlService {
   constructor(@Inject(KNEX) private readonly knex: Knex) {}
 
-  async importFeeds(
-    userId: number,
-    categories: IParsedCategory[],
-  ): Promise<{ categoryCount: number; feedCount: number }> {
+  async importFeeds(userId: number, categories: IParsedCategory[]): Promise<ImportFeedCount> {
     return await this.knex.transaction(async (tx) => {
       let categoryCount = 0;
       let feedCount = 0;
@@ -33,10 +39,7 @@ export class OpmlService {
       for (const category of categories) {
         const task = async () => {
           const [id] = await tx<Category>('categories')
-            .insert({
-              name: category.name,
-              user_id: userId,
-            })
+            .insert({ name: category.name, user_id: userId })
             .onConflict(['user_id', 'name'])
             .ignore();
           if (id) categoryCount += 1;

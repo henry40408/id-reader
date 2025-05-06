@@ -2,6 +2,7 @@ export interface IAppConfig {
   databaseUrl: string;
   env: IAppEnv;
   jwt: IJwtConfig;
+  uploads: string;
 }
 
 export interface IAppEnv {

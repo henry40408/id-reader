@@ -48,6 +48,6 @@ import { IGqlContext } from './gql.interface';
     }),
   ],
   providers: [AuthResolver],
-  exports: [AuthResolver],
+  exports: [AuthResolver, JwtModule],
 })
 export class GqlModule {}

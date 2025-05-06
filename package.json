@@ -62,6 +62,7 @@
     "@types/graphql": "^14.2.3",
     "@types/jest": "^29.5.14",
     "@types/knex": "^0.15.2",
+    "@types/multer": "^1.4.12",
     "@types/node": "^22.10.7",
     "@types/sax": "^1.2.7",
     "@types/supertest": "^6.0.2",

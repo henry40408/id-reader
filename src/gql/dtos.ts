@@ -3,8 +3,8 @@ import { Request } from 'express';
 
 @ObjectType({ description: 'JSON web token payload' })
 export class JwtPayload {
-  @Field(() => String, { description: 'User ID' })
-  sub!: string;
+  @Field(() => Number, { description: 'User ID' })
+  sub!: number;
 
   @Field(() => String, { description: 'Username' })
   username!: string;

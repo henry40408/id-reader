@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { OpmlService } from './opml.service';
 import { RepositoryModule } from '../repository/repository.module';
+import { OpmlService } from './opml.service';
 
 @Module({
   imports: [RepositoryModule],
