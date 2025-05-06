@@ -7,30 +7,29 @@ import { GraphQLFormattedError } from 'graphql';
 import { AuthModule } from '../auth/auth.module';
 import { AppConfigModule } from '../app-config/app-config.module';
 import { AppConfigService } from '../app-config/app-config.service';
+import { DataLoaderModule } from '../repository/dataloader.module';
+import { DataLoaderService } from '../repository/dataloader.service';
+import { RepositoryModule } from '../repository/repository.module';
 import { AuthResolver } from './auth.resolver';
 import { IGqlContext } from './gql.interface';
+import { CategoryResolver } from './category.resolver';
 
 @Module({
   imports: [
     AppConfigModule,
     AuthModule,
-    JwtModule.registerAsync({
-      imports: [AppConfigModule],
-      inject: [AppConfigService],
-      useFactory: (config: AppConfigService) => ({
-        secret: config.config.jwt.secret,
-        signOptions: {
-          expiresIn: config.config.jwt.expiresInSeconds,
-        },
-      }),
-    }),
+    DataLoaderModule,
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      imports: [AppConfigModule],
-      inject: [AppConfigService],
-      useFactory: (config: AppConfigService) => ({
+      imports: [AppConfigModule, DataLoaderModule],
+      inject: [AppConfigService, DataLoaderService],
+      useFactory: (config: AppConfigService, dataloader: DataLoaderService) => ({
         autoSchemaFile: true,
-        context: ({ req, res }: { req: Request; res: Response }): IGqlContext => ({ req, res }),
+        context: ({ req, res }: { req: Request; res: Response }): IGqlContext => ({
+          req,
+          res,
+          loaders: dataloader.loaders,
+        }),
         formatError: (error) => {
           const err: GraphQLFormattedError = {
             message: error.message,
@@ -46,8 +45,19 @@ import { IGqlContext } from './gql.interface';
         graphiql: true,
       }),
     }),
+    JwtModule.registerAsync({
+      imports: [AppConfigModule],
+      inject: [AppConfigService],
+      useFactory: (config: AppConfigService) => ({
+        secret: config.config.jwt.secret,
+        signOptions: {
+          expiresIn: config.config.jwt.expiresInSeconds,
+        },
+      }),
+    }),
+    RepositoryModule,
   ],
-  providers: [AuthResolver],
-  exports: [AuthResolver, JwtModule],
+  providers: [AuthResolver, CategoryResolver],
+  exports: [AuthResolver, CategoryResolver, JwtModule],
 })
 export class GqlModule {}

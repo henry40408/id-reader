@@ -6,7 +6,7 @@ import { AppConfigModule } from '../app-config/app-config.module';
 import { createUser } from '../test.helper';
 import { AuthResolver } from './auth.resolver';
 import { IGqlContext } from './gql.interface';
-import { RequestWithPayload } from './dtos';
+import { RequestWithJwtPayload } from './dtos';
 
 describe('AuthResolver', () => {
   let moduleRef: TestingModule;
@@ -31,7 +31,7 @@ describe('AuthResolver', () => {
 
   it('should sign in', async () => {
     const user = await createUser(moduleRef);
-    const context = createMock<IGqlContext<RequestWithPayload>>({
+    const context = createMock<IGqlContext<RequestWithJwtPayload>>({
       req: {
         jwtPayload: {
           sub: user.id,

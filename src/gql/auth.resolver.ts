@@ -4,7 +4,7 @@ import { milliseconds } from 'date-fns';
 import { UnauthorizedException } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
 import { AppConfigService } from '../app-config/app-config.service';
-import { JwtPayload, RequestWithPayload, SignInInput } from './dtos';
+import { JwtPayload, RequestWithJwtPayload, SignInInput } from './dtos';
 import { IGqlContext } from './gql.interface';
 import { Authenticated } from './access-token.guard';
 import { COOKIE_ACCESS_TOKEN } from './auth.constant';
@@ -19,13 +19,13 @@ export class AuthResolver {
 
   @Query(() => JwtPayload, { description: 'Get current user' })
   @Authenticated()
-  currentUser(@Context() context: IGqlContext<RequestWithPayload>) {
+  currentUser(@Context() context: IGqlContext<RequestWithJwtPayload>) {
     return context.req.jwtPayload;
   }
 
   @Mutation(() => JwtPayload, { description: 'Sign in' })
   async signIn(
-    @Context() context: IGqlContext<RequestWithPayload>,
+    @Context() context: IGqlContext<RequestWithJwtPayload>,
     @Args('input') input: SignInInput,
   ): Promise<JwtPayload> {
     const user = await this.authService.signIn(input);
@@ -47,7 +47,7 @@ export class AuthResolver {
 
   @Mutation(() => Boolean, { description: 'Sign out' })
   @Authenticated()
-  signOut(@Context() context: IGqlContext<RequestWithPayload>) {
+  signOut(@Context() context: IGqlContext<RequestWithJwtPayload>) {
     context.res.clearCookie(COOKIE_ACCESS_TOKEN);
     return true;
   }

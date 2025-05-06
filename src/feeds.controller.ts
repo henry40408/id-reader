@@ -6,7 +6,7 @@ import { Knex } from 'knex';
 import { ImportFeedsDTO, ImportFeedsResponse } from './dtos';
 import { ImportFeedCount, OpmlService } from './opml/opml.service';
 import { Authenticated } from './gql/access-token.guard';
-import { RequestWithPayload } from './gql/dtos';
+import { RequestWithJwtPayload } from './gql/dtos';
 import { KNEX } from './knex/knex.constant';
 
 @Controller({ version: '1', path: 'feeds' })
@@ -26,7 +26,7 @@ export class FeedsController {
   @ApiBody({ type: ImportFeedsDTO })
   @ApiOkResponse({ type: ImportFeedCount })
   async importFeeds(
-    @Req() req: RequestWithPayload,
+    @Req() req: RequestWithJwtPayload,
     @UploadedFile('file') file: Express.Multer.File,
   ): Promise<ImportFeedsResponse> {
     const userId = req.jwtPayload.sub;
