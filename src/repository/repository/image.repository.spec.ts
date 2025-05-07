@@ -3,12 +3,8 @@ import nock from 'nock';
 import { Knex } from 'knex';
 import { RepositoryModule } from '../repository.module';
 import { KNEX } from '../../knex/knex.constant';
+import { IMAGE_1x1 } from '../../test.helper';
 import { ImageRepository } from './image.repository';
-
-const IMAGE_1x1 = Buffer.from(
-  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdj+L+U4T8ABu8CpCYJ1DQAAAAASUVORK5CYII=',
-  'base64',
-);
 
 describe('ImageRepository', () => {
   let moduleRef: TestingModule;
@@ -16,6 +12,7 @@ describe('ImageRepository', () => {
   let knex: Knex;
 
   beforeEach(async () => {
+    nock.cleanAll();
     nock.disableNetConnect();
     moduleRef = await Test.createTestingModule({
       imports: [RepositoryModule],
@@ -36,10 +33,10 @@ describe('ImageRepository', () => {
   });
 
   it('should create an image', async () => {
-    const scope = nock('https://example.invalid').get('/image.png').reply(200, IMAGE_1x1, {
+    const scope = nock('http://example.invalid').get('/image.png').reply(200, IMAGE_1x1, {
       'content-type': 'image/png',
     });
-    const url = 'https://example.invalid/image.png';
+    const url = 'http://example.invalid/image.png';
     const image = await repository.create(url);
     expect(image).toBeDefined();
     expect(image.url).toBe(url);
@@ -51,10 +48,10 @@ describe('ImageRepository', () => {
   const countImages = (url: string) => knex('images').count('id', { as: 'count' }).where('url', url).first();
 
   it('should not create an image if it already exists', async () => {
-    const scope = nock('https://example.invalid').get('/image.png').reply(200, IMAGE_1x1, {
+    const scope = nock('http://example.invalid').get('/image.png').reply(200, IMAGE_1x1, {
       'content-type': 'image/png',
     });
-    const url = 'https://example.invalid/image.png';
+    const url = 'http://example.invalid/image.png';
 
     await expect(countImages(url)).resolves.toEqual({ count: 0 });
 

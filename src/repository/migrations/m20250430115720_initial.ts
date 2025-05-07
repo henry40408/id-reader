@@ -34,6 +34,7 @@ export const up = async (knex: Knex) => {
       t.string('description');
       t.string('xml_url').notNullable();
       t.string('html_url');
+      t.integer('image_id').references('id').inTable('images').onDelete('SET NULL');
       t.timestamps(true, true);
       t.unique(['category_id', 'xml_url']);
     });

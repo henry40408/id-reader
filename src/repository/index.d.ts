@@ -24,6 +24,7 @@ declare module 'knex/types/tables' {
     description?: string;
     xml_url: string;
     html_url?: string;
+    image_id?: number;
     created_at: string;
     updated_at: string;
   }
@@ -54,7 +55,9 @@ declare module 'knex/types/tables' {
     feeds_composite: Knex.CompositeTableType<
       Feed,
       Pick<Feed, 'category_id' | 'xml_url'> &
-        Partial<Pick<Feed, 'title' | 'description' | 'xml_url' | 'html_url' | 'created_at' | 'updated_at'>>,
+        Partial<
+          Pick<Feed, 'title' | 'description' | 'xml_url' | 'html_url' | 'image_id' | 'created_at' | 'updated_at'>
+        >,
       Partial<Omit<Feed, 'id'>>
     >;
     images: Image;

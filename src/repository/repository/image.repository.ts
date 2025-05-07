@@ -1,10 +1,12 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Knex } from 'knex';
 import { Image } from 'knex/types/tables';
 import { KNEX } from '../../knex/knex.constant';
 
 @Injectable()
 export class ImageRepository {
+  private readonly logger = new Logger(ImageRepository.name);
+
   constructor(@Inject(KNEX) private readonly knex: Knex) {}
 
   async create(url: string): Promise<Image> {
@@ -12,6 +14,11 @@ export class ImageRepository {
     if (existed) return existed;
 
     const response = await fetch(url);
+    if (!response.ok) {
+      this.logger.error(`Failed to fetch image from ${url}`);
+      throw new Error(`Failed to fetch image from ${url}`);
+    }
+
     const blob = Buffer.from(await response.arrayBuffer());
     const contentType = response.headers.get('content-type') ?? 'image/png';
 

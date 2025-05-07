@@ -1,16 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Category } from 'knex/types/tables';
-import { Knex } from 'knex';
 import { RepositoryModule } from '../repository/repository.module';
 import { DataLoaderService } from './dataloader.service';
-import { createUser } from 'src/test.helper';
-import { KNEX } from 'src/knex/knex.constant';
+import { createCategory, createUser } from 'src/test.helper';
 
 describe('DataloaderService', () => {
   let moduleRef: TestingModule;
 
   let service: DataLoaderService;
-  let knex: Knex;
 
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
@@ -19,7 +15,6 @@ describe('DataloaderService', () => {
     }).compile();
     await moduleRef.init();
     service = moduleRef.get<DataLoaderService>(DataLoaderService);
-    knex = moduleRef.get<Knex>(KNEX);
   });
 
   afterEach(async () => {
@@ -43,12 +38,9 @@ describe('DataloaderService', () => {
 
   it('should find category by id', async () => {
     const user = await createUser(moduleRef);
-    const [categoryId] = await knex<Category>('categories').insert({
-      user_id: user.id,
-      name: 'Test Category',
-    });
-    const found = await service.loaders.categoryLoader.load(categoryId);
+    const category = await createCategory(moduleRef, user);
+    const found = await service.loaders.categoryLoader.load(category.id);
     expect(found).toBeDefined();
-    expect(found.id).toBe(categoryId);
+    expect(found.id).toBe(category.id);
   });
 });

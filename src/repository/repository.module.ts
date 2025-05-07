@@ -6,8 +6,10 @@ import { CategoryRepository } from './repository/category.repository';
 import { MigrationService } from './migration.service';
 import { UserRepository } from './repository/user.repository';
 import { MyMigrationSource } from './migrations/source';
+import { ImageRepository } from './repository/image.repository';
+import { FeedRepository } from './repository/feed.repository';
 
-const repositories: Provider[] = [CategoryRepository, UserRepository];
+const repositories: Provider[] = [CategoryRepository, FeedRepository, ImageRepository, UserRepository];
 
 @Module({
   imports: [
