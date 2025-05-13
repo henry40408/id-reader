@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 import { Knex } from 'knex';
 import { Image } from 'knex/types/tables';
 import { KNEX } from '../../knex/knex.constant';
@@ -25,7 +25,13 @@ export class ImageRepository {
     const blob = Buffer.from(await response.arrayBuffer());
     const contentType = response.headers.get('content-type') ?? 'image/png';
     const etag = response.headers.get('etag') ?? undefined;
+    if (!etag) {
+      this.logger.warn(`No etag found for ${url}`);
+    }
     const lastModified = response.headers.get('last-modified') ?? undefined;
+    if (!lastModified) {
+      this.logger.warn(`No last modified found for ${url}`);
+    }
 
     return await this.knex.transaction(async (tx) => {
       await tx('images_composite')
@@ -46,14 +52,25 @@ export class ImageRepository {
   private async isLatest(image: Image): Promise<boolean> {
     const url = image.url;
 
-    const resp = await fetch(url, { method: 'HEAD' });
+    const headers = new Headers();
+    if (image.etag) headers.set('If-None-Match', image.etag);
+    if (image.last_modified) headers.set('If-Modified-Since', image.last_modified);
+
+    const resp = await fetch(url, { method: 'HEAD', headers });
     if (!resp.ok) {
+      if (resp.status === Number(HttpStatus.NOT_MODIFIED)) {
+        this.logger.log(`Image ${url} is not modified`);
+        return true;
+      }
       this.logger.error(`Failed to fetch image from ${url}`);
       return false;
     }
 
     const etag = resp.headers.get('etag');
     const isEtagMatched = !!etag && etag === image.etag;
+    if (isEtagMatched) {
+      this.logger.log(`Etag matched for ${url}`);
+    }
 
     const lastModified = resp.headers.get('last-modified');
     let isLastModifiedLatest = false;
@@ -61,6 +78,9 @@ export class ImageRepository {
       const expected = new Date(image.last_modified);
       const actual = new Date(lastModified);
       isLastModifiedLatest = expected >= actual;
+    }
+    if (isLastModifiedLatest) {
+      this.logger.log(`Last modified matched for ${url}`);
     }
 
     return isEtagMatched || isLastModifiedLatest;

@@ -5,6 +5,7 @@ import { RepositoryModule } from '../../repository/repository.module';
 import { createUser } from '../../test.helper';
 import { IGqlContext } from '../gql.interface';
 import { RequestWithJwtPayload } from '../dtos.interface';
+import { FeedMetadataModule } from '../../feed-metadata/feed-metadata.module';
 import { FeedResolver } from './feed.resolver';
 
 describe('FeedResolver', () => {
@@ -13,7 +14,7 @@ describe('FeedResolver', () => {
 
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
-      imports: [JwtModule.register({ secret: 'secret' }), RepositoryModule],
+      imports: [FeedMetadataModule, JwtModule.register({ secret: 'secret' }), RepositoryModule],
       providers: [FeedResolver],
     }).compile();
     await moduleRef.init();

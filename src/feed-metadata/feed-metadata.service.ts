@@ -17,6 +17,8 @@ export class FeedMetadataService {
   ) {}
 
   async updateFeedImage(feedId: number): Promise<Image | null> {
+    this.logger.log(`Update image of feed ${feedId}`);
+
     const cache = createCache();
 
     const feed = await this.knex('feeds').where('id', feedId).first();
@@ -43,6 +45,8 @@ export class FeedMetadataService {
         return image;
       }
     }
+
+    this.logger.warn(`No image found for feed ${feedId}`);
     return null;
   }
 
@@ -57,9 +61,15 @@ export class FeedMetadataService {
   private async fetch(cache: Cache, feedId: number, url: string): Promise<string | null> {
     const key = `feed-metadata:content:${feedId}:${url}`;
     return await cache.wrap(key, async () => {
-      const resp = await fetch(url);
-      if (!resp.ok) return null;
-      return await resp.text();
+      try {
+        const resp = await fetch(url);
+        if (!resp.ok) return null;
+        return await resp.text();
+      } catch (e) {
+        const err = e as Error;
+        this.logger.error(err.message, err.stack, `Failed to fetch content of ${url}`);
+        throw err;
+      }
     });
   }
 
@@ -70,6 +80,12 @@ export class FeedMetadataService {
 
     const alternate = await this.getAlternateURL(cache, feed.id, canonical);
     if (!alternate) return null;
+
+    const parsed = new URL(alternate);
+    if (!parsed.protocol.startsWith('http')) {
+      this.logger.warn(`Alternate URL ${alternate} is not http`);
+      return null;
+    }
 
     return this.findImageFromFeed(cache, feed.id, String(new URL(alternate, canonical)));
   }
@@ -87,12 +103,13 @@ export class FeedMetadataService {
     const parsed = cheerio.load(content);
 
     const appleTouchIcon = parsed('link[rel="apple-touch-icon"]').attr('href');
-    if (appleTouchIcon) {
-      return this.attachImageToFeed(feed.id, String(new URL(appleTouchIcon, canonical)));
-    }
+    if (appleTouchIcon) return this.attachImageToFeed(feed.id, String(new URL(appleTouchIcon, canonical)));
 
     const favicon = parsed('link[rel="icon"]').attr('href');
     if (favicon) return this.attachImageToFeed(feed.id, String(new URL(favicon, canonical)));
+
+    const shortcutIcon = parsed('link[rel="shortcut icon"]').attr('href');
+    if (shortcutIcon) return this.attachImageToFeed(feed.id, String(new URL(shortcutIcon, canonical)));
 
     return null;
   }

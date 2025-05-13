@@ -1,23 +1,6 @@
 import { ObjectType, Field, InputType } from '@nestjs/graphql';
 import { Request } from 'express';
-import { Category, Feed, User } from 'knex/types/tables';
-
-@ObjectType({ description: 'User object' })
-export class UserObject implements User {
-  @Field(() => Number, { description: 'User ID' })
-  id!: number;
-
-  @Field(() => String, { description: 'username' })
-  username!: string;
-
-  password_hash!: string;
-
-  @Field(() => Date, { description: 'Created at' })
-  created_at!: string;
-
-  @Field(() => Date, { description: 'Updated at' })
-  updated_at!: string;
-}
+import { Category, Feed, Image, User } from 'knex/types/tables';
 
 @ObjectType({ description: 'Category object' })
 export class CategoryObject implements Category {
@@ -55,11 +38,56 @@ export class FeedObject implements Feed {
   @Field(() => String, { description: 'HTML URL', nullable: true })
   html_url?: string | undefined;
 
+  image_id?: number | undefined;
+
   @Field(() => Date, { description: 'Created at' })
   created_at: string;
 
   @Field(() => Date, { description: 'Updated at' })
   updated_at: string;
+}
+
+@ObjectType({ description: 'Image object' })
+export class ImageObject implements Image {
+  @Field(() => Number, { description: 'Image ID' })
+  id!: number;
+
+  @Field(() => String, { description: 'URL' })
+  url!: string;
+
+  blob!: Buffer;
+
+  @Field(() => String, { description: 'Content type' })
+  content_type!: string;
+
+  @Field(() => String, { description: 'ETag', nullable: true })
+  etag?: string | undefined;
+
+  @Field(() => String, { description: 'Last modified', nullable: true })
+  last_modified?: string | undefined;
+
+  @Field(() => Date, { description: 'Created at' })
+  created_at: string;
+
+  @Field(() => Date, { description: 'Updated at' })
+  updated_at: string;
+}
+
+@ObjectType({ description: 'User object' })
+export class UserObject implements User {
+  @Field(() => Number, { description: 'User ID' })
+  id!: number;
+
+  @Field(() => String, { description: 'username' })
+  username!: string;
+
+  password_hash!: string;
+
+  @Field(() => Date, { description: 'Created at' })
+  created_at!: string;
+
+  @Field(() => Date, { description: 'Updated at' })
+  updated_at!: string;
 }
 
 @ObjectType({ description: 'JSON web token payload' })

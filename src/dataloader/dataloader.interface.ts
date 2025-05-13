@@ -1,7 +1,8 @@
 import DataLoader from 'dataloader';
-import { Category, User } from 'knex/types/tables';
+import { Category, Image, User } from 'knex/types/tables';
 
 export interface IDataLoaders {
-  userLoader: DataLoader<number, User>;
   categoryLoader: DataLoader<number, Category>;
+  imageLoader: DataLoader<number, Image>;
+  userLoader: DataLoader<number, User>;
 }

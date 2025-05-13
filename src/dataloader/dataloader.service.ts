@@ -10,13 +10,17 @@ export class DataLoaderService {
 
   get loaders(): IDataLoaders {
     return {
-      userLoader: new DataLoader(async (ids: number[]) => {
-        const users = await this.knex('users').whereIn('id', ids);
-        return this.reorder(ids, users);
-      }),
       categoryLoader: new DataLoader(async (ids: number[]) => {
         const categories = await this.knex('categories').whereIn('id', ids);
         return this.reorder(ids, categories);
+      }),
+      imageLoader: new DataLoader(async (ids: number[]) => {
+        const images = await this.knex('images').whereIn('id', ids);
+        return this.reorder(ids, images);
+      }),
+      userLoader: new DataLoader(async (ids: number[]) => {
+        const users = await this.knex('users').whereIn('id', ids);
+        return this.reorder(ids, users);
       }),
     };
   }
