@@ -34,6 +34,8 @@ declare module 'knex/types/tables' {
     url: string;
     blob: Buffer;
     content_type: string;
+    etag?: string;
+    last_modified?: string;
     created_at: string;
     updated_at: string;
   }
@@ -63,7 +65,8 @@ declare module 'knex/types/tables' {
     images: Image;
     images_composite: Knex.CompositeTableType<
       Image,
-      Pick<Image, 'url' | 'blob' | 'content_type'> & Partial<Pick<Image, 'created_at' | 'updated_at'>>,
+      Pick<Image, 'url' | 'blob' | 'content_type'> &
+        Partial<Pick<Image, 'etag' | 'last_modified' | 'created_at' | 'updated_at'>>,
       Partial<Omit<Image, 'id'>>
     >;
   }

@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Knex } from 'knex';
-import { Feed } from 'knex/types/tables';
+import { Feed, Image } from 'knex/types/tables';
 import Parser from 'rss-parser';
 import * as cheerio from 'cheerio';
 import { Cache, createCache } from 'cache-manager';
@@ -16,43 +16,42 @@ export class FeedMetadataService {
     private readonly imageRepository: ImageRepository,
   ) {}
 
-  async updateFeedImage(feedId: number): Promise<boolean> {
+  async updateFeedImage(feedId: number): Promise<Image | null> {
     const cache = createCache();
 
     const feed = await this.knex('feeds').where('id', feedId).first();
     if (!feed) throw new NotFoundException('Feed not found');
-    if (feed.image_id) return true;
 
     {
-      const done = await this.findImageFromFeed(cache, feedId, feed.xml_url);
-      if (done) {
+      const image = await this.findImageFromFeed(cache, feedId, feed.xml_url);
+      if (image) {
         this.logger.log(`Attached image to feed ${feedId} from feed`);
-        return true;
+        return image;
       }
     }
     {
-      const done = await this.findImageFromAlternate(cache, feed);
-      if (done) {
+      const image = await this.findImageFromAlternate(cache, feed);
+      if (image) {
         this.logger.log(`Attached image to feed ${feedId} from alternate`);
-        return true;
+        return image;
       }
     }
     {
-      const done = await this.findImageFromFavIcon(cache, feed);
-      if (done) {
+      const image = await this.findImageFromFavIcon(cache, feed);
+      if (image) {
         this.logger.log(`Attached favicon to feed ${feedId}`);
-        return true;
+        return image;
       }
     }
-    return false;
+    return null;
   }
 
-  private async attachImageToFeed(feedId: number, imageUrl: string): Promise<boolean> {
+  private async attachImageToFeed(feedId: number, imageUrl: string): Promise<Image> {
     const image = await this.imageRepository.create(imageUrl);
     await this.knex('feeds_composite').where('id', feedId).from('feeds').update({
       image_id: image.id,
     });
-    return true;
+    return image;
   }
 
   private async fetch(cache: Cache, feedId: number, url: string): Promise<string | null> {
@@ -64,25 +63,25 @@ export class FeedMetadataService {
     });
   }
 
-  private async findImageFromAlternate(cache: Cache, feed: Feed): Promise<boolean> {
-    if (!feed.html_url) return false;
+  private async findImageFromAlternate(cache: Cache, feed: Feed): Promise<Image | null> {
+    if (!feed.html_url) return null;
 
     const canonical = await this.getCanonicalURL(cache, feed.id, feed.html_url);
 
     const alternate = await this.getAlternateURL(cache, feed.id, canonical);
-    if (!alternate) return false;
+    if (!alternate) return null;
 
     return this.findImageFromFeed(cache, feed.id, String(new URL(alternate, canonical)));
   }
 
-  private async findImageFromFavIcon(cache: Cache, feed: Feed): Promise<boolean> {
-    if (!feed.html_url) return false;
+  private async findImageFromFavIcon(cache: Cache, feed: Feed): Promise<Image | null> {
+    if (!feed.html_url) return null;
 
     const canonical = await this.getCanonicalURL(cache, feed.id, feed.html_url);
     const content = await this.fetch(cache, feed.id, canonical);
     if (!content) {
       this.logger.error(`Failed to fetch content of ${canonical}`);
-      return false;
+      return null;
     }
 
     const parsed = cheerio.load(content);
@@ -95,20 +94,20 @@ export class FeedMetadataService {
     const favicon = parsed('link[rel="icon"]').attr('href');
     if (favicon) return this.attachImageToFeed(feed.id, String(new URL(favicon, canonical)));
 
-    return false;
+    return null;
   }
 
-  private async findImageFromFeed(cache: Cache, feedId: number, xmlUrl: string): Promise<boolean> {
+  private async findImageFromFeed(cache: Cache, feedId: number, xmlUrl: string): Promise<Image | null> {
     const content = await this.fetch(cache, feedId, xmlUrl);
     if (!content) {
       this.logger.error(`Failed to fetch content of ${xmlUrl}`);
-      return false;
+      return null;
     }
 
     const parser = new Parser();
 
     const parsed = await parser.parseString(content);
-    if (!parsed.image?.url) return false;
+    if (!parsed.image?.url) return null;
 
     return this.attachImageToFeed(feedId, String(new URL(parsed.image.url, xmlUrl)));
   }

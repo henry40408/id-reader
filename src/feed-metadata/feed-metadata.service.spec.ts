@@ -38,7 +38,13 @@ describe('FeedMetadataService', () => {
       .reply(
         200,
         `<rss version="2.0"><channel><image><url>http://example.invalid/image.png</url></image></channel></rss>`,
-      );
+      )
+      .head('/image.png')
+      .reply(200, '', {
+        'content-type': 'image/png',
+        etag: 'test',
+        'last-modified': 'Sat, 01 Jan 2000 00:00:00 GMT',
+      });
 
     const user = await createUser(moduleRef);
     const category = await createCategory(moduleRef, user);
@@ -51,9 +57,13 @@ describe('FeedMetadataService', () => {
       url: 'http://example.invalid/image.png',
       blob: IMAGE_1x1,
       content_type: 'image/png',
+      etag: 'test',
+      last_modified: 'Sat, 01 Jan 2000 00:00:00 GMT',
     });
 
-    await service.updateFeedImage(feed.id);
+    const image = await service.updateFeedImage(feed.id);
+    expect(image).toBeDefined();
+    expect(image?.id).toBe(imageId);
 
     const updated = await knex('feeds').where('id', feed.id).first();
     expect(updated?.image_id).toBe(imageId);
@@ -72,11 +82,14 @@ describe('FeedMetadataService', () => {
       .reply(200, IMAGE_1x1, {
         'content-type': 'image/png',
       });
+
     const user = await createUser(moduleRef);
     const category = await createCategory(moduleRef, user);
     const feed = await createFeed(moduleRef, category, { xmlUrl: 'http://example.invalid/feed' });
 
-    await service.updateFeedImage(feed.id);
+    const image = await service.updateFeedImage(feed.id);
+    expect(image).toBeDefined();
+    expect(image?.id).toBeDefined();
 
     const updated = await knex('feeds').where('id', feed.id).first();
     expect(updated?.image_id).toBeDefined();
@@ -92,11 +105,14 @@ describe('FeedMetadataService', () => {
       .reply(200, IMAGE_1x1, {
         'content-type': 'image/png',
       });
+
     const user = await createUser(moduleRef);
     const category = await createCategory(moduleRef, user);
     const feed = await createFeed(moduleRef, category, { xmlUrl: 'http://example.invalid/feed' });
 
-    await service.updateFeedImage(feed.id);
+    const image = await service.updateFeedImage(feed.id);
+    expect(image).toBeDefined();
+    expect(image?.id).toBeDefined();
 
     const updated = await knex('feeds').where('id', feed.id).first();
     expect(updated?.image_id).toBeDefined();
@@ -124,7 +140,9 @@ describe('FeedMetadataService', () => {
       xmlUrl: 'http://example.invalid/feed',
     });
 
-    await service.updateFeedImage(feed.id);
+    const image = await service.updateFeedImage(feed.id);
+    expect(image).toBeDefined();
+    expect(image?.id).toBeDefined();
 
     const updated = await knex('feeds').where('id', feed.id).first();
     expect(updated?.image_id).toBeDefined();
@@ -148,7 +166,9 @@ describe('FeedMetadataService', () => {
       xmlUrl: 'http://example.invalid/feed',
     });
 
-    await service.updateFeedImage(feed.id);
+    const image = await service.updateFeedImage(feed.id);
+    expect(image).toBeDefined();
+    expect(image?.id).toBeDefined();
 
     const updated = await knex('feeds').where('id', feed.id).first();
     expect(updated?.image_id).toBeDefined();
@@ -172,7 +192,9 @@ describe('FeedMetadataService', () => {
       xmlUrl: 'http://example.invalid/feed',
     });
 
-    await service.updateFeedImage(feed.id);
+    const image = await service.updateFeedImage(feed.id);
+    expect(image).toBeDefined();
+    expect(image?.id).toBeDefined();
 
     const updated = await knex('feeds').where('id', feed.id).first();
     expect(updated?.image_id).toBeDefined();
