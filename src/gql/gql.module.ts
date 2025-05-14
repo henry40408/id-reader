@@ -15,6 +15,7 @@ import { AuthResolver } from './resolver/auth.resolver';
 import { IGqlContext } from './gql.interface';
 import { CategoryResolver } from './resolver/category.resolver';
 import { FeedResolver } from './resolver/feed.resolver';
+import { ImageResolver } from './resolver/image.resolver';
 
 @Module({
   imports: [
@@ -60,7 +61,7 @@ import { FeedResolver } from './resolver/feed.resolver';
     }),
     RepositoryModule,
   ],
-  providers: [AuthResolver, CategoryResolver, FeedResolver],
-  exports: [AuthResolver, CategoryResolver, FeedResolver, JwtModule],
+  providers: [AuthResolver, CategoryResolver, FeedResolver, ImageResolver],
+  exports: [AuthResolver, CategoryResolver, FeedResolver, ImageResolver, JwtModule],
 })
 export class GqlModule {}

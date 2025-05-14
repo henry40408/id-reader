@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import DataLoader from 'dataloader';
 import { Knex } from 'knex';
 import { KNEX } from '../knex/knex.constant';
@@ -6,20 +6,25 @@ import { IDataLoaders } from './dataloader.interface';
 
 @Injectable()
 export class DataLoaderService {
+  private readonly logger = new Logger(DataLoaderService.name);
+
   constructor(@Inject(KNEX) private readonly knex: Knex) {}
 
   get loaders(): IDataLoaders {
     return {
       categoryLoader: new DataLoader(async (ids: number[]) => {
         const categories = await this.knex('categories').whereIn('id', ids);
+        this.logger.debug(`categories loaded: ${String(ids)}`);
         return this.reorder(ids, categories);
       }),
       imageLoader: new DataLoader(async (ids: number[]) => {
         const images = await this.knex('images').whereIn('id', ids);
+        this.logger.debug(`images loaded: ${String(ids)}`);
         return this.reorder(ids, images);
       }),
       userLoader: new DataLoader(async (ids: number[]) => {
         const users = await this.knex('users').whereIn('id', ids);
+        this.logger.debug(`users loaded: ${String(ids)}`);
         return this.reorder(ids, users);
       }),
     };

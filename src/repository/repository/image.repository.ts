@@ -53,13 +53,19 @@ export class ImageRepository {
     const url = image.url;
 
     const headers = new Headers();
-    if (image.etag) headers.set('If-None-Match', image.etag);
-    if (image.last_modified) headers.set('If-Modified-Since', image.last_modified);
+    if (image.etag) {
+      this.logger.debug(`If ETag doesn't match for ${url}: ${image.etag}`);
+      headers.set('If-None-Match', image.etag);
+    }
+    if (image.last_modified) {
+      this.logger.debug(`If image is modified since (${url}): ${image.last_modified}`);
+      headers.set('If-Modified-Since', image.last_modified);
+    }
 
     const resp = await fetch(url, { method: 'HEAD', headers });
     if (!resp.ok) {
       if (resp.status === Number(HttpStatus.NOT_MODIFIED)) {
-        this.logger.log(`Image ${url} is not modified`);
+        this.logger.log(`Image ${url} is 304 Not Modified`);
         return true;
       }
       this.logger.error(`Failed to fetch image from ${url}`);
@@ -80,7 +86,7 @@ export class ImageRepository {
       isLastModifiedLatest = expected >= actual;
     }
     if (isLastModifiedLatest) {
-      this.logger.log(`Last modified matched for ${url}`);
+      this.logger.log(`Last-Modified is the latest for ${url}`);
     }
 
     return isEtagMatched || isLastModifiedLatest;

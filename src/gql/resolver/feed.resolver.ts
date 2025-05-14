@@ -31,6 +31,7 @@ export class FeedResolver {
   async feed(@Context() context: IGqlContext<RequestWithJwtPayload>, @Args('feedId') feedId: number) {
     const userId = context.req.jwtPayload.sub;
     const feed = await this.knex('feeds')
+      .select<Feed>('feeds.*')
       .join('categories', 'categories.id', 'feeds.category_id')
       .where('feeds.id', feedId)
       .where('categories.user_id', userId)

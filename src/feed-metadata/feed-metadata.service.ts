@@ -103,18 +103,29 @@ export class FeedMetadataService {
     const parsed = cheerio.load(content);
 
     const appleTouchIcon = parsed('link[rel="apple-touch-icon"]').attr('href');
-    if (appleTouchIcon) return this.attachImageToFeed(feed.id, String(new URL(appleTouchIcon, canonical)));
+    if (appleTouchIcon) {
+      this.logger.debug(`Found Apple touch icon in feed ${feed.id}: ${appleTouchIcon}`);
+      return this.attachImageToFeed(feed.id, String(new URL(appleTouchIcon, canonical)));
+    }
 
     const favicon = parsed('link[rel="icon"]').attr('href');
-    if (favicon) return this.attachImageToFeed(feed.id, String(new URL(favicon, canonical)));
+    if (favicon) {
+      this.logger.debug(`Found favicon in feed ${feed.id}: ${favicon}`);
+      return this.attachImageToFeed(feed.id, String(new URL(favicon, canonical)));
+    }
 
     const shortcutIcon = parsed('link[rel="shortcut icon"]').attr('href');
-    if (shortcutIcon) return this.attachImageToFeed(feed.id, String(new URL(shortcutIcon, canonical)));
+    if (shortcutIcon) {
+      this.logger.debug(`Found shortcut icon in feed ${feed.id}: ${shortcutIcon}`);
+      return this.attachImageToFeed(feed.id, String(new URL(shortcutIcon, canonical)));
+    }
 
     return null;
   }
 
   private async findImageFromFeed(cache: Cache, feedId: number, xmlUrl: string): Promise<Image | null> {
+    this.logger.debug(`Fetching image from feed ${feedId}: ${xmlUrl}`);
+
     const content = await this.fetch(cache, feedId, xmlUrl);
     if (!content) {
       this.logger.error(`Failed to fetch content of ${xmlUrl}`);
@@ -124,12 +135,18 @@ export class FeedMetadataService {
     const parser = new Parser();
 
     const parsed = await parser.parseString(content);
-    if (!parsed.image?.url) return null;
+    if (!parsed.image?.url) {
+      this.logger.warn(`No image found in feed ${feedId}: ${xmlUrl}`);
+      return null;
+    }
 
+    this.logger.debug(`Found image in feed ${feedId}: ${parsed.image.url}`);
     return this.attachImageToFeed(feedId, String(new URL(parsed.image.url, xmlUrl)));
   }
 
   private async getAlternateURL(cache: Cache, feedId: number, htmlUrl: string): Promise<string | undefined> {
+    this.logger.debug(`Fetching alternate URL from feed ${feedId}: ${htmlUrl}`);
+
     const content = await this.fetch(cache, feedId, htmlUrl);
     if (!content) {
       this.logger.error(`Failed to fetch content of ${htmlUrl}`);
@@ -139,10 +156,18 @@ export class FeedMetadataService {
     const parsed = cheerio.load(content);
 
     const rss = parsed('link[type="application/rss+xml"]').attr('href');
-    if (rss) return String(new URL(rss, htmlUrl));
+    if (rss) {
+      const url = String(new URL(rss, htmlUrl));
+      this.logger.debug(`Found RSS URL in feed ${feedId}: ${url}`);
+      return url;
+    }
 
     const atom = parsed('link[type="application/atom+xml"]').attr('href');
-    if (atom) return String(new URL(atom, htmlUrl));
+    if (atom) {
+      const url = String(new URL(atom, htmlUrl));
+      this.logger.debug(`Found Atom URL in feed ${feedId}: ${url}`);
+      return url;
+    }
 
     return undefined;
   }
@@ -157,8 +182,10 @@ export class FeedMetadataService {
     const parsed = cheerio.load(content);
 
     const canonical = parsed('link[rel="canonical"]').attr('href');
-    if (canonical) return String(new URL(canonical, htmlUrl));
-
+    if (canonical) {
+      this.logger.debug(`Found canonical URL in feed ${feedId}: ${canonical}`);
+      return String(new URL(canonical, htmlUrl));
+    }
     return htmlUrl;
   }
 }
