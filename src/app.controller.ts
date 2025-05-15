@@ -1,12 +1,19 @@
 import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { ApiOperation } from '@nestjs/swagger';
+import { HealthCheck, HealthCheckResult, HealthCheckService } from '@nestjs/terminus';
+import { KnexHealthIndicator } from './knex/knex.health';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private health: HealthCheckService,
+    private knexHealth: KnexHealthIndicator,
+  ) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @Get('healthz')
+  @HealthCheck()
+  @ApiOperation({ summary: 'Check health' })
+  async healthz(): Promise<HealthCheckResult> {
+    return await this.health.check([() => this.knexHealth.check('db')]);
   }
 }
