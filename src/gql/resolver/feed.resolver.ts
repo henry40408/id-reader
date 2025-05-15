@@ -7,35 +7,28 @@ import { IGqlContext } from '../gql.interface';
 import { CategoryObject, FeedObject, ImageObject, RequestWithJwtPayload } from '../dtos.interface';
 import { Authenticated } from '../access-token.guard';
 import { FeedMetadataService } from '../../feed-metadata/feed-metadata.service';
+import { FeedRepository } from '../../repository/repository/feed.repository';
 
 @Resolver(() => FeedObject)
 export class FeedResolver {
   constructor(
     @InjectKnex() private readonly knex: Knex,
     private readonly feedMetadataService: FeedMetadataService,
+    private readonly feedRepository: FeedRepository,
   ) {}
 
   @Query(() => [FeedObject], { description: 'Get my feeds' })
   @Authenticated()
   async feeds(@Context() context: IGqlContext<RequestWithJwtPayload>) {
     const userId = context.req.jwtPayload.sub;
-    return await this.knex('feeds')
-      .select<Feed>('feeds.*')
-      .join('categories', 'categories.id', 'feeds.category_id')
-      .where('categories.user_id', userId)
-      .orderBy('id');
+    return await this.feedRepository.findByUserId(userId).select<Feed>('feeds.*');
   }
 
   @Query(() => FeedObject, { description: 'Get my feed by id' })
   @Authenticated()
   async feed(@Context() context: IGqlContext<RequestWithJwtPayload>, @Args('feedId') feedId: number) {
     const userId = context.req.jwtPayload.sub;
-    const feed = await this.knex('feeds')
-      .select<Feed>('feeds.*')
-      .join('categories', 'categories.id', 'feeds.category_id')
-      .where('feeds.id', feedId)
-      .where('categories.user_id', userId)
-      .first();
+    const feed = await this.feedRepository.findByUserId(userId).where('feeds.id', feedId).first();
     if (!feed) throw new NotFoundException('Feed not found');
     return feed;
   }
@@ -44,11 +37,7 @@ export class FeedResolver {
   @Authenticated()
   async updateFeedImage(@Context() context: IGqlContext<RequestWithJwtPayload>, @Args('feedId') feedId: number) {
     const userId = context.req.jwtPayload.sub;
-    const feed = await this.knex('feeds')
-      .join('categories', 'categories.id', 'feeds.category_id')
-      .where('feeds.id', feedId)
-      .where('categories.user_id', userId)
-      .first();
+    const feed = await this.feedRepository.findByUserId(userId).where('feeds.id', feedId).first();
     if (!feed) throw new NotFoundException('Feed not found');
     return await this.feedMetadataService.updateFeedImage(feedId);
   }
