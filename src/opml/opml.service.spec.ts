@@ -4,7 +4,7 @@ import { Readable } from 'node:stream';
 import { TestingModule, Test } from '@nestjs/testing';
 import { Knex } from 'knex';
 import { Category, Feed } from 'knex/types/tables';
-import { KNEX } from '../knex/knex.constant';
+import { getKnexToken } from '../knex/knex.constant';
 import { RepositoryModule } from '../repository/repository.module';
 import { createUser } from '../test.helper';
 import { DEFAULT_CATEGORY_NAME } from './opml.constant';
@@ -22,7 +22,7 @@ describe('OpmlService', () => {
     }).compile();
     await moduleRef.init();
     service = moduleRef.get<OpmlService>(OpmlService);
-    knex = moduleRef.get<Knex>(KNEX);
+    knex = moduleRef.get<Knex>(getKnexToken());
     jest.useFakeTimers();
     jest.setSystemTime(new Date('2000-01-01T00:00:00.000Z'));
   });

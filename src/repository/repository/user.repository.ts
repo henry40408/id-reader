@@ -1,8 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { User } from 'knex/types/tables';
 import { Knex } from 'knex';
-import { KNEX } from '../../knex/knex.constant';
+import { InjectKnex } from '../../knex/knex.constant';
 
 export type CreateUser = Pick<User, 'username'> & { password: string };
 
@@ -10,7 +10,7 @@ export type CreateUser = Pick<User, 'username'> & { password: string };
 export class UserRepository {
   static readonly SALT_ROUNDS = 12;
 
-  constructor(@Inject(KNEX) private readonly knex: Knex) {}
+  constructor(@InjectKnex() private readonly knex: Knex) {}
 
   async clear() {
     await this.knex('users_composite').delete().from('users');

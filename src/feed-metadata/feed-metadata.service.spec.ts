@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import nock from 'nock';
 import { Knex } from 'knex';
 import { RepositoryModule } from '../repository/repository.module';
-import { KNEX } from '../knex/knex.constant';
+import { getKnexToken } from '../knex/knex.constant';
 import { FeedMetadataService } from './feed-metadata.service';
 import { createCategory, createFeed, createUser, IMAGE_1x1 } from 'src/test.helper';
 
@@ -20,7 +20,7 @@ describe('FeedMetadataService', () => {
     }).compile();
     await moduleRef.init();
     service = moduleRef.get<FeedMetadataService>(FeedMetadataService);
-    knex = moduleRef.get<Knex>(KNEX);
+    knex = moduleRef.get<Knex>(getKnexToken());
   });
 
   afterEach(async () => {

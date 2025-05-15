@@ -1,15 +1,14 @@
 import { Context, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
-import { Inject } from '@nestjs/common';
 import { Knex } from 'knex';
 import { Category } from 'knex/types/tables';
-import { KNEX } from '../../knex/knex.constant';
+import { InjectKnex } from '../../knex/knex.constant';
 import { CategoryObject, RequestWithJwtPayload, UserObject } from '../dtos.interface';
 import { IGqlContext } from '../gql.interface';
 import { Authenticated } from '../access-token.guard';
 
 @Resolver(() => CategoryObject)
 export class CategoryResolver {
-  constructor(@Inject(KNEX) private readonly knex: Knex) {}
+  constructor(@InjectKnex() private readonly knex: Knex) {}
 
   @Query(() => [CategoryObject], { description: 'Get my categories' })
   @Authenticated()

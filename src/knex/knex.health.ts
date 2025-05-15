@@ -1,14 +1,14 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { HealthIndicatorResult, HealthIndicatorService } from '@nestjs/terminus';
 import { Knex } from 'knex';
-import { KNEX } from './knex.constant';
+import { InjectKnex } from './knex.constant';
 
 @Injectable()
 export class KnexHealthIndicator {
   private readonly logger = new Logger(KnexHealthIndicator.name);
 
   constructor(
-    @Inject(KNEX) private readonly knex: Knex,
+    @InjectKnex() private readonly knex: Knex,
     private readonly health: HealthIndicatorService,
   ) {}
 

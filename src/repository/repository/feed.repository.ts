@@ -1,13 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Knex } from 'knex';
 import { Feed } from 'knex/types/tables';
-import { KNEX } from '../../knex/knex.constant';
+import { InjectKnex } from '../../knex/knex.constant';
 
 export type CreateFeed = Omit<Feed, 'id' | 'created_at' | 'updated_at'>;
 
 @Injectable()
 export class FeedRepository {
-  constructor(@Inject(KNEX) private readonly knex: Knex) {}
+  constructor(@InjectKnex() private readonly knex: Knex) {}
 
   async create(dto: CreateFeed): Promise<Feed> {
     return await this.knex.transaction(async (tx) => {

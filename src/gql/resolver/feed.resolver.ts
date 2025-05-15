@@ -1,8 +1,8 @@
 import { Args, Context, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { Knex } from 'knex';
-import { Inject, NotFoundException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { Feed } from 'knex/types/tables';
-import { KNEX } from '../../knex/knex.constant';
+import { InjectKnex } from '../../knex/knex.constant';
 import { IGqlContext } from '../gql.interface';
 import { CategoryObject, FeedObject, ImageObject, RequestWithJwtPayload } from '../dtos.interface';
 import { Authenticated } from '../access-token.guard';
@@ -11,7 +11,7 @@ import { FeedMetadataService } from '../../feed-metadata/feed-metadata.service';
 @Resolver(() => FeedObject)
 export class FeedResolver {
   constructor(
-    @Inject(KNEX) private readonly knex: Knex,
+    @InjectKnex() private readonly knex: Knex,
     private readonly feedMetadataService: FeedMetadataService,
   ) {}
 

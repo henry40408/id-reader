@@ -5,19 +5,19 @@ import { ConfigurableModuleClass, MODULE_OPTIONS_TOKEN } from './knex.module-def
 import { KnexHealthIndicator } from './knex.health';
 import { PragmaService } from './pragma.service';
 import { IConfigModuleOptions } from './knex.interface';
-import { KNEX } from './knex.constant';
+import { getKnexToken } from './knex.constant';
 
 @Module({
   imports: [TerminusModule],
   providers: [
     {
-      provide: KNEX,
+      provide: getKnexToken(),
       inject: [MODULE_OPTIONS_TOKEN],
       useFactory: (config: IConfigModuleOptions) => knex.default(config.knex),
     },
     KnexHealthIndicator,
     PragmaService,
   ],
-  exports: [KNEX, KnexHealthIndicator],
+  exports: [getKnexToken(), KnexHealthIndicator],
 })
 export class KnexModule extends ConfigurableModuleClass {}

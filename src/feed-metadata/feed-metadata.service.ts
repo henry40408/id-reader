@@ -1,10 +1,10 @@
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Knex } from 'knex';
 import { Feed, Image } from 'knex/types/tables';
 import Parser from 'rss-parser';
 import * as cheerio from 'cheerio';
 import { Cache, createCache } from 'cache-manager';
-import { KNEX } from '../knex/knex.constant';
+import { InjectKnex } from '../knex/knex.constant';
 import { ImageRepository } from '../repository/repository/image.repository';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class FeedMetadataService {
   private readonly logger = new Logger(FeedMetadataService.name);
 
   constructor(
-    @Inject(KNEX) private readonly knex: Knex,
+    @InjectKnex() private readonly knex: Knex,
     private readonly imageRepository: ImageRepository,
   ) {}
 

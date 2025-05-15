@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Knex } from 'knex';
 import { KnexModule } from './knex.module';
-import { KNEX } from './knex.constant';
+import { getKnexToken } from './knex.constant';
 
 describe('KnexModule', () => {
   let moduleRef: TestingModule;
@@ -22,7 +22,7 @@ describe('KnexModule', () => {
       ],
     }).compile();
     await moduleRef.init();
-    knex = moduleRef.get<Knex>(KNEX);
+    knex = moduleRef.get<Knex>(getKnexToken());
   });
 
   afterEach(async () => {

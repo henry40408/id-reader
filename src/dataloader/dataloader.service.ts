@@ -1,14 +1,14 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import DataLoader from 'dataloader';
 import { Knex } from 'knex';
-import { KNEX } from '../knex/knex.constant';
+import { InjectKnex } from '../knex/knex.constant';
 import { IDataLoaders } from './dataloader.interface';
 
 @Injectable()
 export class DataLoaderService {
   private readonly logger = new Logger(DataLoaderService.name);
 
-  constructor(@Inject(KNEX) private readonly knex: Knex) {}
+  constructor(@InjectKnex() private readonly knex: Knex) {}
 
   get loaders(): IDataLoaders {
     return {

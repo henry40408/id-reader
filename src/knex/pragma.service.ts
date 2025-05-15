@@ -1,12 +1,12 @@
-import { Inject, Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { Knex } from 'knex';
-import { KNEX } from './knex.constant';
+import { InjectKnex } from './knex.constant';
 
 @Injectable()
 export class PragmaService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(PragmaService.name);
 
-  constructor(@Inject(KNEX) private readonly knex: Knex) {}
+  constructor(@InjectKnex() private readonly knex: Knex) {}
 
   async onModuleInit() {
     await this.knex.raw('PRAGMA foreign_keys = ON');

@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { Controller, Get, Inject, Logger, Post, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Logger, Post, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { ApiBody, ApiConsumes, ApiForbiddenResponse, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
@@ -8,14 +8,14 @@ import { ImportFeedsDTO, ImportFeedsResponse } from './dtos.interface';
 import { ImportFeedCount, OpmlService } from './opml/opml.service';
 import { Authenticated } from './gql/access-token.guard';
 import { RequestWithJwtPayload } from './gql/dtos.interface';
-import { KNEX } from './knex/knex.constant';
+import { InjectKnex } from './knex/knex.constant';
 
 @Controller({ version: '1', path: 'feeds' })
 export class FeedsController {
   private readonly logger = new Logger(FeedsController.name);
 
   constructor(
-    @Inject(KNEX) private readonly knex: Knex,
+    @InjectKnex() private readonly knex: Knex,
     private readonly opmlService: OpmlService,
   ) {}
 

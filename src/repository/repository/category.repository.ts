@@ -1,11 +1,11 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Category } from 'knex/types/tables';
 import { Knex } from 'knex';
-import { KNEX } from '../../knex/knex.constant';
+import { InjectKnex } from '../../knex/knex.constant';
 
 @Injectable()
 export class CategoryRepository {
-  constructor(@Inject(KNEX) private readonly knex: Knex) {}
+  constructor(@InjectKnex() private readonly knex: Knex) {}
 
   async create(data: Pick<Category, 'user_id' | 'name'>): Promise<Category> {
     return await this.knex.transaction(async (tx) => {

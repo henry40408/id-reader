@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import nock from 'nock';
 import { Knex } from 'knex';
 import { RepositoryModule } from '../repository.module';
-import { KNEX } from '../../knex/knex.constant';
+import { getKnexToken } from '../../knex/knex.constant';
 import { IMAGE_1x1 } from '../../test.helper';
 import { ImageRepository } from './image.repository';
 
@@ -20,7 +20,7 @@ describe('ImageRepository', () => {
     }).compile();
     await moduleRef.init();
     repository = moduleRef.get<ImageRepository>(ImageRepository);
-    knex = moduleRef.get<Knex>(KNEX);
+    knex = moduleRef.get<Knex>(getKnexToken());
   });
 
   afterEach(async () => {

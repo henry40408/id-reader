@@ -1,11 +1,11 @@
 import { Readable } from 'node:stream';
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Knex } from 'knex';
 import { Category, Feed, User } from 'knex/types/tables';
 import sax from 'sax';
 import { ApiProperty } from '@nestjs/swagger';
 import { XMLBuilder } from 'fast-xml-parser';
-import { KNEX } from '../knex/knex.constant';
+import { InjectKnex } from '../knex/knex.constant';
 import { DEFAULT_CATEGORY_NAME } from './opml.constant';
 
 export interface IParsedFeed {
@@ -29,7 +29,7 @@ export class ImportFeedCount {
 
 @Injectable()
 export class OpmlService {
-  constructor(@Inject(KNEX) private readonly knex: Knex) {}
+  constructor(@InjectKnex() private readonly knex: Knex) {}
 
   async importFeeds(userId: number, categories: IParsedCategory[]): Promise<ImportFeedCount> {
     return await this.knex.transaction(async (tx) => {
