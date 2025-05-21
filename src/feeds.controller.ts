@@ -3,21 +3,16 @@ import { Controller, Get, Logger, Post, Req, Res, UploadedFile, UseInterceptors 
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { ApiBody, ApiConsumes, ApiForbiddenResponse, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
-import { Knex } from 'knex';
 import { ImportFeedsDTO, ImportFeedsResponse } from './dtos.interface';
-import { ImportFeedCount, OpmlService } from './opml/opml.service';
-import { Authenticated } from './gql/access-token.guard';
-import { RequestWithJwtPayload } from './gql/dtos.interface';
-import { InjectKnex } from './knex/knex.constant';
+import { ImportFeedCount, OpmlService } from './opml.service';
+import { Authenticated } from './access-token.guard';
+import { RequestWithJwtPayload } from './object.interface';
 
 @Controller({ version: '1', path: 'feeds' })
 export class FeedsController {
   private readonly logger = new Logger(FeedsController.name);
 
-  constructor(
-    @InjectKnex() private readonly knex: Knex,
-    private readonly opmlService: OpmlService,
-  ) {}
+  constructor(private readonly opmlService: OpmlService) {}
 
   @Post('import')
   @UseInterceptors(FileInterceptor('file'))

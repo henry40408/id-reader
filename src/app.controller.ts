@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { HealthCheck, HealthCheckResult, HealthCheckService } from '@nestjs/terminus';
-import { KnexHealthIndicator } from './knex/knex.health';
+import { KnexHealthIndicator } from './knex.health';
 
 @Controller()
 export class AppController {

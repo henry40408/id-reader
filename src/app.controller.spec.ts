@@ -1,7 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TerminusModule } from '@nestjs/terminus';
 import { AppController } from './app.controller';
-import { RepositoryModule } from './repository/repository.module';
+import { KnexHealthIndicator } from './knex.health';
+import { KnexService } from './knex.service';
+import { AppConfigModule } from './app-config/app-config.module';
 
 describe('AppController', () => {
   let moduleRef: TestingModule;
@@ -9,7 +11,8 @@ describe('AppController', () => {
 
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
-      imports: [TerminusModule, RepositoryModule],
+      imports: [AppConfigModule, TerminusModule],
+      providers: [KnexService, KnexHealthIndicator],
       controllers: [AppController],
     }).compile();
     await moduleRef.init();

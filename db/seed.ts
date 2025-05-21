@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
-import { SeedModule } from '../src/seed/seed.module';
-import { SeedService } from '../src/seed/seed.service';
+import { SeedModule } from '../src/seed.module';
+import { SeedService } from '../src/seed.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(SeedModule);

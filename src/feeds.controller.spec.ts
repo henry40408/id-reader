@@ -4,10 +4,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { createMock } from '@golevelup/ts-jest';
 import { Response } from 'express';
 import { FeedsController } from './feeds.controller';
-import { RepositoryModule } from './repository/repository.module';
-import { OpmlModule } from './opml/opml.module';
 import { createUser } from './test.helper';
-import { RequestWithJwtPayload } from './gql/dtos.interface';
+import { RequestWithJwtPayload } from './object.interface';
+import { KnexService } from './knex.service';
+import { AppConfigModule } from './app-config/app-config.module';
+import { OpmlService } from './opml.service';
+import { UserRepository } from './repository/user.repository';
 
 describe('FeedsController', () => {
   let moduleRef: TestingModule;
@@ -15,8 +17,9 @@ describe('FeedsController', () => {
 
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
-      imports: [JwtModule.register({ secret: 'secret' }), OpmlModule, RepositoryModule],
+      imports: [AppConfigModule, JwtModule.register({ secret: 'secret' })],
       controllers: [FeedsController],
+      providers: [KnexService, OpmlService, UserRepository],
     }).compile();
     await moduleRef.init();
     controller = moduleRef.get<FeedsController>(FeedsController);

@@ -1,8 +1,8 @@
 import { TestingModule } from '@nestjs/testing';
 import { Category, User } from 'knex/types/tables';
-import { UserRepository } from './repository/repository/user.repository';
-import { CategoryRepository } from './repository/repository/category.repository';
-import { FeedRepository } from './repository/repository/feed.repository';
+import { UserRepository } from './repository/user.repository';
+import { CategoryRepository } from './repository/category.repository';
+import { FeedRepository } from './repository/feed.repository';
 
 export const IMAGE_1x1 = Buffer.from(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdj+L+U4T8ABu8CpCYJ1DQAAAAASUVORK5CYII=',
