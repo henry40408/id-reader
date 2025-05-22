@@ -13,17 +13,17 @@ export class DataLoaderService {
     return {
       categoryLoader: new DataLoader(async (ids: number[]) => {
         const categories = await this.knexService.connection('categories').whereIn('id', ids);
-        this.logger.debug(`categories loaded: ${String(ids)}`);
+        this.logger.debug(`Categories loaded: ${String(ids)}`);
         return this.reorder(ids, categories);
       }),
       imageLoader: new DataLoader(async (ids: number[]) => {
         const images = await this.knexService.connection('images').whereIn('id', ids);
-        this.logger.debug(`images loaded: ${String(ids)}`);
+        this.logger.debug(`Images loaded: ${String(ids)}`);
         return this.reorder(ids, images);
       }),
       userLoader: new DataLoader(async (ids: number[]) => {
         const users = await this.knexService.connection('users').whereIn('id', ids);
-        this.logger.debug(`users loaded: ${String(ids)}`);
+        this.logger.debug(`Users loaded: ${String(ids)}`);
         return this.reorder(ids, users);
       }),
     };

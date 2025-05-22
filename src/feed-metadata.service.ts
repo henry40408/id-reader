@@ -5,15 +5,40 @@ import * as cheerio from 'cheerio';
 import { Cache, createCache } from 'cache-manager';
 import { ImageRepository } from './repository/image.repository';
 import { KnexService } from './knex.service';
+import { CreateFeed } from './repository/feed.repository';
+
+export type FoundFeed = Omit<CreateFeed, 'category_id'>;
 
 @Injectable()
 export class FeedMetadataService {
   private readonly logger = new Logger(FeedMetadataService.name);
 
+  private readonly feedParser = new Parser();
+
   constructor(
     private readonly knexService: KnexService,
     private readonly imageRepository: ImageRepository,
   ) {}
+
+  async findFeed(url: string): Promise<FoundFeed | undefined> {
+    const cache = createCache();
+
+    const feed = await this.tryParseFeed(cache, url);
+    if (feed) {
+      this.logger.debug(`${url} is a feed`);
+      return feed;
+    }
+
+    const canonical = await this.getCanonicalURL(cache, url);
+    const alternate = await this.getAlternateURL(cache, canonical);
+    if (alternate) {
+      const feed = await this.tryParseFeed(cache, alternate, url);
+      if (feed) {
+        this.logger.debug(`${url} is a webpage and ${alternate} is a feed`);
+        return feed;
+      }
+    }
+  }
 
   async updateFeedImage(feedId: number): Promise<Image | null> {
     this.logger.log(`Update image of feed ${feedId}`);
@@ -57,8 +82,8 @@ export class FeedMetadataService {
     return image;
   }
 
-  private async fetch(cache: Cache, feedId: number, url: string): Promise<string | null> {
-    const key = `feed-metadata:content:${feedId}:${url}`;
+  private async fetch(cache: Cache, url: string): Promise<string | null> {
+    const key = `feed-metadata:content:${url}`;
     return await cache.wrap(key, async () => {
       try {
         const resp = await fetch(url);
@@ -75,9 +100,9 @@ export class FeedMetadataService {
   private async findImageFromAlternate(cache: Cache, feed: Feed): Promise<Image | null> {
     if (!feed.html_url) return null;
 
-    const canonical = await this.getCanonicalURL(cache, feed.id, feed.html_url);
+    const canonical = await this.getCanonicalURL(cache, feed.html_url);
 
-    const alternate = await this.getAlternateURL(cache, feed.id, canonical);
+    const alternate = await this.getAlternateURL(cache, canonical);
     if (!alternate) return null;
 
     const parsed = new URL(alternate);
@@ -92,8 +117,8 @@ export class FeedMetadataService {
   private async findImageFromFavIcon(cache: Cache, feed: Feed): Promise<Image | null> {
     if (!feed.html_url) return null;
 
-    const canonical = await this.getCanonicalURL(cache, feed.id, feed.html_url);
-    const content = await this.fetch(cache, feed.id, canonical);
+    const canonical = await this.getCanonicalURL(cache, feed.html_url);
+    const content = await this.fetch(cache, canonical);
     if (!content) {
       this.logger.error(`Failed to fetch content of ${canonical}`);
       return null;
@@ -125,15 +150,13 @@ export class FeedMetadataService {
   private async findImageFromFeed(cache: Cache, feedId: number, xmlUrl: string): Promise<Image | null> {
     this.logger.debug(`Fetching image from feed ${feedId}: ${xmlUrl}`);
 
-    const content = await this.fetch(cache, feedId, xmlUrl);
+    const content = await this.fetch(cache, xmlUrl);
     if (!content) {
       this.logger.error(`Failed to fetch content of ${xmlUrl}`);
       return null;
     }
 
-    const parser = new Parser();
-
-    const parsed = await parser.parseString(content);
+    const parsed = await this.feedParser.parseString(content);
     if (!parsed.image?.url) {
       this.logger.warn(`No image found in feed ${feedId}: ${xmlUrl}`);
       return null;
@@ -143,10 +166,10 @@ export class FeedMetadataService {
     return this.attachImageToFeed(feedId, String(new URL(parsed.image.url, xmlUrl)));
   }
 
-  private async getAlternateURL(cache: Cache, feedId: number, htmlUrl: string): Promise<string | undefined> {
-    this.logger.debug(`Fetching alternate URL from feed ${feedId}: ${htmlUrl}`);
+  private async getAlternateURL(cache: Cache, htmlUrl: string): Promise<string | undefined> {
+    this.logger.debug(`Fetching alternate URL in ${htmlUrl}`);
 
-    const content = await this.fetch(cache, feedId, htmlUrl);
+    const content = await this.fetch(cache, htmlUrl);
     if (!content) {
       this.logger.error(`Failed to fetch content of ${htmlUrl}`);
       return undefined;
@@ -157,22 +180,22 @@ export class FeedMetadataService {
     const rss = parsed('link[type="application/rss+xml"]').attr('href');
     if (rss) {
       const url = String(new URL(rss, htmlUrl));
-      this.logger.debug(`Found RSS URL in feed ${feedId}: ${url}`);
+      this.logger.debug(`Found RSS URL in ${url}`);
       return url;
     }
 
     const atom = parsed('link[type="application/atom+xml"]').attr('href');
     if (atom) {
       const url = String(new URL(atom, htmlUrl));
-      this.logger.debug(`Found Atom URL in feed ${feedId}: ${url}`);
+      this.logger.debug(`Found Atom URL in ${url}`);
       return url;
     }
 
     return undefined;
   }
 
-  private async getCanonicalURL(cache: Cache, feedId: number, htmlUrl: string): Promise<string> {
-    const content = await this.fetch(cache, feedId, htmlUrl);
+  private async getCanonicalURL(cache: Cache, htmlUrl: string): Promise<string> {
+    const content = await this.fetch(cache, htmlUrl);
     if (!content) {
       this.logger.error(`Failed to fetch content of ${htmlUrl}`);
       return htmlUrl;
@@ -182,9 +205,31 @@ export class FeedMetadataService {
 
     const canonical = parsed('link[rel="canonical"]').attr('href');
     if (canonical) {
-      this.logger.debug(`Found canonical URL in feed ${feedId}: ${canonical}`);
+      this.logger.debug(`Found canonical URL in ${canonical}`);
       return String(new URL(canonical, htmlUrl));
     }
     return htmlUrl;
+  }
+
+  private async safeParseString(content: string): Promise<Parser.Output<Parser.Item> | undefined> {
+    try {
+      return await this.feedParser.parseString(content);
+    } catch {
+      // empty
+    }
+  }
+
+  private async tryParseFeed(cache: Cache, feedUrl: string, htmlUrl?: string): Promise<FoundFeed | undefined> {
+    const content = await this.fetch(cache, feedUrl);
+    if (!content) return undefined;
+
+    const parsed = await this.safeParseString(content);
+    if (parsed && parsed.title) {
+      return {
+        html_url: parsed.link ?? htmlUrl,
+        xml_url: feedUrl,
+        title: parsed.title,
+      };
+    }
   }
 }

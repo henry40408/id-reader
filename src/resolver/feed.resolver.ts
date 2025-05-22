@@ -1,5 +1,5 @@
-import { Args, Context, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
-import { NotFoundException } from '@nestjs/common';
+import { Args, Context, Field, Mutation, ObjectType, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Feed } from 'knex/types/tables';
 import { IGqlContext } from '../graphql.interface';
 import { CategoryObject, FeedObject, ImageObject, RequestWithJwtPayload } from '../object.interface';
@@ -7,6 +7,16 @@ import { Authenticated } from '../access-token.guard';
 import { FeedMetadataService } from '../feed-metadata.service';
 import { FeedRepository } from '../repository/feed.repository';
 import { DataLoaderService } from '../dataloader.service';
+
+@ObjectType({ description: 'Found feed' })
+export class FoundFeed {
+  @Field(() => String, { description: 'Title' })
+  title: string;
+  @Field(() => String, { description: 'XML URL' })
+  xml_url: string;
+  @Field(() => String, { description: 'HTML URL' })
+  html_url?: string;
+}
 
 @Resolver(() => FeedObject)
 export class FeedResolver {
@@ -30,6 +40,14 @@ export class FeedResolver {
     const feed = await this.feedRepository.findByUserId(userId).where('feeds.id', feedId).first();
     if (!feed) throw new NotFoundException('Feed not found');
     return feed;
+  }
+
+  @Query(() => FoundFeed, { description: 'Detect feed' })
+  @Authenticated()
+  async findFeed(@Args('url') url: string): Promise<FoundFeed> {
+    const found = await this.feedMetadataService.findFeed(url);
+    if (!found) throw new BadRequestException('no feed is found');
+    return found;
   }
 
   @Mutation(() => ImageObject, { description: 'Update feed image', nullable: true })
