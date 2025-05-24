@@ -7,6 +7,7 @@ import { Authenticated } from '../access-token.guard';
 import { FeedMetadataService } from '../feed-metadata.service';
 import { FeedRepository } from '../repository/feed.repository';
 import { DataLoaderService } from '../dataloader.service';
+import { IDataLoaders } from '../dataloader.interface';
 
 @ObjectType({ description: 'Found feed' })
 export class FoundFeed {
@@ -20,11 +21,15 @@ export class FoundFeed {
 
 @Resolver(() => FeedObject)
 export class FeedResolver {
+  private readonly loaders: IDataLoaders;
+
   constructor(
     private readonly dataloaderService: DataLoaderService,
     private readonly feedMetadataService: FeedMetadataService,
     private readonly feedRepository: FeedRepository,
-  ) {}
+  ) {
+    this.loaders = this.dataloaderService.loaders;
+  }
 
   @Query(() => [FeedObject], { description: 'Get my feeds' })
   @Authenticated()
@@ -61,12 +66,12 @@ export class FeedResolver {
 
   @ResolveField(() => CategoryObject, { description: 'Get category' })
   async category(@Parent() feed: FeedObject) {
-    return await this.dataloaderService.loaders.categoryLoader.load(feed.category_id);
+    return await this.loaders.categoryLoader.load(feed.category_id);
   }
 
   @ResolveField(() => ImageObject, { description: 'Get image', nullable: true })
   async image(@Parent() feed: FeedObject) {
     if (!feed.image_id) return null;
-    return await this.dataloaderService.loaders.imageLoader.load(feed.image_id);
+    return await this.loaders.imageLoader.load(feed.image_id);
   }
 }
