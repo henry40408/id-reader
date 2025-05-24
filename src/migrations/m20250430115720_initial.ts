@@ -31,6 +31,7 @@ export const up = async (knex: Knex) => {
 
     await tx.schema.createTable('feeds', (t) => {
       t.increments('id').primary();
+      t.integer('user_id').notNullable().references('id').inTable('users').onDelete('CASCADE');
       t.integer('category_id').notNullable().references('id').inTable('categories').onDelete('CASCADE');
       t.string('title').notNullable();
       t.string('description');
@@ -38,7 +39,7 @@ export const up = async (knex: Knex) => {
       t.string('html_url');
       t.integer('image_id').references('id').inTable('images').onDelete('SET NULL');
       t.timestamps(true, true);
-      t.unique(['category_id', 'xml_url']);
+      t.unique(['user_id', 'xml_url']);
     });
   });
 };

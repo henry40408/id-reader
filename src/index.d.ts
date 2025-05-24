@@ -19,6 +19,7 @@ declare module 'knex/types/tables' {
 
   interface Feed {
     id: number;
+    user_id: number;
     category_id: number;
     title: string;
     description?: string;
@@ -56,7 +57,7 @@ declare module 'knex/types/tables' {
     feeds: Feed;
     feeds_composite: Knex.CompositeTableType<
       Feed,
-      Pick<Feed, 'category_id' | 'xml_url'> &
+      Pick<Feed, 'user_id' | 'category_id' | 'xml_url'> &
         Partial<
           Pick<Feed, 'title' | 'description' | 'xml_url' | 'html_url' | 'image_id' | 'created_at' | 'updated_at'>
         >,

@@ -7,7 +7,7 @@ import { ImageRepository } from './repository/image.repository';
 import { KnexService } from './knex.service';
 import { CreateFeed } from './repository/feed.repository';
 
-export type FoundFeed = Omit<CreateFeed, 'category_id'>;
+export type FoundFeed = Omit<CreateFeed, 'category_id' | 'user_id'>;
 
 @Injectable()
 export class FeedMetadataService {

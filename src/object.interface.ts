@@ -24,6 +24,7 @@ export class FeedObject implements Feed {
   @Field(() => Number, { description: 'Feed ID' })
   id!: number;
 
+  user_id!: number;
   category_id!: number;
 
   @Field(() => String, { description: 'Title' })

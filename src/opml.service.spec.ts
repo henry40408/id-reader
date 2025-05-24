@@ -65,12 +65,12 @@ describe('OpmlService', () => {
           {
             title: 'Test Feed 1',
             htmlUrl: 'http://test.invalid',
-            xmlUrl: 'http://test.invalid/feed',
+            xmlUrl: 'http://test.invalid/feed/1',
           },
           {
             title: 'Test Feed 2',
             htmlUrl: 'http://blog.test.invalid',
-            xmlUrl: 'http://blog.test.invalid/feed',
+            xmlUrl: 'http://blog.test.invalid/feed/2',
           },
         ],
       },
@@ -79,12 +79,12 @@ describe('OpmlService', () => {
         feeds: [
           {
             title: 'Test Feed 3',
-            xmlUrl: 'http://test.invalid/feed',
+            xmlUrl: 'http://test.invalid/feed/3',
             htmlUrl: 'http://test.invalid',
           },
           {
             title: 'Test Feed 4',
-            xmlUrl: 'http://blog.test.invalid/feed',
+            xmlUrl: 'http://blog.test.invalid/feed/4',
             htmlUrl: 'http://blog.test.invalid',
           },
         ],

@@ -36,6 +36,7 @@ export async function createFeed(
 ) {
   const feedRepository = moduleRef.get<FeedRepository>(FeedRepository);
   const feed = await feedRepository.create({
+    user_id: category.user_id,
     title: `Test feed #${feedCount + 1}`,
     xml_url: xmlUrl ?? `https://example.com/feed?id=${feedCount + 1}`,
     html_url: htmlUrl ?? `https://example.com?id=${feedCount + 1}`,

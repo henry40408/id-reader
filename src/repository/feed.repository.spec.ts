@@ -35,6 +35,7 @@ describe('FeedRepository', () => {
     const user = await createUser(moduleRef);
     const category = await categoryRepository.create({ user_id: user.id, name: 'Test Category' });
     const feed = await repository.create({
+      user_id: category.user_id,
       category_id: category.id,
       title: 'Test Feed',
       xml_url: 'http://example.invalid/feed',
@@ -45,7 +46,12 @@ describe('FeedRepository', () => {
   it('should not create a feed with the same category ID and xml URL', async () => {
     const user = await createUser(moduleRef);
     const category = await categoryRepository.create({ user_id: user.id, name: 'Test Category' });
-    const data: CreateFeed = { category_id: category.id, title: 'Test Feed', xml_url: 'http://example.invalid/feed' };
+    const data: CreateFeed = {
+      user_id: category.user_id,
+      category_id: category.id,
+      title: 'Test Feed',
+      xml_url: 'http://example.invalid/feed',
+    };
     await expect(repository.create(data)).resolves.toBeDefined();
     await expect(repository.create(data)).rejects.toThrow('UNIQUE constraint failed');
   });
@@ -54,6 +60,7 @@ describe('FeedRepository', () => {
     const user = await createUser(moduleRef);
     const category = await categoryRepository.create({ user_id: user.id, name: 'Test Category' });
     const feed = await repository.create({
+      user_id: category.user_id,
       category_id: category.id,
       title: 'Test Feed',
       xml_url: 'http://example.invalid/feed',

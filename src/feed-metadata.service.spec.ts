@@ -186,6 +186,32 @@ describe('FeedMetadataService', () => {
     scope.done();
   });
 
+  it('should attach shortcut icon to feed', async () => {
+    const scope = nock('http://example.invalid')
+      .get('/feed')
+      .reply(200, `<rss version="2.0"><channel></channel></rss>`)
+      .get('/')
+      .reply(200, `<link rel="shortcut icon" href="/favicon.ico" />`)
+      .get('/favicon.ico')
+      .reply(200, IMAGE_1x1, { 'content-type': 'image/png' });
+
+    const user = await createUser(moduleRef);
+    const category = await createCategory(moduleRef, user);
+    const feed = await createFeed(moduleRef, category, {
+      htmlUrl: 'http://example.invalid',
+      xmlUrl: 'http://example.invalid/feed',
+    });
+
+    const image = await service.updateFeedImage(feed.id);
+    expect(image).toBeDefined();
+    expect(image?.id).toBeDefined();
+
+    const updated = await knexService.connection('feeds').where('id', feed.id).first();
+    expect(updated?.image_id).toBeDefined();
+
+    scope.done();
+  });
+
   it('should attach apple touch icon to feed', async () => {
     const scope = nock('http://example.invalid')
       .get('/feed')
@@ -208,6 +234,42 @@ describe('FeedMetadataService', () => {
 
     const updated = await knexService.connection('feeds').where('id', feed.id).first();
     expect(updated?.image_id).toBeDefined();
+
+    scope.done();
+  });
+
+  it('should find feed from feed URL', async () => {
+    const scope = nock('http://example.invalid')
+      .get('/feed')
+      .reply(
+        200,
+        `<rss version="2.0"><channel><title>Test Feed</title><link>http://example.invalid</link><description>Test Description</description></channel></rss>`,
+      );
+
+    await expect(service.findFeed('http://example.invalid/feed')).resolves.toEqual({
+      title: 'Test Feed',
+      html_url: 'http://example.invalid',
+      xml_url: 'http://example.invalid/feed',
+    });
+
+    scope.done();
+  });
+
+  it('should find feed from webpage URL', async () => {
+    const scope = nock('http://example.invalid')
+      .get('/')
+      .reply(200, `<link rel="alternate" type="application/rss+xml" href="/feed" />`)
+      .get('/feed')
+      .reply(
+        200,
+        `<rss version="2.0"><channel><title>Test Feed</title><link>http://example.invalid</link><description>Test Description</description></channel></rss>`,
+      );
+
+    await expect(service.findFeed('http://example.invalid')).resolves.toEqual({
+      title: 'Test Feed',
+      html_url: 'http://example.invalid',
+      xml_url: 'http://example.invalid/feed',
+    });
 
     scope.done();
   });

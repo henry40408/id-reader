@@ -53,12 +53,13 @@ export class OpmlService {
             const task = async () => {
               const [id] = await tx<Feed>('feeds')
                 .insert({
+                  user_id: userId,
                   category_id: categoryId,
                   title: feed.title,
                   xml_url: feed.xmlUrl,
                   html_url: feed.htmlUrl,
                 })
-                .onConflict(['category_id', 'xml_url'])
+                .onConflict(['user_id', 'xml_url'])
                 .ignore();
               if (id) feedCount += 1;
             };
