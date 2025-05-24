@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="1.0">
+  <head>
+    <title>Test OPML</title>
+  </head>
+  <body>
+    <outline text="Test Category 1">
+      <outline text="Test Feed 1" title="Test Feed 1" type="rss" xmlUrl="http://test.invalid/feed/1" htmlUrl="http://test.invalid" />
+      <outline text="Test Feed 2" title="Test Feed 2" type="atom" xmlUrl="http://blog.test.invalid/feed/2" htmlUrl="http://blog.test.invalid" />
+    </outline>
+    <outline text="Test Category 2">
+      <outline text="Test Feed 3" title="Test Feed 3" type="rss" xmlUrl="http://test.invalid/feed/3" htmlUrl="http://test.invalid" />
+      <outline text="Test Feed 4" title="Test Feed 4" type="atom" xmlUrl="http://blog.test.invalid/feed/4" htmlUrl="http://blog.test.invalid" />
+    </outline>
+  </body>
+</opml>
