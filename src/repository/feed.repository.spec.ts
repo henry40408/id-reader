@@ -35,7 +35,7 @@ describe('FeedRepository', () => {
     const user = await createUser(moduleRef);
     const category = await categoryRepository.create({ user_id: user.id, name: 'Test Category' });
     const feed = await repository.create({
-      user_id: category.user_id,
+      user_id: 0,
       category_id: category.id,
       title: 'Test Feed',
       xml_url: 'http://example.invalid/feed',
@@ -43,12 +43,11 @@ describe('FeedRepository', () => {
     expect(feed).toBeDefined();
   });
 
-  it('should not create a feed with the same category ID and xml URL', async () => {
+  it('should not create a feed with the same user ID and XML URL', async () => {
     const user = await createUser(moduleRef);
-    const category = await categoryRepository.create({ user_id: user.id, name: 'Test Category' });
     const data: CreateFeed = {
-      user_id: category.user_id,
-      category_id: category.id,
+      user_id: user.id,
+      category_id: 0,
       title: 'Test Feed',
       xml_url: 'http://example.invalid/feed',
     };
@@ -60,7 +59,7 @@ describe('FeedRepository', () => {
     const user = await createUser(moduleRef);
     const category = await categoryRepository.create({ user_id: user.id, name: 'Test Category' });
     const feed = await repository.create({
-      user_id: category.user_id,
+      user_id: 0,
       category_id: category.id,
       title: 'Test Feed',
       xml_url: 'http://example.invalid/feed',

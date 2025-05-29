@@ -12,7 +12,19 @@ export class FeedRepository {
 
   async create(dto: CreateFeed): Promise<Feed> {
     return await this.knexService.connection.transaction(async (tx) => {
-      const [id] = await tx('feeds_composite').insert(dto).into('feeds');
+      if (!!dto.category_id === !!dto.user_id)
+        throw new Error('Either category_id or user_id must be provided, but not both');
+
+      const cloned = structuredClone(dto);
+      if (cloned.category_id) {
+        const category = await tx('categories').where('id', cloned.category_id).first();
+        if (!category) throw new Error(`Category with id ${cloned.category_id} does not exist.`);
+        cloned.user_id = category.user_id;
+      } else {
+        const category = await this.findDefaultCategory(tx, cloned.user_id);
+        cloned.category_id = category.id;
+      }
+      const [id] = await tx('feeds_composite').insert(cloned).into('feeds');
       const feed = await tx('feeds').select('*').where('id', id).first();
       return feed!;
     });
