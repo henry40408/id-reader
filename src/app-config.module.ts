@@ -40,7 +40,7 @@ export class AppConfigService {
     if (this.appEnv.test) return ':memory:';
     return this.configService.getOrThrow<string>(
       'DATABASE_URL',
-      'development.sqlite',
+      'development.sqlite3',
     );
   }
 }
