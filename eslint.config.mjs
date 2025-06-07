@@ -41,6 +41,7 @@ export default tseslint.config(
         'error',
         { alphabetize: { order: 'asc', orderImportKind: 'asc' } },
       ],
+      'no-restricted-imports': ['error', { patterns: ['src/*'] }],
     },
   },
 );
