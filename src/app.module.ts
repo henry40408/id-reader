@@ -4,9 +4,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppConfigModule, AppConfigService } from './app-config.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { CategoryEntity } from './entities/category.entity';
 import { UserEntity } from './entities/user.entity';
 
-const entities = [UserEntity];
+const entities = [CategoryEntity, UserEntity];
 
 @Module({
   imports: [

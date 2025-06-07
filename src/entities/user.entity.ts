@@ -5,14 +5,16 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { CategoryEntity } from './category.entity';
 
 @Entity()
 export class UserEntity {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column({ unique: true })
   username: string;
@@ -25,6 +27,11 @@ export class UserEntity {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => CategoryEntity, (category) => category.user, {
+    cascade: true,
+  })
+  categories: CategoryEntity[];
 
   password?: string;
 
