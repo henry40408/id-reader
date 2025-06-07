@@ -45,13 +45,12 @@ describe('Category entity', () => {
     );
 
     const category3 = repository.create({ userId: 2, name: 'Category 1' });
-    await expect(repository.save(category3)).resolves.toBeDefined();
+    await repository.save(category3);
 
     const category4 = repository.create({ userId: 1, name: 'Category 2' });
-    await expect(repository.save(category4)).resolves.toBeDefined();
+    await repository.save(category4);
 
     const categories = await repository.find();
-    expect(categories).toHaveLength(3);
     expect(categories.map((c) => c.name)).toEqual([
       'Category 1',
       'Category 1',

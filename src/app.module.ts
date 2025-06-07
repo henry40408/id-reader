@@ -5,9 +5,10 @@ import { AppConfigModule, AppConfigService } from './app-config.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CategoryEntity } from './entities/category.entity';
+import { FeedEntity } from './entities/feed.entity';
 import { UserEntity } from './entities/user.entity';
 
-const entities = [CategoryEntity, UserEntity];
+const entities = [CategoryEntity, FeedEntity, UserEntity];
 
 @Module({
   imports: [

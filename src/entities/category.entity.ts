@@ -3,11 +3,13 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Relation,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
+import { FeedEntity } from './feed.entity';
 import { UserEntity } from './user.entity';
 
 @Entity()
@@ -32,4 +34,10 @@ export class CategoryEntity {
     onDelete: 'CASCADE',
   })
   user: Relation<UserEntity>;
+
+  @OneToMany(() => FeedEntity, (feed) => feed.category, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  feeds: Relation<FeedEntity[]>;
 }
