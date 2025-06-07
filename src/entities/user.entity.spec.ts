@@ -1,9 +1,9 @@
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
+import { Repository } from 'typeorm';
 import { AppModule } from '../app.module';
 import { UserEntity } from './user.entity';
-import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
 
 describe('User entity', () => {
   let repository: Repository<UserEntity>;

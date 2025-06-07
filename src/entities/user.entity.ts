@@ -1,3 +1,4 @@
+import * as bcrypt from 'bcrypt';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -7,7 +8,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import * as bcrypt from 'bcrypt';
 
 @Entity()
 export class UserEntity {
