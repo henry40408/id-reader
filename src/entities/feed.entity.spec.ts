@@ -15,9 +15,7 @@ describe('Feed entity', () => {
     }).compile();
     repository = moduleRef.get(getRepositoryToken(FeedEntity));
 
-    const userRepository = moduleRef.get<Repository<UserEntity>>(
-      getRepositoryToken(UserEntity),
-    );
+    const userRepository = moduleRef.get<Repository<UserEntity>>(getRepositoryToken(UserEntity));
     const user1 = userRepository.create({
       id: 1,
       username: 'testuser',
@@ -25,9 +23,7 @@ describe('Feed entity', () => {
     });
     await userRepository.save(user1);
 
-    const categoryRepository = moduleRef.get<Repository<CategoryEntity>>(
-      getRepositoryToken(CategoryEntity),
-    );
+    const categoryRepository = moduleRef.get<Repository<CategoryEntity>>(getRepositoryToken(CategoryEntity));
     const category1 = categoryRepository.create({
       id: 1,
       userId: user1.id,

@@ -20,5 +20,6 @@
         }
       }
     ]
-  }
+  },
+  "coverageProvider": "v8"
 }

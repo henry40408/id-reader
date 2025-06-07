@@ -38,10 +38,7 @@ export class AppConfigService {
 
   private get databaseUrl(): string {
     if (this.appEnv.test) return ':memory:';
-    return this.configService.getOrThrow<string>(
-      'DATABASE_URL',
-      'development.sqlite3',
-    );
+    return this.configService.getOrThrow<string>('DATABASE_URL', 'development.sqlite3');
   }
 }
 

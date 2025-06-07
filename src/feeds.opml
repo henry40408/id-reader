@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="1.0">
+  <head>
+    <title>Exported OPML</title>
+  </head>
+  <body>
+    <outline text="Category 1">
+      <outline text="Feed 1" xmlUrl="http://example.com/feed1.xml" htmlUrl="http://example.com/feed1" />
+      <outline text="Feed 2" xmlUrl="http://example.com/feed2.xml" htmlUrl="http://example.com/feed2" />
+    </outline>
+    <outline text="Category 2">
+      <outline text="Feed 3" xmlUrl="http://example.com/feed3.xml" htmlUrl="http://example.com/feed3" />
+    </outline>
+  </body>
+</opml>

@@ -14,9 +14,7 @@ describe('Category entity', () => {
     }).compile();
     repository = moduleRef.get(getRepositoryToken(CategoryEntity));
 
-    const userRepository = moduleRef.get<Repository<UserEntity>>(
-      getRepositoryToken(UserEntity),
-    );
+    const userRepository = moduleRef.get<Repository<UserEntity>>(getRepositoryToken(UserEntity));
     const user1 = userRepository.create({
       id: 1,
       username: 'testuser1',
@@ -51,11 +49,7 @@ describe('Category entity', () => {
     await repository.save(category4);
 
     const categories = await repository.find();
-    expect(categories.map((c) => c.name)).toEqual([
-      'Category 1',
-      'Category 1',
-      'Category 2',
-    ]);
+    expect(categories.map((c) => c.name)).toEqual(['Category 1', 'Category 1', 'Category 2']);
     expect(categories.map((c) => c.userId)).toEqual([1, 2, 1]);
   });
 });

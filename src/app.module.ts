@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { CategoryEntity } from './entities/category.entity';
 import { FeedEntity } from './entities/feed.entity';
 import { UserEntity } from './entities/user.entity';
+import { OpmlService } from './opml.service';
 
 const entities = [CategoryEntity, FeedEntity, UserEntity];
 
@@ -27,6 +28,6 @@ const entities = [CategoryEntity, FeedEntity, UserEntity];
     TypeOrmModule.forFeature(entities),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, OpmlService],
 })
 export class AppModule {}
