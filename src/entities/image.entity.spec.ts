@@ -2,12 +2,8 @@ import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AppModule } from '../app.module';
+import { PNG_1x1 } from '../test.helper';
 import { ImageEntity } from './image.entity';
-
-const PNG_1x1 = Buffer.from(
-  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAAtJREFUGFdjYAACAAAFAAGq1chRAAAAAElFTkSuQmCC',
-  'base64',
-);
 
 describe('Image entity', () => {
   let repository: Repository<ImageEntity>;

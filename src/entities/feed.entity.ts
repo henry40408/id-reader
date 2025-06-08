@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { CategoryEntity } from './category.entity';
+import { ImageEntity } from './image.entity';
 
 @Entity()
 @Unique(['userId', 'categoryId', 'url'])
@@ -41,4 +42,7 @@ export class FeedEntity {
     onDelete: 'CASCADE',
   })
   category: Relation<CategoryEntity>;
+
+  @ManyToOne(() => ImageEntity, { cascade: true, nullable: true, eager: true, onDelete: 'SET NULL' })
+  image?: Relation<ImageEntity>;
 }
