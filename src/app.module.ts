@@ -6,10 +6,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CategoryEntity } from './entities/category.entity';
 import { FeedEntity } from './entities/feed.entity';
+import { ImageEntity } from './entities/image.entity';
 import { UserEntity } from './entities/user.entity';
 import { OpmlService } from './opml.service';
 
-const entities = [CategoryEntity, FeedEntity, UserEntity];
+const entities = [CategoryEntity, FeedEntity, ImageEntity, UserEntity];
 
 @Module({
   imports: [
