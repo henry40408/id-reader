@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import fetch from 'node-fetch';
 import Parser from 'rss-parser';
 import { Repository } from 'typeorm';
 import { FeedEntity } from './entities/feed.entity';

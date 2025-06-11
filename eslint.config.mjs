@@ -37,11 +37,15 @@ export default tseslint.config(
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-floating-promises': 'warn',
       '@typescript-eslint/no-unsafe-argument': 'warn',
-      'import/order': [
-        'error',
-        { alphabetize: { order: 'asc', orderImportKind: 'asc' } },
-      ],
+      'import/order': ['error', { alphabetize: { order: 'asc', orderImportKind: 'asc' } }],
       'no-restricted-imports': ['error', { patterns: ['src/*'] }],
+      'no-restricted-globals': [
+        'error',
+        {
+          name: 'fetch',
+          message: 'Use node-fetch instead',
+        },
+      ],
     },
   },
 );
