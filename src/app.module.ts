@@ -3,12 +3,12 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { JwtModule } from '@nestjs/jwt';
+import { TerminusModule } from '@nestjs/terminus';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Request, Response } from 'express';
 import { GraphQLFormattedError } from 'graphql/error';
 import { AppConfigModule, AppConfigService } from './app-config.module';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { CategoryEntity } from './entities/category.entity';
 import { FeedEntity } from './entities/feed.entity';
 import { ImageEntity } from './entities/image.entity';
@@ -35,6 +35,7 @@ const entities = [CategoryEntity, FeedEntity, ImageEntity, UserEntity];
       }),
     }),
     TypeOrmModule.forFeature(entities),
+    TerminusModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
@@ -61,6 +62,6 @@ const entities = [CategoryEntity, FeedEntity, ImageEntity, UserEntity];
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, ImageService, OpmlService, AuthResolver],
+  providers: [ImageService, OpmlService, AuthResolver],
 })
 export class AppModule {}
