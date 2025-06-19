@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { JwtModule } from '@nestjs/jwt';
+import { MulterModule } from '@nestjs/platform-express';
 import { TerminusModule } from '@nestjs/terminus';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Request, Response } from 'express';
@@ -13,6 +14,7 @@ import { CategoryEntity } from './entities/category.entity';
 import { FeedEntity } from './entities/feed.entity';
 import { ImageEntity } from './entities/image.entity';
 import { UserEntity } from './entities/user.entity';
+import { FeedsController } from './feeds.controller';
 import { GraphQLContext } from './graphql.context';
 import { ImageService } from './image.service';
 import { OpmlService } from './opml.service';
@@ -60,8 +62,12 @@ const entities = [CategoryEntity, FeedEntity, ImageEntity, UserEntity];
         signOptions: { expiresIn: configService.config.jwt.expiresIn },
       }),
     }),
+    MulterModule.register({
+      dest: '/tmp',
+      limits: { fileSize: 10 * 1024 * 1024 },
+    }),
   ],
-  controllers: [AppController],
+  controllers: [AppController, FeedsController],
   providers: [ImageService, OpmlService, AuthResolver],
 })
 export class AppModule {}

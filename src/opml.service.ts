@@ -95,23 +95,34 @@ export class OpmlService {
 
       for (const outline of outlines) {
         const categoryName = outline.text;
-        const inserted = await categoryRepository.upsert(
-          { userId: user.id, name: categoryName },
-          { conflictPaths: ['userId', 'name'] },
-        );
-        const category = inserted.generatedMaps[0] as CategoryEntity;
+
+        const value = { userId: user.id, name: categoryName };
+        await categoryRepository
+          .createQueryBuilder()
+          .insert()
+          .into(CategoryEntity)
+          .values(value)
+          .orIgnore()
+          .updateEntity(false)
+          .execute();
+
+        const category = await categoryRepository.findOneOrFail({ where: value });
 
         for (const feed of outline.children) {
-          await feedRepository.upsert(
-            {
+          await feedRepository
+            .createQueryBuilder()
+            .insert()
+            .into(FeedEntity)
+            .values({
               categoryId: category.id,
               userId: user.id,
               title: feed.text,
               url: feed.xmlUrl,
               link: feed.htmlUrl,
-            },
-            { conflictPaths: ['userId', 'categoryId', 'url'] },
-          );
+            })
+            .orIgnore()
+            .updateEntity(false)
+            .execute();
         }
       }
     });
