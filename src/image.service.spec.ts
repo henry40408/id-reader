@@ -1,13 +1,15 @@
-import { MikroORM } from '@mikro-orm/core';
+import { EntityManager, MikroORM } from '@mikro-orm/core';
 import { Test, TestingModule } from '@nestjs/testing';
 import nock from 'nock';
 import { AppModule } from './app.module';
+import { CategoryEntity, UserEntity } from './entities';
 import { FeedEntity } from './entities/feed.entity';
 import { ImageService } from './image.service';
 import { PNG_1x1 } from './test.helper';
 
 describe('Image service', () => {
   let moduleRef: TestingModule;
+  let em: EntityManager;
   let service: ImageService;
 
   beforeEach(async () => {
@@ -15,7 +17,8 @@ describe('Image service', () => {
     moduleRef = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
-    service = moduleRef.get<ImageService>(ImageService);
+    em = moduleRef.get(EntityManager);
+    service = moduleRef.get(ImageService);
     const orm = moduleRef.get(MikroORM);
     await orm.schema.refreshDatabase();
   });
@@ -30,18 +33,31 @@ describe('Image service', () => {
     expect(service).toBeDefined();
   });
 
-  it('should download favicon', async () => {
-    nock('https://example.invalid').get('/favicon.ico').reply(200, PNG_1x1, {
+  it('should download feed image', async () => {
+    nock('https://example.invalid').get('/feed.xml').reply(404, '').get('/favicon.ico').reply(200, PNG_1x1, {
       'Content-Type': 'image/png',
     });
-    const feed = {
-      id: 1,
-      link: 'https://example.invalid',
-    } as FeedEntity;
-    const image = await service.downloadFavicon(feed);
+
+    await em.persist(em.create(UserEntity, { id: 1, username: 'testuser', passwordHash: 'hashedpassword' })).flush();
+    await em.persist(em.create(CategoryEntity, { id: 1, user: 1, name: 'Test Feed' })).flush();
+
+    const feed = new FeedEntity();
+    feed.title = 'Test Feed';
+    feed.url = 'https://example.invalid/feed.xml';
+    feed.link = 'https://example.invalid';
+    feed.user = await em.findOneOrFail(UserEntity, 1);
+    feed.category = await em.findOneOrFail(CategoryEntity, 1);
+
+    await em.persist(feed).flush();
+
+    const image = await service.downloadFeedImage(feed);
     expect(image).toBeDefined();
     expect(image?.url).toBe('https://example.invalid/favicon.ico');
     expect(image?.contentType).toBe('image/png');
     expect(image?.blob).toEqual(PNG_1x1);
+
+    const updatedFeed = await em.findOneOrFail(FeedEntity, feed.id, { populate: ['image'] });
+    expect(updatedFeed.image?.id).toBe(image?.id);
+    expect(updatedFeed.image?.url).toBe(image?.url);
   });
 });

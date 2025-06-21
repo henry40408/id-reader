@@ -11,20 +11,28 @@ export class ImageService {
   constructor(private readonly em: EntityManager) {}
 
   async downloadFeedImage(feed: FeedEntity): Promise<ImageEntity | undefined> {
+    let image: ImageEntity | undefined;
     {
-      const image = await this.downloadImageFromFeed(feed);
-      if (image) {
-        this.logger.debug(`Downloaded image from feed ${feed.id}: ${image.id}`);
-        return image;
+      const feedImage = await this.downloadImageFromFeed(feed);
+      if (feedImage) {
+        this.logger.debug(`Downloaded image from feed ${feed.id}: ${feedImage.id}`);
+        image = feedImage;
       }
     }
     {
       const favicon = await this.downloadFavicon(feed);
       if (favicon) {
         this.logger.debug(`Downloaded favicon for feed ${feed.id}: ${favicon.id}`);
-        return favicon;
+        image = favicon;
       }
     }
+
+    if (image) {
+      feed.image = image;
+      await this.em.persistAndFlush(feed);
+      return image;
+    }
+
     this.logger.debug(`No image found in feed ${feed.id}, trying favicon.`);
     return undefined;
   }
