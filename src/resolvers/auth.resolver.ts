@@ -1,6 +1,6 @@
 import { EntityManager } from '@mikro-orm/core';
 import { BadRequestException, UseGuards } from '@nestjs/common';
-import { Args, Context, Field, InputType, Mutation, ObjectType, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { secondsToMilliseconds } from 'date-fns';
@@ -8,21 +8,7 @@ import { AppConfigService } from '../app-config.module';
 import { AuthGuard, RequestWithUser } from '../auth.guard';
 import { UserEntity } from '../entities';
 import { ACCESS_TOKEN_KEY, GraphQLContext, JwtPayload } from '../graphql.context';
-
-@ObjectType({ description: 'The JWT payload object' })
-export class JwtPayloadObject {
-  @Field({ description: 'The user ID from the JWT payload' })
-  sub!: number;
-}
-
-@InputType({ description: 'Sign in credentials' })
-export class SignInInput {
-  @Field({ description: 'The username of the user' })
-  username!: string;
-
-  @Field({ description: 'The password of the user' })
-  password!: string;
-}
+import { JwtPayloadObject, SignInInput } from './object-types';
 
 @Resolver()
 export class AuthResolver {
