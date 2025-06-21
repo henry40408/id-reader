@@ -13,7 +13,7 @@ export class CategoriesResolver {
 
   @Query(() => [CategoryObject], { description: 'Get all categories' })
   @UseGuards(AuthGuard)
-  async categories(@Context() ctx: GraphQLContext<RequestWithUser>): Promise<CategoryEntity[]> {
+  async getCategories(@Context() ctx: GraphQLContext<RequestWithUser>): Promise<CategoryEntity[]> {
     const userId = ctx.req.jwtPayload.sub;
     return await this.em.find(CategoryEntity, { user: userId }, { populate: ['user'] });
   }

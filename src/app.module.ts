@@ -15,6 +15,7 @@ import { ImageService } from './image.service';
 import { OpmlService } from './opml.service';
 import { OrmModule } from './orm/orm.module';
 import { AuthResolver, CategoriesResolver } from './resolvers';
+import { FeedsResolver } from './resolvers/feeds.resolver';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { AuthResolver, CategoriesResolver } from './resolvers';
     // GraphQL resolvers
     AuthResolver,
     CategoriesResolver,
+    FeedsResolver,
   ],
 })
 export class AppModule {}

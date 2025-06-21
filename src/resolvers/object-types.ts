@@ -47,3 +47,30 @@ export class CategoryObject {
   @Field({ description: 'The date when the category was last updated' })
   updatedAt!: Date;
 }
+
+@ObjectType({ description: 'Feed object' })
+export class FeedObject {
+  @Field({ description: 'The unique identifier of the feed' })
+  id!: number;
+
+  @Field({ description: 'The title of the feed' })
+  title!: string;
+
+  @Field({ description: 'The URL of the feed' })
+  url!: string;
+
+  @Field({ description: 'The link of the feed', nullable: true })
+  link: string;
+
+  @Field(() => UserObject, { description: 'The user who owns the feed' })
+  user!: UserObject;
+
+  @Field(() => CategoryObject, { description: 'The category of the feed' })
+  category!: CategoryObject;
+
+  @Field({ description: 'The date when the feed was created' })
+  createdAt!: Date;
+
+  @Field({ description: 'The date when the feed was last updated' })
+  updatedAt!: Date;
+}
