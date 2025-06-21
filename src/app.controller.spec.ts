@@ -1,29 +1,28 @@
 import { TerminusModule } from '@nestjs/terminus';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { AppConfigModule } from './app-config.module';
 import { AppController } from './app.controller';
+import { OrmModule } from './orm/orm.module';
 
 describe('AppController', () => {
-  let appController: AppController;
+  let moduleRef: TestingModule;
+  let controller: AppController;
 
   beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
-      imports: [
-        TerminusModule,
-        TypeOrmModule.forRoot({
-          database: ':memory:',
-          type: 'sqlite',
-        }),
-      ],
+    moduleRef = await Test.createTestingModule({
+      imports: [AppConfigModule, TerminusModule, OrmModule],
       controllers: [AppController],
     }).compile();
+    controller = moduleRef.get(AppController);
+  });
 
-    appController = app.get<AppController>(AppController);
+  afterEach(async () => {
+    await moduleRef.close();
   });
 
   describe('root', () => {
     it('should return health check response', async () => {
-      await expect(appController.check()).resolves.toEqual(
+      await expect(controller.check()).resolves.toEqual(
         expect.objectContaining({
           status: 'ok',
           info: {

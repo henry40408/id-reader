@@ -1,55 +1,67 @@
-import { Test } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { AppModule } from '../app.module';
+import { EntityManager, MikroORM } from '@mikro-orm/core';
+import { Test, TestingModule } from '@nestjs/testing';
+import { OrmModule } from '../orm/orm.module';
 import { CategoryEntity } from './category.entity';
-import { UserEntity } from './user.entity';
+import { UserEntity } from '.';
 
 describe('Category entity', () => {
-  let repository: Repository<CategoryEntity>;
+  let moduleRef: TestingModule;
+  let em: EntityManager;
 
   beforeEach(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
+    moduleRef = await Test.createTestingModule({
+      imports: [OrmModule],
     }).compile();
-    repository = moduleRef.get(getRepositoryToken(CategoryEntity));
 
-    const userRepository = moduleRef.get<Repository<UserEntity>>(getRepositoryToken(UserEntity));
-    const user1 = userRepository.create({
-      id: 1,
-      username: 'testuser1',
-      passwordHash: 'testpassword1',
-    });
-    await userRepository.save(user1);
+    const orm = moduleRef.get(MikroORM);
+    await orm.schema.refreshDatabase();
 
-    const user2 = userRepository.create({
-      id: 2,
-      username: 'testuser2',
-      passwordHash: 'testpassword2',
-    });
-    await userRepository.save(user2);
+    em = moduleRef.get(EntityManager);
+
+    await em
+      .fork()
+      .persist(
+        em.create(UserEntity, {
+          id: 1,
+          username: 'testuser1',
+          passwordHash: 'testpassword1',
+        }),
+      )
+      .flush();
+    await em
+      .fork()
+      .persist(
+        em.create(UserEntity, {
+          id: 2,
+          username: 'testuser2',
+          passwordHash: 'testpassword2',
+        }),
+      )
+      .flush();
   });
 
-  it('should be defined', () => {
-    expect(repository).toBeDefined();
+  afterEach(async () => {
+    await moduleRef.close();
   });
 
-  it('should unique userId and name', async () => {
-    const category1 = repository.create({ userId: 1, name: 'Category 1' });
-    const category2 = repository.create({ userId: 1, name: 'Category 1' });
-    await repository.save(category1);
-    await expect(repository.save(category2)).rejects.toThrow(
-      'SQLITE_CONSTRAINT: UNIQUE constraint failed: category_entity.userId, category_entity.name',
-    );
+  it('should unique user and name', async () => {
+    const user1 = await em.findOneOrFail(UserEntity, { id: 1 });
 
-    const category3 = repository.create({ userId: 2, name: 'Category 1' });
-    await repository.save(category3);
+    const category1 = new CategoryEntity();
+    category1.user = user1;
+    category1.name = 'Test Category 1';
 
-    const category4 = repository.create({ userId: 1, name: 'Category 2' });
-    await repository.save(category4);
+    await em.fork().persist(category1).flush();
 
-    const categories = await repository.find();
-    expect(categories.map((c) => c.name)).toEqual(['Category 1', 'Category 1', 'Category 2']);
-    expect(categories.map((c) => c.userId)).toEqual([1, 2, 1]);
+    const category2 = new CategoryEntity();
+    category2.user = user1;
+    category2.name = 'Test Category 1';
+    await expect(em.fork().persist(category2).flush()).rejects.toThrow();
+
+    const user2 = await em.findOneOrFail(UserEntity, { id: 2 });
+    const category3 = new CategoryEntity();
+    category3.user = user2;
+    category3.name = 'Test Category 1';
+    await em.fork().persist(category3).flush();
   });
 });

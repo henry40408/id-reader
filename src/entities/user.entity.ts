@@ -1,43 +1,23 @@
+import { Entity, Unique, OneToMany, BeforeUpdate, Property, Collection, BeforeCreate } from '@mikro-orm/core';
 import * as bcrypt from 'bcrypt';
-import {
-  BeforeInsert,
-  BeforeUpdate,
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  Unique,
-  UpdateDateColumn,
-} from 'typeorm';
+import { BaseEntity } from './base.entity';
 import { CategoryEntity } from './category.entity';
 
 @Entity()
-@Unique(['username'])
-export class UserEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
+@Unique({ properties: 'username' })
+export class UserEntity extends BaseEntity {
+  @Property()
   username: string;
 
-  @Column()
+  @Property()
   passwordHash: string;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @OneToMany(() => CategoryEntity, (category) => category.user, {
-    cascade: true,
-  })
-  categories: CategoryEntity[];
+  @OneToMany(() => CategoryEntity, (category) => category.user)
+  categories = new Collection<CategoryEntity>(this);
 
   password?: string;
 
-  @BeforeInsert()
+  @BeforeCreate()
   @BeforeUpdate()
   async hashPassword() {
     if (this.password) this.passwordHash = await bcrypt.hash(this.password, 10);

@@ -1,48 +1,27 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  Relation,
-  Unique,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Entity, ManyToOne, Property, Rel, Unique } from '@mikro-orm/core';
+import { BaseEntity } from './base.entity';
 import { CategoryEntity } from './category.entity';
 import { ImageEntity } from './image.entity';
+import { UserEntity } from './user.entity';
 
 @Entity()
-@Unique(['userId', 'categoryId', 'url'])
-export class FeedEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
-  userId: number;
-
-  @Column()
-  categoryId: number;
-
-  @Column()
+@Unique({ properties: ['user', 'url'] })
+export class FeedEntity extends BaseEntity {
+  @Property()
   title: string;
 
-  @Column()
+  @Property()
   url: string;
 
-  @Column({ nullable: true })
+  @Property({ nullable: true })
   link?: string;
 
-  @CreateDateColumn()
-  createdAt: Date;
+  @ManyToOne(() => UserEntity)
+  user: Rel<UserEntity>;
 
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @ManyToOne(() => CategoryEntity)
+  category: Rel<CategoryEntity>;
 
-  @ManyToOne(() => CategoryEntity, (category) => category.feeds, {
-    onDelete: 'CASCADE',
-  })
-  category: Relation<CategoryEntity>;
-
-  @ManyToOne(() => ImageEntity, { cascade: true, nullable: true, eager: true, onDelete: 'SET NULL' })
-  image?: Relation<ImageEntity>;
+  @ManyToOne(() => ImageEntity, { nullable: true })
+  image?: Rel<ImageEntity>;
 }

@@ -5,38 +5,22 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { JwtModule } from '@nestjs/jwt';
 import { MulterModule } from '@nestjs/platform-express';
 import { TerminusModule } from '@nestjs/terminus';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { Request, Response } from 'express';
 import { GraphQLFormattedError } from 'graphql/error';
 import { AppConfigModule, AppConfigService } from './app-config.module';
 import { AppController } from './app.controller';
-import { CategoryEntity } from './entities/category.entity';
-import { FeedEntity } from './entities/feed.entity';
-import { ImageEntity } from './entities/image.entity';
-import { UserEntity } from './entities/user.entity';
 import { FeedsController } from './feeds.controller';
 import { GraphQLContext } from './graphql.context';
 import { ImageService } from './image.service';
 import { OpmlService } from './opml.service';
+import { OrmModule } from './orm/orm.module';
 import { AuthResolver } from './resolvers/auth.resolver';
-
-const entities = [CategoryEntity, FeedEntity, ImageEntity, UserEntity];
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     AppConfigModule,
-    TypeOrmModule.forRootAsync({
-      imports: [AppConfigModule],
-      inject: [AppConfigService],
-      useFactory: (configService: AppConfigService) => ({
-        type: 'sqlite',
-        database: configService.config.databaseUrl,
-        entities,
-        synchronize: !configService.config.appEnv.production,
-      }),
-    }),
-    TypeOrmModule.forFeature(entities),
+    OrmModule,
     TerminusModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,

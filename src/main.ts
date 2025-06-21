@@ -1,3 +1,4 @@
+import { MikroORM } from '@mikro-orm/core';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerDocumentOptions, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
@@ -26,6 +27,9 @@ async function bootstrap() {
     const documentFactory = () => SwaggerModule.createDocument(app, config, options);
     SwaggerModule.setup('api', app, documentFactory);
   }
+
+  await app.get(MikroORM).getSchemaGenerator().ensureDatabase();
+  await app.get(MikroORM).getSchemaGenerator().updateSchema();
 
   await app.listen(process.env.PORT ?? 3000);
 }

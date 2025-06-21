@@ -1,4 +1,5 @@
-import { Test } from '@nestjs/testing';
+import { MikroORM } from '@mikro-orm/core';
+import { Test, TestingModule } from '@nestjs/testing';
 import nock from 'nock';
 import { AppModule } from './app.module';
 import { FeedEntity } from './entities/feed.entity';
@@ -6,20 +7,23 @@ import { ImageService } from './image.service';
 import { PNG_1x1 } from './test.helper';
 
 describe('Image service', () => {
+  let moduleRef: TestingModule;
   let service: ImageService;
 
   beforeEach(async () => {
     nock.disableNetConnect();
-    const moduleRef = await Test.createTestingModule({
+    moduleRef = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
-    await moduleRef.init();
     service = moduleRef.get<ImageService>(ImageService);
+    const orm = moduleRef.get(MikroORM);
+    await orm.schema.refreshDatabase();
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     nock.cleanAll();
     nock.enableNetConnect();
+    await moduleRef.close();
   });
 
   it('should be defined', () => {

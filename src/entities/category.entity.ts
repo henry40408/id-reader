@@ -1,43 +1,19 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  Relation,
-  Unique,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Collection, Entity, ManyToOne, OneToMany, Property, Rel, Unique } from '@mikro-orm/core';
+import { BaseEntity } from './base.entity';
 import { FeedEntity } from './feed.entity';
 import { UserEntity } from './user.entity';
 
 @Entity()
-@Unique(['userId', 'name'])
-export class CategoryEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
-  userId: number;
-
-  @Column()
+@Unique({
+  properties: ['user', 'name'],
+})
+export class CategoryEntity extends BaseEntity {
+  @Property()
   name: string;
 
-  @CreateDateColumn()
-  createdAt: Date;
+  @ManyToOne(() => UserEntity)
+  user?: Rel<UserEntity>;
 
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @ManyToOne(() => UserEntity, (user) => user.categories, {
-    onDelete: 'CASCADE',
-  })
-  user: Relation<UserEntity>;
-
-  @OneToMany(() => FeedEntity, (feed) => feed.category, {
-    cascade: true,
-    onDelete: 'CASCADE',
-  })
-  feeds: Relation<FeedEntity[]>;
+  @OneToMany(() => FeedEntity, (feed) => feed.category)
+  feeds = new Collection<FeedEntity>(this);
 }

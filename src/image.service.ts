@@ -1,19 +1,14 @@
+import { EntityManager } from '@mikro-orm/core';
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import fetch from 'node-fetch';
 import Parser from 'rss-parser';
-import { Repository } from 'typeorm';
-import { FeedEntity } from './entities/feed.entity';
-import { ImageEntity } from './entities/image.entity';
+import { FeedEntity, ImageEntity } from './entities';
 
 @Injectable()
 export class ImageService {
   private readonly logger = new Logger(ImageService.name);
 
-  constructor(
-    @InjectRepository(ImageEntity)
-    private readonly imageRepository: Repository<ImageEntity>,
-  ) {}
+  constructor(private readonly em: EntityManager) {}
 
   async downloadFeedImage(feed: FeedEntity): Promise<ImageEntity | undefined> {
     {
@@ -99,12 +94,13 @@ export class ImageService {
         return undefined;
       }
 
-      const image = new ImageEntity();
-      image.url = response.url;
-      image.contentType = contentType;
-      image.blob = Buffer.from(await response.arrayBuffer());
-
-      return this.imageRepository.save(image);
+      const image = this.em.create(ImageEntity, {
+        url: response.url,
+        contentType,
+        blob: Buffer.from(await response.arrayBuffer()),
+      });
+      await this.em.persist(image).flush();
+      return image;
     } catch (error_) {
       const error = error_ as Error;
       this.logger.error(`Failed to download image ${url}: ${error.message}`, error.stack);

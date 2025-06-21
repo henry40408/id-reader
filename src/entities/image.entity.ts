@@ -1,23 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Unique } from 'typeorm';
+import { Entity, Property, Unique } from '@mikro-orm/core';
+import { BaseEntity } from './base.entity';
 
 @Entity()
-@Unique(['url', 'createdAt'])
-export class ImageEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
+@Unique({ properties: ['url', 'createdAt'] })
+export class ImageEntity extends BaseEntity {
+  @Property()
   url: string;
 
-  @Column()
+  @Property()
   blob: Buffer;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Property({ type: 'varchar', length: 255 })
   contentType: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 }

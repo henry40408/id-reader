@@ -1,13 +1,12 @@
+import { EntityManager } from '@mikro-orm/core';
 import { BadRequestException, UseGuards } from '@nestjs/common';
 import { Args, Context, Field, InputType, Mutation, ObjectType, Query, Resolver } from '@nestjs/graphql';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { secondsToMilliseconds } from 'date-fns';
-import { Repository } from 'typeorm';
 import { AppConfigService } from '../app-config.module';
 import { AuthGuard, RequestWithUser } from '../auth.guard';
-import { UserEntity } from '../entities/user.entity';
+import { UserEntity } from '../entities';
 import { ACCESS_TOKEN_KEY, GraphQLContext, JwtPayload } from '../graphql.context';
 
 @ObjectType({ description: 'The JWT payload object' })
@@ -28,7 +27,7 @@ export class SignInInput {
 @Resolver()
 export class AuthResolver {
   constructor(
-    @InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>,
+    private readonly em: EntityManager,
     private readonly appConfigService: AppConfigService,
     private readonly jwtService: JwtService,
   ) {}
@@ -44,7 +43,7 @@ export class AuthResolver {
     @Context() ctx: GraphQLContext<RequestWithUser>,
     @Args('input') input: SignInInput,
   ): Promise<JwtPayloadObject> {
-    const found = await this.userRepository.findOneBy({ username: input.username });
+    const found = await this.em.findOneOrFail(UserEntity, { username: input.username });
     if (!found) throw new BadRequestException('Invalid username or password');
 
     const valid = await bcrypt.compare(input.password, found.passwordHash);
