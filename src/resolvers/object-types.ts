@@ -48,6 +48,24 @@ export class CategoryObject {
   updatedAt!: Date;
 }
 
+@ObjectType({ description: 'Image object' })
+export class ImageObject {
+  @Field({ description: 'The unique identifier of the image' })
+  id!: number;
+
+  @Field({ description: 'The URL of the image' })
+  url!: string;
+
+  @Field({ description: 'The content type of the image' })
+  contentType!: string;
+
+  @Field({ description: 'The date when the image was created' })
+  createdAt!: Date;
+
+  @Field({ description: 'The date when the image was last updated' })
+  updatedAt!: Date;
+}
+
 @ObjectType({ description: 'Feed object' })
 export class FeedObject {
   @Field({ description: 'The unique identifier of the feed' })
@@ -67,6 +85,9 @@ export class FeedObject {
 
   @Field(() => CategoryObject, { description: 'The category of the feed' })
   category!: CategoryObject;
+
+  @Field({ description: 'The image associated with the feed', nullable: true })
+  image?: ImageObject;
 
   @Field({ description: 'The date when the feed was created' })
   createdAt!: Date;
