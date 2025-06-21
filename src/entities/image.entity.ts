@@ -12,4 +12,10 @@ export class ImageEntity extends BaseEntity {
 
   @Property({ type: 'varchar', length: 255 })
   contentType: string;
+
+  @Property({ nullable: true })
+  etag?: string;
+
+  @Property({ nullable: true })
+  lastModified?: string;
 }

@@ -36,6 +36,7 @@
     "@nestjs/swagger": "^11.2.0",
     "@nestjs/terminus": "^11.0.0",
     "bcrypt": "^6.0.0",
+    "cheerio": "^1.1.0",
     "cookie-parser": "^1.4.7",
     "date-fns": "^4.1.0",
     "express": "^5.1.0",

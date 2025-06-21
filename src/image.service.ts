@@ -1,6 +1,7 @@
 import { EntityManager } from '@mikro-orm/core';
-import { Injectable, Logger } from '@nestjs/common';
-import fetch from 'node-fetch';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
+import * as cheerio from 'cheerio';
+import fetch, { HeaderInit } from 'node-fetch';
 import Parser from 'rss-parser';
 import { FeedEntity, ImageEntity } from './entities';
 
@@ -10,7 +11,7 @@ export class ImageService {
 
   constructor(private readonly em: EntityManager) {}
 
-  async downloadFeedImage(feed: FeedEntity): Promise<ImageEntity | undefined> {
+  async downloadFeedImage(feed: FeedEntity): Promise<ImageEntity | null> {
     let image: ImageEntity | undefined;
     {
       const feedImage = await this.downloadImageFromFeed(feed);
@@ -33,42 +34,80 @@ export class ImageService {
       return image;
     }
 
-    this.logger.debug(`No image found in feed ${feed.id}, trying favicon.`);
-    return undefined;
+    this.logger.debug(`No image found in feed ${feed.id}, trying favicon`);
+    return null;
   }
 
-  async downloadFavicon(feed: FeedEntity): Promise<ImageEntity | undefined> {
+  async downloadFavicon(feed: FeedEntity): Promise<ImageEntity | null> {
     if (!feed.link) {
-      this.logger.warn(`Feed ${feed.id} has no link, cannot download favicon.`);
-      return undefined;
+      this.logger.warn(`Feed ${feed.id} has no link, cannot download favicon`);
+      return null;
     }
 
     const url = new URL('/favicon.ico', feed.link);
     try {
-      return this.downloadImage(url);
+      {
+        const favicon = await this.downloadImage(url);
+        if (favicon) return favicon;
+      }
+      {
+        const favicon = await this.searchAndDownloadFavicon(feed);
+        if (favicon) return favicon;
+      }
+      return null;
     } catch (error_) {
       const error = error_ as Error;
       this.logger.error(`Failed to download favicon ${url}: ${error.message}`, error.stack);
-      return undefined;
+      return null;
     }
   }
 
-  async downloadImageFromFeed(feed: FeedEntity): Promise<ImageEntity | undefined> {
+  async searchAndDownloadFavicon(feed: FeedEntity): Promise<ImageEntity | null> {
+    if (!feed.link) {
+      this.logger.warn(`Feed ${feed.id} has no link, cannot download favicon from link`);
+      return null;
+    }
+
+    try {
+      const url = new URL(feed.link);
+
+      const response = await fetch(url, { redirect: 'follow' });
+      if (!response.ok) {
+        this.logger.warn(`Failed to download website content for favicon ${feed.link}: ${response.statusText}`);
+        return null;
+      }
+
+      const parsed = cheerio.load(await response.text());
+      const iconLink = parsed('link[rel="icon"]').attr('href') || parsed('link[rel="shortcut icon"]').attr('href');
+      if (!iconLink) {
+        this.logger.warn(`No favicon link found in website content for ${feed.link}`);
+        return null;
+      }
+
+      return await this.downloadImage(new URL(iconLink, url));
+    } catch (error_) {
+      const error = error_ as Error;
+      this.logger.error(`Failed to download favicon from link ${feed.link}: ${error.message}`, error.stack);
+      return null;
+    }
+  }
+
+  async downloadImageFromFeed(feed: FeedEntity): Promise<ImageEntity | null> {
     try {
       const parser = new Parser();
 
       const response = await fetch(feed.url, { redirect: 'follow' });
       if (!response.ok) {
         this.logger.warn(`Failed to fetch feed content for feed ${feed.id}: ${response.statusText}`);
-        return undefined;
+        return null;
       }
 
       const parsed = await parser.parseString(await response.text());
 
       const baseUrl = parsed.link || feed.link;
       if (!baseUrl) {
-        this.logger.warn(`Feed ${feed.id} has no link, cannot resolve image URL.`);
-        return undefined;
+        this.logger.warn(`Feed ${feed.id} has no link, cannot resolve image URL`);
+        return null;
       }
 
       if (parsed.image && parsed.image.url) {
@@ -77,42 +116,64 @@ export class ImageService {
       }
 
       this.logger.warn(`No image found in feed content for feed ${feed.id}`);
-      return undefined;
+      return null;
     } catch (error_) {
       const error = error_ as Error;
       this.logger.error(
         `Failed to download image from feed content for feed ${feed.id}: ${error.message}`,
         error.stack,
       );
-      return undefined;
+      return null;
     }
   }
 
-  async downloadImage(url: URL): Promise<ImageEntity | undefined> {
+  async downloadImage(url: URL): Promise<ImageEntity | null> {
     try {
-      const response = await fetch(url, { redirect: 'follow' });
+      const headers: HeaderInit = {};
+
+      const existing = await this.em.findOne(ImageEntity, { url: String(url) });
+      if (existing?.etag) {
+        this.logger.debug(`Set ETag for ${url}: ${existing.etag}`);
+        headers['If-None-Match'] = existing.etag;
+      }
+      if (existing?.lastModified) {
+        this.logger.debug(`Set Last-Modified for ${url}: ${existing.lastModified}`);
+        headers['If-Modified-Since'] = existing.lastModified;
+      }
+
+      const response = await fetch(url, { redirect: 'follow', headers });
+      if (response.status === Number(HttpStatus.NOT_MODIFIED)) {
+        const etag = response.headers.get('etag');
+        const lastModified = response.headers.get('last-modified');
+        this.logger.debug(`Image ${url} not modified, using existing image`);
+        this.logger.debug(`ETag: ${etag}, Last-Modified: ${lastModified}`);
+        return existing;
+      }
       if (!response.ok) {
         this.logger.warn(`Failed to download image ${url}: ${response.statusText}`);
-        return undefined;
+        return null;
       }
 
       const contentType = response.headers.get('content-type');
       if (!contentType || !contentType.startsWith('image/')) {
         this.logger.warn(`Invalid content type for image ${url}: ${contentType}`);
-        return undefined;
+        return null;
       }
 
+      this.logger.debug(`Downloaded image ${url} with content type ${contentType}`);
       const image = this.em.create(ImageEntity, {
         url: response.url,
         contentType,
         blob: Buffer.from(await response.arrayBuffer()),
+        etag: response.headers.get('etag'),
+        lastModified: response.headers.get('last-modified'),
       });
       await this.em.persist(image).flush();
       return image;
     } catch (error_) {
       const error = error_ as Error;
       this.logger.error(`Failed to download image ${url}: ${error.message}`, error.stack);
-      return undefined;
+      return null;
     }
   }
 }

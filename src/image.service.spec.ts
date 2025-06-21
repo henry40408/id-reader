@@ -34,8 +34,11 @@ describe('Image service', () => {
   });
 
   it('should download feed image', async () => {
+    const lastModified = new Date();
     nock('https://example.invalid').get('/feed.xml').reply(404, '').get('/favicon.ico').reply(200, PNG_1x1, {
       'Content-Type': 'image/png',
+      ETag: '12345',
+      'Last-Modified': lastModified.toUTCString(),
     });
 
     await em.persist(em.create(UserEntity, { id: 1, username: 'testuser', passwordHash: 'hashedpassword' })).flush();
@@ -50,14 +53,32 @@ describe('Image service', () => {
 
     await em.persist(feed).flush();
 
-    const image = await service.downloadFeedImage(feed);
-    expect(image).toBeDefined();
-    expect(image?.url).toBe('https://example.invalid/favicon.ico');
-    expect(image?.contentType).toBe('image/png');
-    expect(image?.blob).toEqual(PNG_1x1);
+    {
+      const image = await service.downloadFeedImage(feed);
+      expect(image).toBeDefined();
+      expect(image?.id).toBe(1);
+      expect(image?.url).toBe('https://example.invalid/favicon.ico');
+      expect(image?.contentType).toBe('image/png');
+      expect(image?.blob).toEqual(PNG_1x1);
+      expect(image?.etag).toBe('12345');
+      expect(image?.lastModified).toEqual(lastModified.toUTCString());
 
-    const updatedFeed = await em.findOneOrFail(FeedEntity, feed.id, { populate: ['image'] });
-    expect(updatedFeed.image?.id).toBe(image?.id);
-    expect(updatedFeed.image?.url).toBe(image?.url);
+      const updatedFeed = await em.findOneOrFail(FeedEntity, feed.id, { populate: ['image'] });
+      expect(updatedFeed.image?.id).toBe(image?.id);
+      expect(updatedFeed.image?.url).toBe(image?.url);
+    }
+
+    nock('https://example.invalid')
+      .get('/feed.xml')
+      .reply(404, '')
+      .get('/favicon.ico')
+      .matchHeader('If-None-Match', '12345')
+      .matchHeader('If-Modified-Since', lastModified.toUTCString())
+      .reply(304, '');
+    {
+      const image = await service.downloadFeedImage(feed);
+      expect(image).toBeDefined();
+      expect(image?.id).toBe(1);
+    }
   });
 });
