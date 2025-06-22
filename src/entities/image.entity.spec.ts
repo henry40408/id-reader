@@ -1,7 +1,7 @@
 import { EntityManager, MikroORM } from '@mikro-orm/core';
 import { Test, TestingModule } from '@nestjs/testing';
 import { OrmModule } from '../orm/orm.module';
-import { PNG_1x1 } from '../test.helper';
+import { PNG_1x1, PNG_1x1_SHA256SUM } from '../test.helper';
 import { ImageEntity } from '.';
 
 describe('Image entity', () => {
@@ -43,6 +43,7 @@ describe('Image entity', () => {
       url: 'https://example.com/image.png',
       blob: PNG_1x1,
       contentType: 'image/png',
+      sha256sum: PNG_1x1_SHA256SUM,
     });
   });
 });

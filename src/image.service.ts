@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import { EntityManager } from '@mikro-orm/core';
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import * as cheerio from 'cheerio';
@@ -15,14 +16,14 @@ export class ImageService {
     let image: ImageEntity | undefined;
     {
       const feedImage = await this.downloadImageFromFeed(feed);
-      if (feedImage) {
+      if (!image && feedImage) {
         this.logger.debug(`Downloaded image from feed ${feed.id}: ${feedImage.id}`);
         image = feedImage;
       }
     }
     {
       const favicon = await this.downloadFavicon(feed);
-      if (favicon) {
+      if (!image && favicon) {
         this.logger.debug(`Downloaded favicon for feed ${feed.id}: ${favicon.id}`);
         image = favicon;
       }
@@ -43,6 +44,8 @@ export class ImageService {
       this.logger.warn(`Feed ${feed.id} has no link, cannot download favicon`);
       return null;
     }
+
+    this.logger.debug(`Downloading favicon for feed ${feed.id} from ${feed.link}`);
 
     const url = new URL('/favicon.ico', feed.link);
     try {
@@ -68,6 +71,8 @@ export class ImageService {
       return null;
     }
 
+    this.logger.debug(`Searching for favicon in website content for feed ${feed.id} from ${feed.link}`);
+
     try {
       const url = new URL(feed.link);
 
@@ -84,7 +89,10 @@ export class ImageService {
         return null;
       }
 
-      return await this.downloadImage(new URL(iconLink, url));
+      const fullIconLink = new URL(iconLink, url);
+      this.logger.debug(`Found favicon link: ${fullIconLink}`);
+
+      return await this.downloadImage(fullIconLink);
     } catch (error_) {
       const error = error_ as Error;
       this.logger.error(`Failed to download favicon from link ${feed.link}: ${error.message}`, error.stack);
@@ -94,6 +102,8 @@ export class ImageService {
 
   async downloadImageFromFeed(feed: FeedEntity): Promise<ImageEntity | null> {
     try {
+      this.logger.debug(`Downloading image from feed content for feed ${feed.id}`);
+
       const parser = new Parser();
 
       const response = await fetch(feed.url, { redirect: 'follow' });
@@ -129,9 +139,11 @@ export class ImageService {
 
   async downloadImage(url: URL): Promise<ImageEntity | null> {
     try {
+      const em = this.em.fork();
+
       const headers: HeaderInit = {};
 
-      const existing = await this.em.findOne(ImageEntity, { url: String(url) });
+      const existing = await em.findOne(ImageEntity, { url: String(url) });
       if (existing?.etag) {
         this.logger.debug(`Set ETag for ${url}: ${existing.etag}`);
         headers['If-None-Match'] = existing.etag;
@@ -145,8 +157,9 @@ export class ImageService {
       if (response.status === Number(HttpStatus.NOT_MODIFIED)) {
         const etag = response.headers.get('etag');
         const lastModified = response.headers.get('last-modified');
-        this.logger.debug(`Image ${url} not modified, using existing image`);
-        this.logger.debug(`ETag: ${etag}, Last-Modified: ${lastModified}`);
+        this.logger.debug(
+          `Image ${url} not modified, using existing image. ETag: ${etag}, Last-Modified: ${lastModified}`,
+        );
         return existing;
       }
       if (!response.ok) {
@@ -160,15 +173,25 @@ export class ImageService {
         return null;
       }
 
+      const blob = Buffer.from(await response.arrayBuffer());
+      const sha256sum = crypto.createHash('sha256').update(blob).digest('hex');
+      const sameSha256sum = await em.findOne(ImageEntity, { sha256sum });
+      if (sameSha256sum) {
+        this.logger.debug(`Image ${url} already exists with same SHA256 sum: ${sha256sum}`);
+        return sameSha256sum;
+      }
+
       this.logger.debug(`Downloaded image ${url} with content type ${contentType}`);
-      const image = this.em.create(ImageEntity, {
+      const image = em.create(ImageEntity, {
         url: response.url,
         contentType,
-        blob: Buffer.from(await response.arrayBuffer()),
+        blob,
         etag: response.headers.get('etag'),
         lastModified: response.headers.get('last-modified'),
       });
-      await this.em.persist(image).flush();
+      em.persist(image);
+
+      await em.flush();
       return image;
     } catch (error_) {
       const error = error_ as Error;

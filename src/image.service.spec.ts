@@ -5,7 +5,7 @@ import { AppModule } from './app.module';
 import { CategoryEntity, UserEntity } from './entities';
 import { FeedEntity } from './entities/feed.entity';
 import { ImageService } from './image.service';
-import { PNG_1x1 } from './test.helper';
+import { PNG_1x1, PNG_1x1_SHA256SUM } from './test.helper';
 
 describe('Image service', () => {
   let moduleRef: TestingModule;
@@ -62,6 +62,7 @@ describe('Image service', () => {
       expect(image?.blob).toEqual(PNG_1x1);
       expect(image?.etag).toBe('12345');
       expect(image?.lastModified).toEqual(lastModified.toUTCString());
+      expect(image?.sha256sum).toBe(PNG_1x1_SHA256SUM);
 
       const updatedFeed = await em.findOneOrFail(FeedEntity, feed.id, { populate: ['image'] });
       expect(updatedFeed.image?.id).toBe(image?.id);

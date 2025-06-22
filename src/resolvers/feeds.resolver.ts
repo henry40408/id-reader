@@ -19,7 +19,7 @@ export class FeedsResolver {
   @UseGuards(AuthGuard)
   async getFeeds(@Context() ctx: GraphQLContext<RequestWithUser>) {
     const userId = ctx.req.jwtPayload.sub;
-    return await this.em.find(FeedEntity, { user: userId }, { populate: ['user', 'category'] });
+    return await this.em.find(FeedEntity, { user: userId }, { populate: ['user', 'category', 'image'] });
   }
 
   @Mutation(() => FeedObject)

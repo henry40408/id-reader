@@ -59,6 +59,15 @@ export class ImageObject {
   @Field({ description: 'The content type of the image' })
   contentType!: string;
 
+  @Field({ description: 'The SHA-256 checksum of the image', nullable: true })
+  sha256sum!: string;
+
+  @Field({ description: 'The ETag of the image', nullable: true })
+  etag?: string;
+
+  @Field({ description: 'The last modified date of the image', nullable: true })
+  lastModified?: string;
+
   @Field({ description: 'The date when the image was created' })
   createdAt!: Date;
 
