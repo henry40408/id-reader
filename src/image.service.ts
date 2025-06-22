@@ -106,7 +106,12 @@ export class ImageService {
 
       const parser = new Parser();
 
-      const response = await fetch(feed.url, { redirect: 'follow' });
+      const response = await fetch(feed.url, {
+        redirect: 'follow',
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; Miniflux/2.2.8; +https://miniflux.app)',
+        },
+      });
       if (!response.ok) {
         this.logger.warn(`Failed to fetch feed content for feed ${feed.id}: ${response.statusText}`);
         return null;
