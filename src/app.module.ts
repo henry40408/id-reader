@@ -9,6 +9,7 @@ import { Request, Response } from 'express';
 import { GraphQLFormattedError } from 'graphql/error';
 import { AppConfigModule, AppConfigService } from './app-config.module';
 import { AppController } from './app.controller';
+import { FeedService } from './feed.service';
 import { FeedsController } from './feeds.controller';
 import { GraphQLContext } from './graphql.context';
 import { ImageService } from './image.service';
@@ -55,6 +56,7 @@ import { FeedsResolver } from './resolvers/feeds.resolver';
   controllers: [AppController, FeedsController],
   providers: [
     // services
+    FeedService,
     ImageService,
     OpmlService,
     // GraphQL resolvers

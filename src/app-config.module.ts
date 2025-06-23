@@ -17,6 +17,7 @@ export interface AppConfig {
   appEnv: AppEnv;
   databaseUrl: string;
   jwt: JwtConfig;
+  userAgent: string;
 }
 
 @Injectable()
@@ -34,6 +35,10 @@ export class AppConfigService {
           millisecondsToSeconds(milliseconds({ days: 7 })),
         ),
       },
+      userAgent: this.configService.getOrThrow<string>(
+        'USER_AGENT',
+        'Mozilla/5.0 (compatible; Miniflux/2.2.8; +https://miniflux.app)',
+      ),
     };
   }
 

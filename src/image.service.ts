@@ -4,13 +4,17 @@ import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import * as cheerio from 'cheerio';
 import fetch, { HeaderInit } from 'node-fetch';
 import Parser from 'rss-parser';
+import { AppConfigService } from './app-config.module';
 import { FeedEntity, ImageEntity } from './entities';
 
 @Injectable()
 export class ImageService {
   private readonly logger = new Logger(ImageService.name);
 
-  constructor(private readonly em: EntityManager) {}
+  constructor(
+    private readonly em: EntityManager,
+    private readonly configService: AppConfigService,
+  ) {}
 
   async downloadFeedImage(feed: FeedEntity): Promise<ImageEntity | null> {
     let image: ImageEntity | undefined;
@@ -108,9 +112,7 @@ export class ImageService {
 
       const response = await fetch(feed.url, {
         redirect: 'follow',
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; Miniflux/2.2.8; +https://miniflux.app)',
-        },
+        headers: { 'User-Agent': this.configService.config.userAgent },
       });
       if (!response.ok) {
         this.logger.warn(`Failed to fetch feed content for feed ${feed.id}: ${response.statusText}`);

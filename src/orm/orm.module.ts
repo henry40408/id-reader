@@ -4,8 +4,10 @@ import { SqliteDriver } from '@mikro-orm/sqlite';
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
 import { AppConfigModule, AppConfigService } from '../app-config.module';
-import { CategoryEntity, FeedEntity, ImageEntity, UserEntity } from '../entities';
+import { CategoryEntity, EntryEntity, FeedEntity, ImageEntity, UserEntity } from '../entities';
 import { OrmHealthIndicator } from './orm.health';
+
+const entities = [CategoryEntity, EntryEntity, FeedEntity, ImageEntity, UserEntity];
 
 @Module({
   imports: [
@@ -15,14 +17,14 @@ import { OrmHealthIndicator } from './orm.health';
       inject: [AppConfigService],
       useFactory: (configService: AppConfigService) => ({
         driver: SqliteDriver,
-        entities: [CategoryEntity, FeedEntity, ImageEntity, UserEntity],
+        entities,
         dbName: configService.config.databaseUrl,
         highlighter: new SqlHighlighter(),
         debug: configService.config.appEnv.development,
         allowGlobalContext: configService.config.appEnv.test,
       }),
     }),
-    MikroOrmModule.forFeature([CategoryEntity, FeedEntity, ImageEntity, UserEntity]),
+    MikroOrmModule.forFeature(entities),
     TerminusModule,
   ],
   providers: [OrmHealthIndicator],
