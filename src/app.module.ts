@@ -13,6 +13,7 @@ import { FeedService } from './feed.service';
 import { FeedsController } from './feeds.controller';
 import { GraphQLContext } from './graphql.context';
 import { ImageService } from './image.service';
+import { ImagesController } from './images.controller';
 import { OpmlService } from './opml.service';
 import { OrmModule } from './orm/orm.module';
 import { AuthResolver, CategoriesResolver } from './resolvers';
@@ -53,7 +54,7 @@ import { FeedsResolver } from './resolvers/feeds.resolver';
       limits: { fileSize: 10 * 1024 * 1024 },
     }),
   ],
-  controllers: [AppController, FeedsController],
+  controllers: [AppController, FeedsController, ImagesController],
   providers: [
     // services
     FeedService,
