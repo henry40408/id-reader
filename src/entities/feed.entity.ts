@@ -8,19 +8,19 @@ import { UserEntity } from './user.entity';
 @Unique({ properties: ['user', 'url'] })
 export class FeedEntity extends BaseEntity {
   @Property()
-  title: string;
+  title!: string;
 
   @Property()
-  url: string;
+  url!: string;
 
   @Property({ nullable: true })
   link?: string;
 
   @ManyToOne(() => UserEntity)
-  user: Rel<UserEntity>;
+  user!: Rel<UserEntity>;
 
   @ManyToOne(() => CategoryEntity)
-  category: Rel<CategoryEntity>;
+  category!: Rel<CategoryEntity>;
 
   @ManyToOne(() => ImageEntity, { nullable: true })
   image?: Rel<ImageEntity>;

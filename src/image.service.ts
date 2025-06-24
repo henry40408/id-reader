@@ -2,10 +2,13 @@ import crypto from 'node:crypto';
 import { EntityManager } from '@mikro-orm/core';
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import * as cheerio from 'cheerio';
+import { sub } from 'date-fns';
 import fetch, { HeaderInit } from 'node-fetch';
 import Parser from 'rss-parser';
 import { AppConfigService } from './app-config.module';
-import { FeedEntity, ImageEntity } from './entities';
+import { FeedEntity, ImageEntity, JobLogEntity } from './entities';
+
+export const DOWNLOAD_FEED_IMAGE = 'download_feed_image';
 
 @Injectable()
 export class ImageService {
@@ -15,6 +18,71 @@ export class ImageService {
     private readonly em: EntityManager,
     private readonly configService: AppConfigService,
   ) {}
+
+  async downloadFeedImages(userId: number, seconds: number): Promise<void> {
+    const em = this.em.fork();
+
+    const now = new Date();
+    const pivot = sub(now, { seconds });
+
+    const feeds = await em.find(FeedEntity, { user: userId });
+    const feedIds = feeds.map((feed) => String(feed.id));
+    const jobLogs = await em.find(JobLogEntity, {
+      name: DOWNLOAD_FEED_IMAGE,
+      externalId: { $in: feedIds },
+      createdAt: { $gte: pivot },
+    });
+
+    const promises: Promise<void>[] = [];
+    for (const feed of feeds) {
+      const found = jobLogs.find((log) => log.externalId === String(feed.id));
+      if (found) {
+        this.logger.debug(`Skipping feed ${feed.id} as it has already been processed recently`);
+        continue;
+      }
+      const task = async () => {
+        try {
+          this.logger.debug(`Downloading image for feed ${feed.id}`);
+          const image = await this.downloadFeedImage(feed);
+          if (image) {
+            this.logger.debug(`Downloaded image for feed ${feed.id}: ${image.id}`);
+
+            const jobLog = em.create(JobLogEntity, {
+              name: DOWNLOAD_FEED_IMAGE,
+              externalId: String(feed.id),
+              status: 'ok',
+              payload: { type: 'ok', result: { imageId: image.id } },
+            });
+            await em.upsert(JobLogEntity, jobLog, { onConflictAction: 'merge' });
+          } else {
+            this.logger.debug(`No image found for feed ${feed.id}`);
+
+            const jobLog = em.create(JobLogEntity, {
+              name: DOWNLOAD_FEED_IMAGE,
+              externalId: String(feed.id),
+              status: 'err',
+              payload: { type: 'err', error: 'No image found' },
+            });
+            await em.upsert(JobLogEntity, jobLog, { onConflictAction: 'merge' });
+          }
+        } catch (error_) {
+          const error = error_ as Error;
+          this.logger.error(`Failed to download image for feed ${feed.id}: ${error.message}`, error.stack);
+
+          const jobLog = em.create(JobLogEntity, {
+            name: DOWNLOAD_FEED_IMAGE,
+            externalId: String(feed.id),
+            status: 'err',
+            payload: { type: 'err', error: error.message },
+          });
+          await em.upsert(JobLogEntity, jobLog, { onConflictAction: 'merge' });
+        }
+      };
+      promises.push(task());
+    }
+    await Promise.all(promises);
+    await em.flush();
+  }
 
   async downloadFeedImage(feed: FeedEntity): Promise<ImageEntity | null> {
     let image: ImageEntity | undefined;

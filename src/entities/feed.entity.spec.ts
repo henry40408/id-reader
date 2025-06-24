@@ -67,6 +67,8 @@ describe('Feed entity', () => {
       url: 'http://example.com/feed1', // Same URL as feed1
     });
 
-    await expect(em.fork().persist(duplicateFeed).flush()).rejects.toThrow('SQLITE_CONSTRAINT');
+    await expect(em.fork().persist(duplicateFeed).flush()).rejects.toThrow(
+      'SQLITE_CONSTRAINT: UNIQUE constraint failed',
+    );
   });
 });

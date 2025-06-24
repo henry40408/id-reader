@@ -1,7 +1,8 @@
 import { EntityManager } from '@mikro-orm/core';
 import { UserInputError } from '@nestjs/apollo';
-import { UseGuards } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { milliseconds, millisecondsToSeconds } from 'date-fns';
 import { AuthGuard, RequestWithUser } from '../auth.guard';
 import { FeedEntity } from '../entities';
 import { GraphQLContext } from '../graphql.context';
@@ -10,6 +11,8 @@ import { FeedObject } from './object-types';
 
 @Resolver()
 export class FeedsResolver {
+  private readonly logger = new Logger(FeedsResolver.name);
+
   constructor(
     private readonly em: EntityManager,
     private readonly imageService: ImageService,
@@ -37,5 +40,23 @@ export class FeedsResolver {
     if (!image) throw new UserInputError('No image found for this feed');
 
     return await this.em.findOneOrFail(FeedEntity, { id: feed.id }, { populate: ['image', 'user', 'category'] });
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(AuthGuard)
+  updateFeedImages(
+    @Context() ctx: GraphQLContext<RequestWithUser>,
+    @Args('seconds', {
+      type: () => Number,
+      description: 'The number of seconds to look back for feed images',
+      defaultValue: millisecondsToSeconds(milliseconds({ days: 30 })),
+    })
+    seconds: number,
+  ): boolean {
+    const userId = ctx.req.jwtPayload.sub;
+    this.imageService.downloadFeedImages(userId, seconds).catch((err) => {
+      this.logger.error(err);
+    });
+    return true;
   }
 }

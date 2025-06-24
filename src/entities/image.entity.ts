@@ -6,13 +6,13 @@ import { BaseEntity } from './base.entity';
 @Unique({ properties: ['url', 'createdAt'] })
 export class ImageEntity extends BaseEntity {
   @Property()
-  url: string;
+  url!: string;
 
   @Property()
-  blob: Buffer;
+  blob!: Buffer;
 
   @Property({ type: 'varchar', length: 255 })
-  contentType: string;
+  contentType!: string;
 
   @Property()
   sha256sum?: string;

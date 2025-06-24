@@ -9,10 +9,10 @@ import { UserEntity } from './user.entity';
 })
 export class CategoryEntity extends BaseEntity {
   @Property()
-  name: string;
+  name!: string;
 
   @ManyToOne(() => UserEntity)
-  user?: Rel<UserEntity>;
+  user!: Rel<UserEntity>;
 
   @OneToMany(() => FeedEntity, (feed) => feed.category)
   feeds = new Collection<FeedEntity>(this);

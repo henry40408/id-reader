@@ -4,10 +4,10 @@ import { SqliteDriver } from '@mikro-orm/sqlite';
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
 import { AppConfigModule, AppConfigService } from '../app-config.module';
-import { CategoryEntity, EntryEntity, FeedEntity, ImageEntity, UserEntity } from '../entities';
+import { CategoryEntity, EntryEntity, FeedEntity, ImageEntity, JobLogEntity, UserEntity } from '../entities';
 import { OrmHealthIndicator } from './orm.health';
 
-const entities = [CategoryEntity, EntryEntity, FeedEntity, ImageEntity, UserEntity];
+const entities = [CategoryEntity, EntryEntity, FeedEntity, ImageEntity, JobLogEntity, UserEntity];
 
 @Module({
   imports: [
