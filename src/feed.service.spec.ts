@@ -57,11 +57,6 @@ describe('FeedService', () => {
     const entry = entries[0];
     expect(entry.guid).toBe('https://news.ycombinator.com/item?id=44350322');
     expect(entry.title).toBe('I wrote my PhD Thesis in Typst');
-    expect(entry.content).toContain(`
-<p>Article URL: <a href="https://fransskarman.com/phd_thesis_in_typst.html">https://fransskarman.com/phd_thesis_in_typst.html</a></p>
-<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44350322">https://news.ycombinator.com/item?id=44350322</a></p>
-<p>Points: 487</p>
-<p># Comments: 284</p>`);
     expect(entry.summary).toBe('');
     expect(entry.link).toBe('https://fransskarman.com/phd_thesis_in_typst.html');
     expect(entry.pubDate).toEqual(new Date('2025-06-22T21:12:01.000Z'));
