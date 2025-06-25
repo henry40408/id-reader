@@ -8,7 +8,7 @@ import Parser from 'rss-parser';
 import { AppConfigService } from './app-config.module';
 import { FeedEntity, ImageEntity, JobLogEntity } from './entities';
 
-export const DOWNLOAD_FEED_IMAGE = 'download_feed_image';
+export const DOWNLOAD_FEED_IMAGE = 'feed:download_image';
 
 @Injectable()
 export class ImageService {
