@@ -1,10 +1,13 @@
 import { EntityManager } from '@mikro-orm/core';
 import { Injectable, Logger } from '@nestjs/common';
+import { add, sub } from 'date-fns';
 import fetch from 'node-fetch';
 import Parser from 'rss-parser';
 import { AppConfigService } from './app-config.module';
-import { EntryEntity, FeedEntity } from './entities';
+import { EntryEntity, FeedEntity, JobLogEntity } from './entities';
 import { convertDate } from './utility';
+
+export const FEED_FETCH_ENTRIES = 'feed:fetch_entries';
 
 @Injectable()
 export class FeedService {
@@ -15,7 +18,64 @@ export class FeedService {
     private readonly em: EntityManager,
   ) {}
 
-  async fetchEntries(feed: FeedEntity) {
+  async fetchEntries(userId: number, seconds: number): Promise<void> {
+    const em = this.em.fork();
+
+    const now = new Date();
+    const pivot = sub(now, { seconds });
+
+    const feeds = await em.find(FeedEntity, { user: userId });
+    const feedIds = feeds.map((feed) => String(feed.id));
+    const jobLogs = await em.find(JobLogEntity, {
+      name: FEED_FETCH_ENTRIES,
+      externalId: { $in: feedIds },
+      createdAt: { $gte: pivot },
+    });
+
+    const promises: Promise<void>[] = [];
+    for (const feed of feeds) {
+      const found = jobLogs.find((log) => log.externalId === String(feed.id));
+      if (found) {
+        const nextRun = add(found.createdAt, { seconds });
+        this.logger.debug(
+          `Skipping feed ${feed.id} as it has already been processed recently. It will be processed again at ${nextRun.toISOString()}.`,
+        );
+        continue;
+      }
+      const task = async () => {
+        try {
+          this.logger.debug(`Fetching entries for feed ${feed.id}`);
+          await this.fetchFeedEntries(feed);
+
+          this.logger.debug(`Entries fetched for feed ${feed.id}`);
+
+          const jobLog = em.create(JobLogEntity, {
+            name: FEED_FETCH_ENTRIES,
+            externalId: String(feed.id),
+            status: 'ok',
+            payload: { type: 'ok', result: {} },
+          });
+          await em.upsert(JobLogEntity, jobLog, { onConflictAction: 'merge' });
+        } catch (error_) {
+          const error = error_ as Error;
+          this.logger.error(`Failed to fetch entries for feed ${feed.id}: ${error.message}`, error.stack);
+
+          const jobLog = em.create(JobLogEntity, {
+            name: FEED_FETCH_ENTRIES,
+            externalId: String(feed.id),
+            status: 'err',
+            payload: { type: 'err', error: error.message },
+          });
+          await em.upsert(JobLogEntity, jobLog, { onConflictAction: 'merge' });
+        }
+      };
+      promises.push(task());
+    }
+    await Promise.all(promises);
+    await em.flush();
+  }
+
+  async fetchFeedEntries(feed: FeedEntity) {
     const em = this.em.fork();
 
     const res = await fetch(feed.url, {

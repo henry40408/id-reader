@@ -49,7 +49,7 @@ describe('FeedService', () => {
 
     await em.persist(feed).flush();
 
-    await service.fetchEntries(feed);
+    await service.fetchFeedEntries(feed);
 
     const entries = await em.find(EntryEntity, { feed: feed.id });
     expect(entries).toHaveLength(30);

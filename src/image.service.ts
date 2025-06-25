@@ -2,13 +2,13 @@ import crypto from 'node:crypto';
 import { EntityManager } from '@mikro-orm/core';
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import * as cheerio from 'cheerio';
-import { sub } from 'date-fns';
+import { add, sub } from 'date-fns';
 import fetch, { HeaderInit } from 'node-fetch';
 import Parser from 'rss-parser';
 import { AppConfigService } from './app-config.module';
 import { FeedEntity, ImageEntity, JobLogEntity } from './entities';
 
-export const DOWNLOAD_FEED_IMAGE = 'feed:download_image';
+export const FEED_DOWNLOAD_IMAGE = 'feed:download_image';
 
 @Injectable()
 export class ImageService {
@@ -28,7 +28,7 @@ export class ImageService {
     const feeds = await em.find(FeedEntity, { user: userId });
     const feedIds = feeds.map((feed) => String(feed.id));
     const jobLogs = await em.find(JobLogEntity, {
-      name: DOWNLOAD_FEED_IMAGE,
+      name: FEED_DOWNLOAD_IMAGE,
       externalId: { $in: feedIds },
       createdAt: { $gte: pivot },
     });
@@ -37,7 +37,10 @@ export class ImageService {
     for (const feed of feeds) {
       const found = jobLogs.find((log) => log.externalId === String(feed.id));
       if (found) {
-        this.logger.debug(`Skipping feed ${feed.id} as it has already been processed recently`);
+        const nextRun = add(found.createdAt, { seconds });
+        this.logger.debug(
+          `Skipping feed ${feed.id} as it has already been processed recently. It will be processed again at ${nextRun.toISOString()}.`,
+        );
         continue;
       }
       const task = async () => {
@@ -48,7 +51,7 @@ export class ImageService {
             this.logger.debug(`Downloaded image for feed ${feed.id}: ${image.id}`);
 
             const jobLog = em.create(JobLogEntity, {
-              name: DOWNLOAD_FEED_IMAGE,
+              name: FEED_DOWNLOAD_IMAGE,
               externalId: String(feed.id),
               status: 'ok',
               payload: { type: 'ok', result: { imageId: image.id } },
@@ -58,7 +61,7 @@ export class ImageService {
             this.logger.debug(`No image found for feed ${feed.id}`);
 
             const jobLog = em.create(JobLogEntity, {
-              name: DOWNLOAD_FEED_IMAGE,
+              name: FEED_DOWNLOAD_IMAGE,
               externalId: String(feed.id),
               status: 'err',
               payload: { type: 'err', error: 'No image found' },
@@ -70,7 +73,7 @@ export class ImageService {
           this.logger.error(`Failed to download image for feed ${feed.id}: ${error.message}`, error.stack);
 
           const jobLog = em.create(JobLogEntity, {
-            name: DOWNLOAD_FEED_IMAGE,
+            name: FEED_DOWNLOAD_IMAGE,
             externalId: String(feed.id),
             status: 'err',
             payload: { type: 'err', error: error.message },
