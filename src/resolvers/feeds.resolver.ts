@@ -4,10 +4,11 @@ import { Logger, UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { milliseconds, millisecondsToSeconds } from 'date-fns';
 import { AuthGuard, RequestWithUser } from '../auth.guard';
-import { FeedEntity } from '../entities';
+import { EntryEntity, FeedEntity } from '../entities';
+import { FeedService } from '../feed.service';
 import { GraphQLContext } from '../graphql.context';
 import { ImageService } from '../image.service';
-import { FeedObject } from './object-types';
+import { EntryObject, FeedObject } from './object-types';
 
 @Resolver()
 export class FeedsResolver {
@@ -15,17 +16,44 @@ export class FeedsResolver {
 
   constructor(
     private readonly em: EntityManager,
+    private readonly feedService: FeedService,
     private readonly imageService: ImageService,
   ) {}
 
-  @Query(() => [FeedObject])
+  @Mutation(() => FeedObject, { description: 'Fetch entries for a feed' })
+  @UseGuards(AuthGuard)
+  async fetchEntries(
+    @Context() ctx: GraphQLContext<RequestWithUser>,
+    @Args('id', { type: () => Number, description: 'The ID of the feed to fetch entries for' }) feedId: number,
+  ): Promise<FeedEntity> {
+    const userId = ctx.req.jwtPayload.sub;
+    const feed = await this.em.findOne(FeedEntity, { id: feedId, user: userId });
+    if (!feed) throw new UserInputError('Feed not found');
+    this.feedService.fetchEntries(feed).catch((err) => {
+      this.logger.error(err);
+    });
+    return feed;
+  }
+
+  @Query(() => [EntryObject], { description: 'Get entries for a specific feed' })
+  @UseGuards(AuthGuard)
+  async getEntries(@Context() ctx: GraphQLContext<RequestWithUser>): Promise<EntryEntity[]> {
+    const userId = ctx.req.jwtPayload.sub;
+    return await this.em.findAll(EntryEntity, {
+      where: { user: userId },
+      orderBy: { isoDate: 'DESC' },
+      populate: ['feed', 'user'],
+    });
+  }
+
+  @Query(() => [FeedObject], { description: 'Get all feeds for the current user' })
   @UseGuards(AuthGuard)
   async getFeeds(@Context() ctx: GraphQLContext<RequestWithUser>) {
     const userId = ctx.req.jwtPayload.sub;
     return await this.em.find(FeedEntity, { user: userId }, { populate: ['user', 'category', 'image'] });
   }
 
-  @Mutation(() => FeedObject)
+  @Mutation(() => FeedObject, { description: 'Update the image for a feed' })
   @UseGuards(AuthGuard)
   async updateFeedImage(
     @Context() ctx: GraphQLContext<RequestWithUser>,
@@ -42,7 +70,7 @@ export class FeedsResolver {
     return await this.em.findOneOrFail(FeedEntity, { id: feed.id }, { populate: ['image', 'user', 'category'] });
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => Boolean, { description: 'Update feed images for all feeds' })
   @UseGuards(AuthGuard)
   updateFeedImages(
     @Context() ctx: GraphQLContext<RequestWithUser>,

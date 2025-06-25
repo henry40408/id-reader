@@ -104,3 +104,45 @@ export class FeedObject {
   @Field({ description: 'The date when the feed was last updated' })
   updatedAt!: Date;
 }
+
+@ObjectType({ description: 'Entry object' })
+export class EntryObject {
+  @Field({ description: 'The unique identifier of the entry' })
+  id!: number;
+
+  @Field({ description: 'The globally unique identifier of the entry' })
+  guid!: string;
+
+  @Field({ description: 'The title of the entry' })
+  title!: string;
+
+  @Field({ description: 'The publication date of the entry' })
+  isoDate!: Date;
+
+  @Field({ description: 'The content of the entry', nullable: true })
+  content?: string;
+
+  @Field({ description: 'The summary of the entry', nullable: true })
+  summary?: string;
+
+  @Field({ description: 'The link to the entry', nullable: true })
+  link?: string;
+
+  @Field({ description: 'The creator of the entry', nullable: true })
+  creator?: string;
+
+  @Field(() => [String], { description: 'The categories associated with the entry', nullable: true })
+  categories?: string[];
+
+  @Field({ description: 'The date when the entry was created' })
+  createdAt!: Date;
+
+  @Field({ description: 'The date when the entry was last updated' })
+  updatedAt!: Date;
+
+  @Field(() => FeedObject, { description: 'The feed to which the entry belongs' })
+  feed!: FeedObject;
+
+  @Field(() => UserObject, { description: 'The user who owns the entry' })
+  user!: UserObject;
+}

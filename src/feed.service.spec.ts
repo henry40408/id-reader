@@ -57,9 +57,9 @@ describe('FeedService', () => {
     const entry = entries[0];
     expect(entry.guid).toBe('https://news.ycombinator.com/item?id=44350322');
     expect(entry.title).toBe('I wrote my PhD Thesis in Typst');
+    expect(entry.isoDate).toEqual(new Date('2025-06-22T21:12:01.000Z'));
     expect(entry.summary).toBe('');
     expect(entry.link).toBe('https://fransskarman.com/phd_thesis_in_typst.html');
-    expect(entry.pubDate).toEqual(new Date('2025-06-22T21:12:01.000Z'));
     expect(entry.creator).toBe('todsacerdoti');
     expect(entry.categories).toEqual([]);
     expect(entry.feed.id).toBe(feed.id);

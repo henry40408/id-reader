@@ -1,6 +1,7 @@
-import { Entity, ManyToOne, Property, Rel, Unique } from '@mikro-orm/core';
+import { Collection, Entity, ManyToOne, OneToMany, Property, Rel, Unique } from '@mikro-orm/core';
 import { BaseEntity } from './base.entity';
 import { CategoryEntity } from './category.entity';
+import { EntryEntity } from './entry.entity';
 import { ImageEntity } from './image.entity';
 import { UserEntity } from './user.entity';
 
@@ -24,4 +25,7 @@ export class FeedEntity extends BaseEntity {
 
   @ManyToOne(() => ImageEntity, { nullable: true })
   image?: Rel<ImageEntity>;
+
+  @OneToMany(() => EntryEntity, (entry) => entry.feed)
+  entries = new Collection<EntryEntity>(this);
 }

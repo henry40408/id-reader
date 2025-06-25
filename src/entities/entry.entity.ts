@@ -11,6 +11,9 @@ export class EntryEntity extends BaseEntity {
   @Property()
   title!: string;
 
+  @Property()
+  isoDate!: Date;
+
   @Property({ nullable: true })
   content?: string;
 
@@ -19,9 +22,6 @@ export class EntryEntity extends BaseEntity {
 
   @Property({ nullable: true })
   link?: string; // use original link if available
-
-  @Property({ nullable: true })
-  pubDate?: Date;
 
   @Property({ nullable: true })
   creator?: string;
