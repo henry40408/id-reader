@@ -1,7 +1,7 @@
 import { EntityManager } from '@mikro-orm/core';
 import { UserInputError } from '@nestjs/apollo';
 import { UseGuards } from '@nestjs/common';
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthGuard, RequestWithUser } from '../auth.guard';
 import { CategoryEntity } from '../entities';
 import { GraphQLContext } from '../graphql.context';
@@ -34,7 +34,7 @@ export class CategoriesResolver {
   @UseGuards(AuthGuard)
   async deleteCategory(
     @Context() ctx: GraphQLContext<RequestWithUser>,
-    @Args('id', { type: () => Number, description: 'The ID of the category to delete' }) id: number,
+    @Args('id', { type: () => Int, description: 'The ID of the category to delete' }) id: number,
   ): Promise<boolean> {
     const userId = ctx.req.jwtPayload.sub;
     const category = await this.em.findOne(CategoryEntity, { id, user: userId });

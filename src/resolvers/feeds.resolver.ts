@@ -1,7 +1,7 @@
 import { EntityManager } from '@mikro-orm/core';
 import { UserInputError } from '@nestjs/apollo';
 import { Logger, UseGuards } from '@nestjs/common';
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { milliseconds, millisecondsToSeconds } from 'date-fns';
 import { AuthGuard, RequestWithUser } from '../auth.guard';
 import { EntryEntity, FeedEntity } from '../entities';
@@ -24,7 +24,7 @@ export class FeedsResolver {
   @UseGuards(AuthGuard)
   async fetchEntries(
     @Context() ctx: GraphQLContext<RequestWithUser>,
-    @Args('id', { type: () => Number, description: 'The ID of the feed to fetch entries for' }) feedId: number,
+    @Args('id', { type: () => Int, description: 'The ID of the feed to fetch entries for' }) feedId: number,
   ): Promise<FeedEntity> {
     const userId = ctx.req.jwtPayload.sub;
     const feed = await this.em.findOne(FeedEntity, { id: feedId, user: userId });
@@ -57,7 +57,7 @@ export class FeedsResolver {
   @UseGuards(AuthGuard)
   async updateFeedImage(
     @Context() ctx: GraphQLContext<RequestWithUser>,
-    @Args('id', { type: () => Number, description: 'The ID of the feed to update' }) feedId: number,
+    @Args('id', { type: () => Int, description: 'The ID of the feed to update' }) feedId: number,
   ) {
     const userId = ctx.req.jwtPayload.sub;
 
@@ -75,7 +75,7 @@ export class FeedsResolver {
   updateFeedImages(
     @Context() ctx: GraphQLContext<RequestWithUser>,
     @Args('seconds', {
-      type: () => Number,
+      type: () => Int,
       description: 'The number of seconds to look back for feed images',
       defaultValue: millisecondsToSeconds(milliseconds({ days: 30 })),
     })
