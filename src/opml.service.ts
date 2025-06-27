@@ -2,6 +2,7 @@ import { Readable } from 'node:stream';
 import { EntityManager } from '@mikro-orm/core';
 import { Injectable } from '@nestjs/common';
 import sax from 'sax';
+import xml2js from 'xml2js';
 import { CategoryEntity } from './entities/category.entity';
 import { FeedEntity } from './entities/feed.entity';
 import { UserEntity } from './entities/user.entity';
@@ -115,6 +116,57 @@ export class OpmlService {
     }
 
     await em.flush();
+  }
+
+  async exportFeeds(user: UserEntity): Promise<string> {
+    const now = new Date();
+    const feeds = await this.em.find(FeedEntity, { user }, { populate: ['category'] });
+
+    const outlines: OpmlOutline[] = [];
+    const categoriesMap: Record<string, OpmlOutline> = {};
+
+    for (const feed of feeds) {
+      const categoryName = feed.category?.name || DEFAULT_CATEGORY_NAME;
+      if (!categoriesMap[categoryName]) {
+        categoriesMap[categoryName] = {
+          text: categoryName,
+          children: [],
+        };
+        outlines.push(categoriesMap[categoryName]);
+      }
+      categoriesMap[categoryName].children.push({
+        text: feed.title,
+        xmlUrl: feed.url,
+        htmlUrl: feed.link,
+        children: [],
+      });
+    }
+
+    const builder = new xml2js.Builder();
+    const opml = {
+      opml: {
+        $: { version: '2.0' },
+        head: { title: `Exported Feeds (${now.toISOString()})` },
+        body: {
+          outline: outlines.map((outline) => {
+            const attrs: Record<string, string> = { text: outline.text };
+            if (outline.xmlUrl) attrs.xmlUrl = outline.xmlUrl;
+            if (outline.htmlUrl) attrs.htmlUrl = outline.htmlUrl;
+            return {
+              $: attrs,
+              outline: outline.children.map((child) => ({
+                $: {
+                  text: child.text,
+                  xmlUrl: child.xmlUrl || '',
+                  htmlUrl: child.htmlUrl || '',
+                },
+              })),
+            };
+          }),
+        },
+      },
+    };
+    return builder.buildObject(opml);
   }
 
   private getAttributeValue(v?: string | sax.QualifiedAttribute): string {

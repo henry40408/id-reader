@@ -31,9 +31,12 @@ describe('OPML service', () => {
         }),
       )
       .flush();
+
+    jest.useFakeTimers();
   });
 
   afterEach(async () => {
+    jest.useRealTimers();
     await moduleRef.close();
   });
 
@@ -83,5 +86,41 @@ describe('OPML service', () => {
         feeds: { '0': { title: 'Feed 4' } },
       },
     ]);
+  });
+
+  it('should export feeds to OPML', async () => {
+    jest.setSystemTime(new Date('2025-01-01T00:00:00Z'));
+
+    const user = await em.findOneOrFail(UserEntity, { id: 1 });
+
+    const category1 = em.create(CategoryEntity, { user, name: 'Category 1' });
+    const category2 = em.create(CategoryEntity, { user, name: 'Category 2' });
+
+    em.create('FeedEntity', {
+      user,
+      category: category1,
+      title: 'Feed 1',
+      url: 'http://example1.invalid/feed',
+      link: 'http://example1.invalid',
+    });
+    em.create('FeedEntity', {
+      user,
+      category: category1,
+      title: 'Feed 2',
+      url: 'http://example2.invalid/feed',
+      link: 'http://example2.invalid',
+    });
+    em.create('FeedEntity', {
+      user,
+      category: category2,
+      title: 'Feed 3',
+      url: 'http://example3.invalid/feed',
+      link: 'http://example3.invalid',
+    });
+
+    await em.flush();
+
+    const xml = await service.exportFeeds(user);
+    expect(xml).toMatchSnapshot();
   });
 });
