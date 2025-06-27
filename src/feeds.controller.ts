@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import { EntityManager } from '@mikro-orm/core';
-import { Controller, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Controller, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBody,
@@ -11,6 +11,7 @@ import {
   ApiProperty,
   ApiSecurity,
 } from '@nestjs/swagger';
+import { Response } from 'express';
 import { AuthGuard, RequestWithUser } from './auth.guard';
 import { FORBIDDEN_CONTENT } from './content.constant';
 import { UserEntity } from './entities';
@@ -57,5 +58,23 @@ export class FeedsController {
     const readable = fs.createReadStream(file.path);
     await this.opmlService.importFeeds(user, readable);
     return {};
+  }
+
+  @Post('export')
+  @UseGuards(AuthGuard)
+  @ApiForbiddenResponse({ description: 'Forbidden', content: FORBIDDEN_CONTENT })
+  @ApiOkResponse({
+    description: 'Feeds exported successfully',
+    content: { 'application/xml': {} },
+  })
+  @ApiOperation({ summary: 'Export feeds as OPML file' })
+  @ApiSecurity(API_SECURITY_SCHEME)
+  async exportFeeds(@Req() req: RequestWithUser, @Res({ passthrough: true }) res: Response) {
+    const now = new Date();
+    const user = await this.em.findOneOrFail(UserEntity, { id: req.jwtPayload.sub });
+    const xml = await this.opmlService.exportFeeds(user);
+    res.setHeader('Content-Type', 'application/xml');
+    res.setHeader('Content-Disposition', `attachment; filename="feeds-${now.toISOString()}.opml"`);
+    res.send(xml);
   }
 }
