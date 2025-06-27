@@ -3,6 +3,7 @@ import { UserInputError } from '@nestjs/apollo';
 import { Logger, UseGuards } from '@nestjs/common';
 import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { milliseconds, millisecondsToSeconds } from 'date-fns';
+import sanitizeHtml from 'sanitize-html';
 import { AuthGuard, RequestWithUser } from '../auth.guard';
 import { EntryEntity, FeedEntity } from '../entities';
 import { FeedService } from '../feed.service';
@@ -85,10 +86,14 @@ export class FeedsResolver {
   @UseGuards(AuthGuard)
   async getEntries(@Context() ctx: GraphQLContext<RequestWithUser>): Promise<EntryEntity[]> {
     const userId = ctx.req.jwtPayload.sub;
-    return await this.em.findAll(EntryEntity, {
+    const entires = await this.em.findAll(EntryEntity, {
       where: { user: userId },
       orderBy: { isoDate: 'DESC' },
       populate: ['feed', 'user'],
+    });
+    return entires.map((entry) => {
+      if (entry.content) entry.content = sanitizeHtml(entry.content);
+      return entry;
     });
   }
 

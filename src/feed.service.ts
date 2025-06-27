@@ -111,7 +111,7 @@ export class FeedService {
       entity.title = entry.title;
       entity.isoDate = new Date(entry.isoDate);
       entity.content = entry.content;
-      entity.summary = entry.summary || '';
+      entity.summary = entry.summary || entry.contentSnippet || '';
       entity.link = entry.link;
       entity.creator = entry.creator;
       entity.categories = entry.categories || [];
