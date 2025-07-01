@@ -35,11 +35,17 @@ describe('Image service', () => {
 
   it('should download feed image', async () => {
     const lastModified = new Date();
-    nock('https://example.invalid').get('/feed.xml').reply(404, '').get('/favicon.ico').reply(200, PNG_1x1, {
-      'Content-Type': 'image/png',
-      ETag: '12345',
-      'Last-Modified': lastModified.toUTCString(),
-    });
+    nock('https://example.invalid')
+      .get('/feed.xml')
+      .times(2)
+      .reply(404, '')
+      .get('/favicon.ico')
+      .times(2)
+      .reply(200, PNG_1x1, {
+        'Content-Type': 'image/png',
+        ETag: '12345',
+        'Last-Modified': lastModified.toUTCString(),
+      });
 
     await em.persist(em.create(UserEntity, { id: 1, username: 'testuser', passwordHash: 'hashedpassword' })).flush();
     await em.persist(em.create(CategoryEntity, { id: 1, user: 1, name: 'Test Feed' })).flush();
@@ -67,6 +73,9 @@ describe('Image service', () => {
       const updatedFeed = await em.findOneOrFail(FeedEntity, feed.id, { populate: ['image'] });
       expect(updatedFeed.image?.id).toBe(image?.id);
       expect(updatedFeed.image?.url).toBe(image?.url);
+
+      // Re-download the image, should not throw any errors
+      await service.downloadFeedImage(feed);
     }
 
     nock('https://example.invalid')

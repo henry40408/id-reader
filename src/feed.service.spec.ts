@@ -35,7 +35,7 @@ describe('FeedService', () => {
 
   it('should fetch entries from a RSS feed', async () => {
     const content = await fs.readFile(path.join(__dirname, 'hnrss.xml'), 'utf-8');
-    nock('https://example.invalid').get('/feed.xml').reply(200, content);
+    nock('https://example.invalid').get('/feed.xml').times(2).reply(200, content);
 
     await em.persist(em.create(UserEntity, { id: 1, username: 'testuser', passwordHash: 'hashedpassword' })).flush();
     await em.persist(em.create(CategoryEntity, { id: 1, user: 1, name: 'Test Feed' })).flush();
@@ -63,5 +63,8 @@ describe('FeedService', () => {
     expect(entry.categories).toEqual([]);
     expect(entry.feed.id).toBe(feed.id);
     expect(entry.user.id).toBe(1);
+
+    // Re-fetch entries on the same feed doesn't throw any errors
+    await service.fetchFeedEntries(feed);
   });
 });
