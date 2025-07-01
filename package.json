@@ -115,7 +115,11 @@
       ]
     },
     "collectCoverageFrom": [
-      "**/*.(t|j)s"
+      "**/*.(t|j)s",
+      "!resolvers/**/*.(t|j)s",
+      "!main.ts",
+      "!seed.module.ts",
+      "!seed.service.ts"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",

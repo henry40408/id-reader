@@ -120,4 +120,37 @@ describe('Image service', () => {
     expect(jobLog1?.status).toBe('ok');
     expect(jobLog1?.payload).toEqual({ type: 'ok', result: { imageId: 1 } });
   });
+
+  it('should search favicon from webpage', async () => {
+    nock('https://example.invalid')
+      .get('/favicon.ico')
+      .reply(404, '')
+      .get('/feed.xml')
+      .reply(404, '')
+      .get('/')
+      .reply(200, '<html><head><link rel="icon" href="/icon.ico"></head></html>')
+      .get('/icon.ico')
+      .reply(200, PNG_1x1, {
+        'Content-Type': 'image/png',
+        ETag: '12345',
+        'Last-Modified': new Date().toUTCString(),
+      });
+
+    await em.persist(em.create(UserEntity, { id: 1, username: 'testuser', passwordHash: 'hashedpassword' })).flush();
+    await em.persist(em.create(CategoryEntity, { id: 1, user: 1, name: 'Test Feed' })).flush();
+
+    const feed = new FeedEntity();
+    feed.title = 'Test Feed';
+    feed.url = 'https://example.invalid/feed.xml';
+    feed.link = 'https://example.invalid';
+    feed.user = await em.findOneOrFail(UserEntity, 1);
+    feed.category = await em.findOneOrFail(CategoryEntity, 1);
+
+    await em.persist(feed).flush();
+
+    const image = await service.downloadFeedImage(feed);
+    expect(image).toBeDefined();
+    expect(image?.id).toBe(1);
+    expect(image?.url).toBe('https://example.invalid/icon.ico');
+  });
 });
