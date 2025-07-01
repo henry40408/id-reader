@@ -4,7 +4,7 @@ import { EntityManager, MikroORM } from '@mikro-orm/core';
 import { Test, TestingModule } from '@nestjs/testing';
 import nock from 'nock';
 import { AppModule } from './app.module';
-import { CategoryEntity, EntryEntity, FeedEntity, UserEntity } from './entities';
+import { CategoryEntity, EntryEntity, FeedEntity, JobLogEntity, UserEntity } from './entities';
 import { FeedService } from './feed.service';
 
 describe('FeedService', () => {
@@ -66,5 +66,42 @@ describe('FeedService', () => {
 
     // Re-fetch entries on the same feed doesn't throw any errors
     await service.fetchFeedEntries(feed);
+  });
+
+  it('should fetch entries from multiple feeds', async () => {
+    const content = await fs.readFile(path.join(__dirname, 'hnrss.xml'), 'utf-8');
+    nock('https://example.invalid').get('/feed1.xml').reply(200, content).get('/feed2.xml').reply(200, content);
+
+    await em.persist(em.create(UserEntity, { id: 1, username: 'testuser', passwordHash: 'hashedpassword' })).flush();
+    await em.persist(em.create(CategoryEntity, { id: 1, user: 1, name: 'Test Feed' })).flush();
+
+    const feed1 = new FeedEntity();
+    feed1.title = 'Test Feed 1';
+    feed1.url = 'https://example.invalid/feed1.xml';
+    feed1.link = 'https://example.invalid';
+    feed1.user = await em.findOneOrFail(UserEntity, 1);
+    feed1.category = await em.findOneOrFail(CategoryEntity, 1);
+
+    const feed2 = new FeedEntity();
+    feed2.title = 'Test Feed 2';
+    feed2.url = 'https://example.invalid/feed2.xml';
+    feed2.link = 'https://example.invalid';
+    feed2.user = await em.findOneOrFail(UserEntity, 1);
+    feed2.category = await em.findOneOrFail(CategoryEntity, 1);
+
+    await em.persist([feed1, feed2]).flush();
+
+    await service.fetchEntries(1, 86_400);
+
+    const entriesFeed1 = await em.find(EntryEntity, { feed: feed1.id });
+    expect(entriesFeed1).toHaveLength(30);
+
+    const entriesFeed2 = await em.find(EntryEntity, { feed: feed2.id });
+    expect(entriesFeed2).toHaveLength(30);
+
+    const jobLog = await em.findOne(JobLogEntity, { externalId: String(feed1.id) });
+    expect(jobLog?.name).toBe('feed:fetch_entries');
+    expect(jobLog?.status).toBe('ok');
+    expect(jobLog?.payload).toEqual({ type: 'ok', result: {} });
   });
 });

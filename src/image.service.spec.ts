@@ -2,7 +2,7 @@ import { EntityManager, MikroORM } from '@mikro-orm/core';
 import { Test, TestingModule } from '@nestjs/testing';
 import nock from 'nock';
 import { AppModule } from './app.module';
-import { CategoryEntity, UserEntity } from './entities';
+import { CategoryEntity, JobLogEntity, UserEntity } from './entities';
 import { FeedEntity } from './entities/feed.entity';
 import { ImageService } from './image.service';
 import { PNG_1x1, PNG_1x1_SHA256SUM } from './test.helper';
@@ -90,5 +90,34 @@ describe('Image service', () => {
       expect(image).toBeDefined();
       expect(image?.id).toBe(1);
     }
+  });
+
+  it('should download feed images', async () => {
+    const lastModified = new Date();
+
+    nock('https://example.invalid').get('/feed1.xml').times(2).reply(404, '').get('/favicon.ico').reply(200, PNG_1x1, {
+      'Content-Type': 'image/png',
+      ETag: '12345',
+      'Last-Modified': lastModified.toUTCString(),
+    });
+
+    await em.persist(em.create(UserEntity, { id: 1, username: 'testuser', passwordHash: 'hashedpassword' })).flush();
+    await em.persist(em.create(CategoryEntity, { id: 1, user: 1, name: 'Test Feed' })).flush();
+
+    const feed1 = new FeedEntity();
+    feed1.title = 'Test Feed 1';
+    feed1.url = 'https://example.invalid/feed1.xml';
+    feed1.link = 'https://example.invalid';
+    feed1.user = await em.findOneOrFail(UserEntity, 1);
+    feed1.category = await em.findOneOrFail(CategoryEntity, 1);
+
+    await em.persist([feed1]).flush();
+
+    await service.downloadFeedImages(1, 86_400);
+
+    const jobLog1 = await em.findOne(JobLogEntity, { externalId: String(feed1.id) });
+    expect(jobLog1?.name).toBe('feed:download_image');
+    expect(jobLog1?.status).toBe('ok');
+    expect(jobLog1?.payload).toEqual({ type: 'ok', result: { imageId: 1 } });
   });
 });
