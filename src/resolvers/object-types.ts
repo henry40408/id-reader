@@ -41,6 +41,9 @@ export class CategoryObject {
   @Field({ description: 'The name of the category' })
   name!: string;
 
+  @Field(() => [FeedObject], { description: 'The feeds associated with the category', nullable: true })
+  feeds?: FeedObject[];
+
   @Field(() => UserObject, { description: 'The user who owns the category' })
   user!: UserObject;
 
@@ -100,6 +103,9 @@ export class FeedObject {
 
   @Field({ description: 'The image associated with the feed', nullable: true })
   image?: ImageObject;
+
+  @Field(() => [EntryObject], { description: 'The entries associated with the feed', nullable: true })
+  entries?: EntryObject[];
 
   @Field({ description: 'The date when the feed was created' })
   createdAt!: Date;

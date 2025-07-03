@@ -10,6 +10,7 @@ import { Request, Response } from 'express';
 import { GraphQLFormattedError } from 'graphql/error';
 import { AppConfigModule, AppConfigService } from './app-config.module';
 import { AppController } from './app.controller';
+import { DataloaderService } from './dataloader.service';
 import { FeedService } from './feed.service';
 import { FeedsController } from './feeds.controller';
 import { GraphQLContext } from './graphql.context';
@@ -18,6 +19,7 @@ import { ImagesController } from './images.controller';
 import { OpmlService } from './opml.service';
 import { OrmModule } from './orm/orm.module';
 import { AuthResolver, CategoriesResolver } from './resolvers';
+import { EntriesResolver } from './resolvers/entries.resolver';
 import { FeedsResolver } from './resolvers/feeds.resolver';
 import { ViteService } from './vite.service';
 
@@ -62,6 +64,7 @@ import { ViteService } from './vite.service';
   controllers: [AppController, FeedsController, ImagesController],
   providers: [
     // services
+    DataloaderService,
     FeedService,
     ImageService,
     OpmlService,
@@ -69,6 +72,7 @@ import { ViteService } from './vite.service';
     // GraphQL resolvers
     AuthResolver,
     CategoriesResolver,
+    EntriesResolver,
     FeedsResolver,
   ],
 })

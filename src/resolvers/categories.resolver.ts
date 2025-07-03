@@ -1,21 +1,31 @@
 import { EntityManager } from '@mikro-orm/core';
 import { UserInputError } from '@nestjs/apollo';
 import { UseGuards } from '@nestjs/common';
-import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { AuthGuard, RequestWithUser } from '../auth.guard';
-import { CategoryEntity } from '../entities';
+import { DataloaderService } from '../dataloader.service';
+import { CategoryEntity, FeedEntity, UserEntity } from '../entities';
 import { GraphQLContext } from '../graphql.context';
 import { CategoryObject } from './object-types';
 
-@Resolver()
+@Resolver(CategoryObject)
 export class CategoriesResolver {
-  constructor(private readonly em: EntityManager) {}
+  private readonly feedsLoader: DataloaderService['loaders']['feedsLoader'];
+  private readonly usersLoader: DataloaderService['loaders']['usersLoader'];
+
+  constructor(
+    private readonly dataloader: DataloaderService,
+    private readonly em: EntityManager,
+  ) {
+    this.feedsLoader = this.dataloader.loaders.feedsLoader;
+    this.usersLoader = this.dataloader.loaders.usersLoader;
+  }
 
   @Query(() => [CategoryObject], { description: 'Get all categories' })
   @UseGuards(AuthGuard)
   async getCategories(@Context() ctx: GraphQLContext<RequestWithUser>): Promise<CategoryEntity[]> {
     const userId = ctx.req.jwtPayload.sub;
-    return await this.em.find(CategoryEntity, { user: userId }, { populate: ['user'] });
+    return await this.em.find(CategoryEntity, { user: userId });
   }
 
   @Mutation(() => CategoryObject, { description: 'Create a new category' })
@@ -27,7 +37,7 @@ export class CategoriesResolver {
     const userId = ctx.req.jwtPayload.sub;
     const category = this.em.create(CategoryEntity, { name, user: userId });
     await this.em.persistAndFlush(category);
-    return await this.em.findOneOrFail(CategoryEntity, { id: category.id }, { populate: ['user'] });
+    return await this.em.findOneOrFail(CategoryEntity, { id: category.id });
   }
 
   @Mutation(() => Boolean, { description: 'Delete a category by ID' })
@@ -41,5 +51,15 @@ export class CategoriesResolver {
     if (!category) throw new UserInputError('Category not found');
     await this.em.removeAndFlush(category);
     return true;
+  }
+
+  @ResolveField()
+  async feeds(@Parent() category: CategoryObject): Promise<FeedEntity[]> {
+    return await this.em.find(FeedEntity, { category: category.id });
+  }
+
+  @ResolveField()
+  async user(@Parent() category: CategoryObject): Promise<UserEntity | null> {
+    return await this.usersLoader.load(category.user.id);
   }
 }
