@@ -4,6 +4,9 @@ import { ObjectType, Field, InputType } from '@nestjs/graphql';
 export class JwtPayloadObject {
   @Field({ description: 'The user ID from the JWT payload' })
   sub!: number;
+
+  @Field({ description: 'The username from the JWT payload' })
+  username!: string;
 }
 
 @InputType({ description: 'Sign in credentials' })
