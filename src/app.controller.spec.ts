@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppConfigModule } from './app-config.module';
 import { AppController } from './app.controller';
 import { OrmModule } from './orm/orm.module';
+import { ViteService } from './vite.service';
 
 describe('AppController', () => {
   let moduleRef: TestingModule;
@@ -11,6 +12,7 @@ describe('AppController', () => {
   beforeEach(async () => {
     moduleRef = await Test.createTestingModule({
       imports: [AppConfigModule, TerminusModule, OrmModule],
+      providers: [ViteService],
       controllers: [AppController],
     }).compile();
     controller = moduleRef.get(AppController);
