@@ -7,9 +7,12 @@ export function useAuth() {
   const username = ref('');
   const password = ref('');
 
-  const { onResult, onError, refetch } = useQuery<{
-    currentUser: { sub: number; username: string };
-  }>(gql`
+  const { onResult, onError, refetch } = useQuery<
+    | {
+        currentUser: { sub: number; username: string };
+      }
+    | undefined
+  >(gql`
     query currentUser {
       currentUser {
         sub
@@ -18,6 +21,7 @@ export function useAuth() {
     }
   `);
   onResult((result) => {
+    if (!result.data) return;
     authenticated.value = result.data.currentUser;
   });
   onError((error) => {
