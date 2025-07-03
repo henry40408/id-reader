@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { JwtModule } from '@nestjs/jwt';
 import { MulterModule } from '@nestjs/platform-express';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { TerminusModule } from '@nestjs/terminus';
 import { Request, Response } from 'express';
 import { GraphQLFormattedError } from 'graphql/error';
@@ -18,6 +19,7 @@ import { OpmlService } from './opml.service';
 import { OrmModule } from './orm/orm.module';
 import { AuthResolver, CategoriesResolver } from './resolvers';
 import { FeedsResolver } from './resolvers/feeds.resolver';
+import { ViteService } from './vite.service';
 
 @Module({
   imports: [
@@ -53,6 +55,9 @@ import { FeedsResolver } from './resolvers/feeds.resolver';
       dest: '/tmp',
       limits: { fileSize: 10 * 1024 * 1024 },
     }),
+    ServeStaticModule.forRoot({
+      rootPath: './public',
+    }),
   ],
   controllers: [AppController, FeedsController, ImagesController],
   providers: [
@@ -60,6 +65,7 @@ import { FeedsResolver } from './resolvers/feeds.resolver';
     FeedService,
     ImageService,
     OpmlService,
+    ViteService,
     // GraphQL resolvers
     AuthResolver,
     CategoriesResolver,
