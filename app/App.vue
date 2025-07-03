@@ -7,12 +7,13 @@
   <form @submit.prevent="signIn()" v-else>
     <input type="text" placeholder="username" v-model="username" />
     <input type="password" placeholder="password" v-model="password" />
-    <button type="submit">Submit</button>
+    <button type="submit" :disabled="loading">Submit</button>
   </form>
+  <div v-if="error">{{ error }}</div>
 </template>
 
 <script setup lang="ts">
 import { useAuth } from './composables/useAuth';
 
-const { authenticated, username, password, signIn, signOut } = useAuth();
+const { authenticated, error, loading, username, password, signIn, signOut } = useAuth();
 </script>
