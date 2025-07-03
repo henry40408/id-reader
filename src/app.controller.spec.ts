@@ -1,22 +1,37 @@
+import { TerminusModule } from '@nestjs/terminus';
 import { Test, TestingModule } from '@nestjs/testing';
+import { AppConfigModule } from './app-config.module';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { OrmModule } from './orm/orm.module';
+import { ViteService } from './vite.service';
 
 describe('AppController', () => {
-  let appController: AppController;
+  let moduleRef: TestingModule;
+  let controller: AppController;
 
   beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
+    moduleRef = await Test.createTestingModule({
+      imports: [AppConfigModule, TerminusModule, OrmModule],
+      providers: [ViteService],
       controllers: [AppController],
-      providers: [AppService],
     }).compile();
+    controller = moduleRef.get(AppController);
+  });
 
-    appController = app.get<AppController>(AppController);
+  afterEach(async () => {
+    await moduleRef.close();
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('should return health check response', async () => {
+      await expect(controller.check()).resolves.toEqual(
+        expect.objectContaining({
+          status: 'ok',
+          info: {
+            db: { status: 'up' },
+          },
+        }),
+      );
     });
   });
 });
