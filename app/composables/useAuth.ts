@@ -26,21 +26,28 @@ const signOutMutation = graphql(`
   }
 `);
 
-export function useAuth() {
-  const authenticated = ref<{ sub: number; username: string } | null>(null);
-  const loading = ref(false);
-  const error = ref<string>('');
-  const username = ref('');
-  const password = ref('');
+const authenticated = ref(false);
+const jwtPayload = ref<{ sub: number; username: string } | null>(null);
+const loading = ref(false);
+const error = ref<string>('');
+const username = ref('');
+const password = ref('');
 
-  const { onResult, onError, refetch } = useQuery(currentUserQuery);
+export function useAuth() {
+  const { onError, onResult, refetch } = useQuery(currentUserQuery, null, { fetchPolicy: 'no-cache' });
   onResult((result) => {
-    if (!result.data) return;
-    authenticated.value = result.data.currentUser;
+    if (result.data?.currentUser) {
+      authenticated.value = true;
+      jwtPayload.value = result.data.currentUser;
+    } else {
+      authenticated.value = false;
+      jwtPayload.value = null;
+    }
   });
-  onError((error) => {
-    console.error('Authentication error:', error);
-    authenticated.value = null;
+  onError((err: Error) => {
+    console.error('Error fetching current user:', err);
+    authenticated.value = false;
+    jwtPayload.value = null;
   });
 
   const { mutate: doSignIn } = useMutation(signInMutation, () => ({
@@ -88,6 +95,7 @@ export function useAuth() {
 
   return {
     authenticated,
+    jwtPayload,
     error,
     loading,
     username,

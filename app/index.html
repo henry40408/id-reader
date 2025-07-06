@@ -8,10 +8,21 @@
   <body>
     <div id="app"></div>
     <script type="module">
-      import { createApp, h, provide } from 'vue';
       import { DefaultApolloClient } from '@vue/apollo-composable';
+      import { createApp, h, provide } from 'vue';
+      import { createRouter, createWebHistory } from 'vue-router';
       import { apolloClient } from './apollo';
+
       import App from './App.vue';
+
+      const routes = [
+        { path: '/', component: () => import('./views/HomeView.vue') },
+        { path: '/categories', component: () => import('./views/Categories.vue') },
+      ];
+      const router = createRouter({
+        history: createWebHistory(),
+        routes,
+      });
 
       const app = createApp({
         setup() {
@@ -19,7 +30,7 @@
         },
         render: () => h(App),
       });
-      app.mount('#app');
+      app.use(router).mount('#app');
     </script>
   </body>
 </html>
