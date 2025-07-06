@@ -43,6 +43,7 @@ import { graphql } from '../../generated/gql/gql';
 import { ref } from 'vue';
 import { ApolloError } from '@apollo/client/errors';
 import Confirm from '../components/Confirm.vue';
+import { useAuth } from '../composables/useAuth';
 
 const creatingCategory = ref(false);
 const categoryName = ref('');
@@ -99,7 +100,10 @@ const getCategoriesQuery = graphql(`
   }
 `);
 
-const { result, loading, onError, refetch } = useQuery(getCategoriesQuery);
+const { authenticated } = useAuth();
+const { result, loading, onError, refetch } = useQuery(getCategoriesQuery, null, () => ({
+  enabled: authenticated.value,
+}));
 onError((err) => {
   error.value = err;
   console.error('Error fetching categories:', err);

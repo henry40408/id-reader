@@ -6,9 +6,9 @@
     <span v-else>
       <span>Are you sure?</span>
       {{ ' ' }}
-      <button @click="confirm()">Yes</button>
+      <a href="#" @click.prevent="confirm()" class="text-blue-500">Yes</a>
       {{ ' ' }}
-      <button @click="cancel()">No</button>
+      <a href="#" @click.prevent="cancel()" class="text-red-500">No</a>
     </span>
   </span>
 </template>

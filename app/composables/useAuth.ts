@@ -66,6 +66,8 @@ export function useAuth() {
     loading.value = true;
     doSignIn()
       .then(() => {
+        username.value = '';
+        password.value = '';
         void refetch();
       })
       .catch((err: Error) => {
