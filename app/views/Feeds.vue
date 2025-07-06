@@ -44,6 +44,9 @@ import { ref } from 'vue';
 import { ApolloError } from '@apollo/client/errors';
 import Confirm from '../components/Confirm.vue';
 import { useAuth } from '../composables/useAuth';
+import { useTitle } from '../composables/useTitle';
+
+useTitle('Categories & Feeds');
 
 const creatingCategory = ref(false);
 const categoryName = ref('');

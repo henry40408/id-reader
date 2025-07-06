@@ -8,4 +8,7 @@
 
 <script setup lang="ts">
 import Nav from '../components/Nav.vue';
+import { useTitle } from '../composables/useTitle';
+
+useTitle('Home');
 </script>
