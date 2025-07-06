@@ -31,7 +31,7 @@ import { ViteService } from './vite.service';
     TerminusModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: true,
+      autoSchemaFile: 'generated/schema.gql',
       context: ({ req, res }: { req: Request; res: Response }): GraphQLContext => ({ req, res }),
       formatError: (error) => {
         const formatted: GraphQLFormattedError = {
@@ -61,7 +61,12 @@ import { ViteService } from './vite.service';
       rootPath: './public',
     }),
   ],
-  controllers: [AppController, FeedsController, ImagesController],
+  controllers: [
+    FeedsController,
+    ImagesController,
+    // the controller should be the last one to handle all unmatched routes
+    AppController,
+  ],
   providers: [
     // services
     DataloaderService,

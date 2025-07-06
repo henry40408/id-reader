@@ -1,6 +1,30 @@
 import { useMutation, useQuery } from '@vue/apollo-composable';
-import gql from 'graphql-tag';
 import { ref } from 'vue';
+import { graphql } from '../../generated/gql';
+
+const currentUserQuery = graphql(`
+  query CurrentUser {
+    currentUser {
+      sub
+      username
+    }
+  }
+`);
+
+const signInMutation = graphql(`
+  mutation signIn($credentials: SignInInput!) {
+    signIn(input: $credentials) {
+      sub
+      username
+    }
+  }
+`);
+
+const signOutMutation = graphql(`
+  mutation signOut {
+    signOut
+  }
+`);
 
 export function useAuth() {
   const authenticated = ref<{ sub: number; username: string } | null>(null);
@@ -9,19 +33,7 @@ export function useAuth() {
   const username = ref('');
   const password = ref('');
 
-  const { onResult, onError, refetch } = useQuery<
-    | {
-        currentUser: { sub: number; username: string };
-      }
-    | undefined
-  >(gql`
-    query currentUser {
-      currentUser {
-        sub
-        username
-      }
-    }
-  `);
+  const { onResult, onError, refetch } = useQuery(currentUserQuery);
   onResult((result) => {
     if (!result.data) return;
     authenticated.value = result.data.currentUser;
@@ -31,33 +43,16 @@ export function useAuth() {
     authenticated.value = null;
   });
 
-  const { mutate: doSignIn } = useMutation(
-    gql`
-      mutation signIn($credentials: SignInInput!) {
-        signIn(input: $credentials) {
-          sub
-          username
-        }
-      }
-    `,
-    () => ({
-      variables: {
-        credentials: {
-          username: username.value,
-          password: password.value,
-        },
+  const { mutate: doSignIn } = useMutation(signInMutation, () => ({
+    variables: {
+      credentials: {
+        username: username.value,
+        password: password.value,
       },
-    }),
-  );
+    },
+  }));
 
-  const { mutate: doSignOut } = useMutation(
-    gql`
-      mutation signOut {
-        signOut
-      }
-    `,
-    () => ({}),
-  );
+  const { mutate: doSignOut } = useMutation(signOutMutation, () => ({}));
 
   function signIn() {
     error.value = '';

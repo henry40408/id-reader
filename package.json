@@ -19,7 +19,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "db:seed": "node -r @swc-node/register db/seed"
+    "db:seed": "node -r @swc-node/register db/seed",
+    "generate": "graphql-codegen --config src/codegen.ts",
+    "generate:watch": "graphql-codegen --config src/codegen.ts --watch"
   },
   "dependencies": {
     "@apollo/client": "^3.13.8",
@@ -62,9 +64,14 @@
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.18.0",
     "@golevelup/ts-jest": "^0.7.0",
+    "@graphql-codegen/cli": "^5.0.7",
+    "@graphql-codegen/client-preset": "^4.8.3",
+    "@graphql-codegen/typescript": "^4.1.6",
+    "@graphql-codegen/typescript-operations": "^4.6.1",
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.1",
+    "@parcel/watcher": "^2.5.1",
     "@swc-node/register": "^1.10.10",
     "@swc/cli": "^0.6.0",
     "@swc/core": "^1.11.31",
