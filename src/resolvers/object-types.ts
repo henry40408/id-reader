@@ -143,6 +143,9 @@ export class EntryObject {
   @Field(() => [String], { description: 'The categories associated with the entry', nullable: true })
   categories?: string[];
 
+  @Field({ description: 'The date when the entry was read', nullable: true })
+  readAt?: Date;
+
   @Field({ description: 'The date when the entry was created' })
   createdAt!: Date;
 

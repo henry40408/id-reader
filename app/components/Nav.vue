@@ -2,6 +2,7 @@
   <nav>
     <ul>
       <li><router-link to="/">Home</router-link></li>
+      <li v-if="authenticated"><router-link to="/unread">Unread Entries</router-link></li>
       <li v-if="authenticated"><router-link to="/feeds">Categories &amp; Feeds</router-link></li>
     </ul>
     <Auth />

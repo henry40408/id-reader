@@ -29,6 +29,9 @@ export class EntryEntity extends BaseEntity {
   @Property({ nullable: true })
   categories?: string[];
 
+  @Property({ nullable: true })
+  readAt?: Date;
+
   @ManyToOne(() => FeedEntity)
   feed!: FeedEntity;
 

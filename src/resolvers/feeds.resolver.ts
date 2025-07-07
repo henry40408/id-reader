@@ -72,7 +72,7 @@ export class FeedsResolver {
   @UseGuards(AuthGuard)
   fetchEntries(@Context() ctx: GraphQLContext<RequestWithUser>) {
     const userId = ctx.req.jwtPayload.sub;
-    const seconds = millisecondsToSeconds(milliseconds({ days: 30 }));
+    const seconds = millisecondsToSeconds(milliseconds({ hours: 1 }));
     this.feedService.fetchEntries(userId, seconds).catch((err) => {
       this.logger.error(err);
     });
