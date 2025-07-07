@@ -1,0 +1,170 @@
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Hacker News: Best</title><link>https://news.ycombinator.com/best</link><description>Hacker News RSS</description><docs>https://hnrss.org/</docs><generator>hnrss v2.1.1</generator><lastBuildDate>Mon, 23 Jun 2025 16:29:01 +0000</lastBuildDate><atom:link href="https://hnrss.org/best" rel="self" type="application/rss+xml"></atom:link><item><title><![CDATA[I wrote my PhD Thesis in Typst]]></title><description><![CDATA[
+<p>Article URL: <a href="https://fransskarman.com/phd_thesis_in_typst.html">https://fransskarman.com/phd_thesis_in_typst.html</a></p>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44350322">https://news.ycombinator.com/item?id=44350322</a></p>
+<p>Points: 487</p>
+<p># Comments: 284</p>
+]]></description><pubDate>Sun, 22 Jun 2025 21:12:01 +0000</pubDate><link>https://fransskarman.com/phd_thesis_in_typst.html</link><dc:creator>todsacerdoti</dc:creator><comments>https://news.ycombinator.com/item?id=44350322</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44350322</guid></item><item><title><![CDATA[Mechanical Watch: Exploded View]]></title><description><![CDATA[
+<p>Article URL: <a href="https://fellerts.no/projects/epoch.html">https://fellerts.no/projects/epoch.html</a></p>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44347425">https://news.ycombinator.com/item?id=44347425</a></p>
+<p>Points: 1093</p>
+<p># Comments: 122</p>
+]]></description><pubDate>Sun, 22 Jun 2025 14:56:44 +0000</pubDate><link>https://fellerts.no/projects/epoch.html</link><dc:creator>fellerts</dc:creator><comments>https://news.ycombinator.com/item?id=44347425</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44347425</guid></item><item><title><![CDATA[Git Notes: Git's coolest, most unloved­ feature (2022)]]></title><description><![CDATA[
+<p>Article URL: <a href="https://tylercipriani.com/blog/2022/11/19/git-notes-gits-coolest-most-unloved-feature/">https://tylercipriani.com/blog/2022/11/19/git-notes-gits-coolest-most-unloved-feature/</a></p>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44345334">https://news.ycombinator.com/item?id=44345334</a></p>
+<p>Points: 535</p>
+<p># Comments: 132</p>
+]]></description><pubDate>Sun, 22 Jun 2025 09:14:35 +0000</pubDate><link>https://tylercipriani.com/blog/2022/11/19/git-notes-gits-coolest-most-unloved-feature/</link><dc:creator>Delgan</dc:creator><comments>https://news.ycombinator.com/item?id=44345334</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44345334</guid></item><item><title><![CDATA[LibRedirect – Redirects popular sites to alternative privacy-friendly frontends]]></title><description><![CDATA[
+<p>Article URL: <a href="https://libredirect.github.io">https://libredirect.github.io</a></p>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44344246">https://news.ycombinator.com/item?id=44344246</a></p>
+<p>Points: 415</p>
+<p># Comments: 100</p>
+]]></description><pubDate>Sun, 22 Jun 2025 06:07:48 +0000</pubDate><link>https://libredirect.github.io</link><dc:creator>riffraff</dc:creator><comments>https://news.ycombinator.com/item?id=44344246</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44344246</guid></item><item><title><![CDATA[TPU Deep Dive]]></title><description><![CDATA[
+<p>Article URL: <a href="https://henryhmko.github.io/posts/tpu/tpu.html">https://henryhmko.github.io/posts/tpu/tpu.html</a></p>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44342977">https://news.ycombinator.com/item?id=44342977</a></p>
+<p>Points: 419</p>
+<p># Comments: 81</p>
+]]></description><pubDate>Sun, 22 Jun 2025 02:51:03 +0000</pubDate><link>https://henryhmko.github.io/posts/tpu/tpu.html</link><dc:creator>transpute</dc:creator><comments>https://news.ycombinator.com/item?id=44342977</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44342977</guid></item><item><title><![CDATA[U.S. bombs Iranian nuclear sites]]></title><description><![CDATA[
+<p>Article URL: <a href="https://www.bbc.co.uk/news/live/ckg3rzj8emjt">https://www.bbc.co.uk/news/live/ckg3rzj8emjt</a></p>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44341639">https://news.ycombinator.com/item?id=44341639</a></p>
+<p>Points: 1208</p>
+<p># Comments: 3699</p>
+]]></description><pubDate>Sun, 22 Jun 2025 00:00:16 +0000</pubDate><link>https://www.bbc.co.uk/news/live/ckg3rzj8emjt</link><dc:creator>mattcollins</dc:creator><comments>https://news.ycombinator.com/item?id=44341639</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44341639</guid></item><item><title><![CDATA[Tell HN: Beware confidentiality agreements that act as lifetime non competes]]></title><description><![CDATA[
+<p>Just a note of warning from personal experience.<p>Companies don’t really need non-competes anymore. Some companies take  an extremely broad interpretation of IP confidentiality, where they consider doing any work in the industry during your lifetime an inevitable confidentiality violation. They argue it would be impossible for you to work elsewhere in this industry <i>during your entire career</i> without violating confidentiality with the technical and business instincts you bring to that domain. It doesn’t require conscious violation on your part (they argue).<p>So beware and read your employment agreement carefully.<p>More here  <a href="https://www.promarket.org/2024/02/08/confidentiality-agreements-can-act-like-noncompetes/" rel="nofollow">https://www.promarket.org/2024/02/08/confidentiality-agreeme...</a><p>And this is the insane legal doctrine behind this<p><a href="https://en.m.wikipedia.org/wiki/Inevitable_disclosure" rel="nofollow">https://en.m.wikipedia.org/wiki/Inevitable_disclosure</a></p>
+<hr>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44338562">https://news.ycombinator.com/item?id=44338562</a></p>
+<p>Points: 395</p>
+<p># Comments: 248</p>
+]]></description><pubDate>Sat, 21 Jun 2025 16:02:24 +0000</pubDate><link>https://news.ycombinator.com/item?id=44338562</link><dc:creator>throwarayes</dc:creator><comments>https://news.ycombinator.com/item?id=44338562</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44338562</guid></item><item><title><![CDATA[Microsoft suspended the email account of an ICC prosecutor at The Hague]]></title><description><![CDATA[
+<p>Article URL: <a href="https://www.nytimes.com/2025/06/20/technology/us-tech-europe-microsoft-trump-icc.html">https://www.nytimes.com/2025/06/20/technology/us-tech-europe-microsoft-trump-icc.html</a></p>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44336915">https://news.ycombinator.com/item?id=44336915</a></p>
+<p>Points: 520</p>
+<p># Comments: 378</p>
+]]></description><pubDate>Sat, 21 Jun 2025 12:06:15 +0000</pubDate><link>https://www.nytimes.com/2025/06/20/technology/us-tech-europe-microsoft-trump-icc.html</link><dc:creator>blinding-streak</dc:creator><comments>https://news.ycombinator.com/item?id=44336915</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44336915</guid></item><item><title><![CDATA[uBlock Origin Lite Beta for Safari iOS]]></title><description><![CDATA[
+<p>Article URL: <a href="https://testflight.apple.com/join/JjTcThrV">https://testflight.apple.com/join/JjTcThrV</a></p>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44335664">https://news.ycombinator.com/item?id=44335664</a></p>
+<p>Points: 400</p>
+<p># Comments: 126</p>
+]]></description><pubDate>Sat, 21 Jun 2025 08:10:50 +0000</pubDate><link>https://testflight.apple.com/join/JjTcThrV</link><dc:creator>Squarex</dc:creator><comments>https://news.ycombinator.com/item?id=44335664</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44335664</guid></item><item><title><![CDATA[Samsung embeds IronSource spyware app on phones across WANA]]></title><description><![CDATA[
+<p>Article URL: <a href="https://smex.org/open-letter-to-samsung-end-forced-israeli-app-installations-in-the-wana-region/">https://smex.org/open-letter-to-samsung-end-forced-israeli-app-installations-in-the-wana-region/</a></p>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44334167">https://news.ycombinator.com/item?id=44334167</a></p>
+<p>Points: 821</p>
+<p># Comments: 472</p>
+]]></description><pubDate>Sat, 21 Jun 2025 03:06:42 +0000</pubDate><link>https://smex.org/open-letter-to-samsung-end-forced-israeli-app-installations-in-the-wana-region/</link><dc:creator>the-anarchist</dc:creator><comments>https://news.ycombinator.com/item?id=44334167</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44334167</guid></item><item><title><![CDATA[Harper – an open-source alternative to Grammarly]]></title><description><![CDATA[
+<p>Article URL: <a href="https://writewithharper.com">https://writewithharper.com</a></p>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44331362">https://news.ycombinator.com/item?id=44331362</a></p>
+<p>Points: 619</p>
+<p># Comments: 155</p>
+]]></description><pubDate>Fri, 20 Jun 2025 19:51:45 +0000</pubDate><link>https://writewithharper.com</link><dc:creator>ReadCarlBarks</dc:creator><comments>https://news.ycombinator.com/item?id=44331362</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44331362</guid></item><item><title><![CDATA[YouTube's new anti-adblock measures]]></title><description><![CDATA[
+<p>Article URL: <a href="https://iter.ca/post/yt-adblock/">https://iter.ca/post/yt-adblock/</a></p>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44329712">https://news.ycombinator.com/item?id=44329712</a></p>
+<p>Points: 960</p>
+<p># Comments: 1287</p>
+]]></description><pubDate>Fri, 20 Jun 2025 17:01:35 +0000</pubDate><link>https://iter.ca/post/yt-adblock/</link><dc:creator>smitop</dc:creator><comments>https://news.ycombinator.com/item?id=44329712</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44329712</guid></item><item><title><![CDATA[Phoenix.new – Remote AI Runtime for Phoenix]]></title><description><![CDATA[
+<p>Article URL: <a href="https://fly.io/blog/phoenix-new-the-remote-ai-runtime/">https://fly.io/blog/phoenix-new-the-remote-ai-runtime/</a></p>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44328326">https://news.ycombinator.com/item?id=44328326</a></p>
+<p>Points: 619</p>
+<p># Comments: 261</p>
+]]></description><pubDate>Fri, 20 Jun 2025 14:57:04 +0000</pubDate><link>https://fly.io/blog/phoenix-new-the-remote-ai-runtime/</link><dc:creator>wut42</dc:creator><comments>https://news.ycombinator.com/item?id=44328326</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44328326</guid></item><item><title><![CDATA[Hurl: Run and test HTTP requests with plain text]]></title><description><![CDATA[
+<p>Article URL: <a href="https://github.com/Orange-OpenSource/hurl">https://github.com/Orange-OpenSource/hurl</a></p>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44324592">https://news.ycombinator.com/item?id=44324592</a></p>
+<p>Points: 451</p>
+<p># Comments: 105</p>
+]]></description><pubDate>Fri, 20 Jun 2025 03:55:03 +0000</pubDate><link>https://github.com/Orange-OpenSource/hurl</link><dc:creator>flykespice</dc:creator><comments>https://news.ycombinator.com/item?id=44324592</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44324592</guid></item><item><title><![CDATA[Show HN: I wrote a new BitTorrent tracker in Elixir]]></title><description><![CDATA[
+<p>Hello everyone!<p>I'm currently in a journey to learn and improve my Elixir and Go skills (my daily job uses C++) and looking through my backlog for projects to take on I decided Elixir is the perfect language to write a highly-parallel BitTorrent tracker.
+So I have spent my free time these last 3 months writing one! Now I think it has enough features to present it to the world (and a docker image to give it a quick try).<p>I know some people see trackers as relics of the past now that DHT and PEX are common but I think they still serve a purpose in today's Internet (purely talking about public trackers). That said there is not a lot going on in terms of new developments since everyone just throws opentracker in a vps a calls it a day (honorable exceptions: aquatic and torrust).<p>I plan to continue development for the foreseeable future and add some (optional) esoteric features along the way so if anyone currently operates a tracker please give a try and enjoy the lack of crashes.<p>note: only swarm_printout.ex has been vibe coded, the rest has all been written by hand.</p>
+<hr>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44323253">https://news.ycombinator.com/item?id=44323253</a></p>
+<p>Points: 386</p>
+<p># Comments: 72</p>
+]]></description><pubDate>Thu, 19 Jun 2025 22:49:49 +0000</pubDate><link>https://github.com/Dahrkael/ExTracker</link><dc:creator>dahrkael</dc:creator><comments>https://news.ycombinator.com/item?id=44323253</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44323253</guid></item><item><title><![CDATA[The Zed Debugger Is Here]]></title><description><![CDATA[
+<p>Article URL: <a href="https://zed.dev/blog/debugger">https://zed.dev/blog/debugger</a></p>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44314977">https://news.ycombinator.com/item?id=44314977</a></p>
+<p>Points: 500</p>
+<p># Comments: 201</p>
+]]></description><pubDate>Thu, 19 Jun 2025 02:42:15 +0000</pubDate><link>https://zed.dev/blog/debugger</link><dc:creator>SupremumLimit</dc:creator><comments>https://news.ycombinator.com/item?id=44314977</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44314977</guid></item><item><title><![CDATA[Andrej Karpathy: Software in the era of AI [video]]]></title><description><![CDATA[
+<p>Article URL: <a href="https://www.youtube.com/watch?v=LCEmiRjPEtQ">https://www.youtube.com/watch?v=LCEmiRjPEtQ</a></p>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44314423">https://news.ycombinator.com/item?id=44314423</a></p>
+<p>Points: 1450</p>
+<p># Comments: 779</p>
+]]></description><pubDate>Thu, 19 Jun 2025 00:33:21 +0000</pubDate><link>https://www.youtube.com/watch?v=LCEmiRjPEtQ</link><dc:creator>sandslash</dc:creator><comments>https://news.ycombinator.com/item?id=44314423</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44314423</guid></item><item><title><![CDATA[Show HN: Unregistry – “docker push” directly to servers without a registry]]></title><description><![CDATA[
+<p>I got tired of the push-to-registry/pull-from-registry dance every time I needed to deploy a Docker image.<p>In certain cases, using a full-fledged external (or even local) registry is annoying overhead. And if you think about it, there's already a form of registry present on any of your Docker-enabled hosts — the Docker's own image storage.<p>So I built Unregistry [1] that exposes Docker's (containerd) image storage through a standard registry API. It adds a `docker pussh` command that pushes images directly to remote Docker daemons over SSH. It transfers only the missing layers, making it fast and efficient.<p><pre><code>  docker pussh myapp:latest user@server
+</code></pre>
+Under the hood, it starts a temporary unregistry container on the remote host, pushes to it through an SSH tunnel, and cleans up when done.<p>I've built it as a byproduct while working on Uncloud [2], a tool for deploying containers across a network of Docker hosts, and figured it'd be useful as a standalone project.<p>Would love to hear your thoughts and use cases!<p>[1]: <a href="https://github.com/psviderski/unregistry">https://github.com/psviderski/unregistry</a><p>[2]: <a href="https://github.com/psviderski/uncloud">https://github.com/psviderski/uncloud</a></p>
+<hr>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44314085">https://news.ycombinator.com/item?id=44314085</a></p>
+<p>Points: 709</p>
+<p># Comments: 163</p>
+]]></description><pubDate>Wed, 18 Jun 2025 23:17:10 +0000</pubDate><link>https://github.com/psviderski/unregistry</link><dc:creator>psviderski</dc:creator><comments>https://news.ycombinator.com/item?id=44314085</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44314085</guid></item><item><title><![CDATA[New US visa rules will force foreign students to unlock social media profiles]]></title><description><![CDATA[
+<p>Article URL: <a href="https://www.theguardian.com/us-news/2025/jun/18/social-media-student-visa-screening">https://www.theguardian.com/us-news/2025/jun/18/social-media-student-visa-screening</a></p>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44314054">https://news.ycombinator.com/item?id=44314054</a></p>
+<p>Points: 515</p>
+<p># Comments: 666</p>
+]]></description><pubDate>Wed, 18 Jun 2025 23:11:03 +0000</pubDate><link>https://www.theguardian.com/us-news/2025/jun/18/social-media-student-visa-screening</link><dc:creator>sva_</dc:creator><comments>https://news.ycombinator.com/item?id=44314054</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44314054</guid></item><item><title><![CDATA[My iPhone 8 Refuses to Die: Now It's a Solar-Powered Vision OCR Server]]></title><description><![CDATA[
+<p>Article URL: <a href="https://terminalbytes.com/iphone-8-solar-powered-vision-ocr-server/">https://terminalbytes.com/iphone-8-solar-powered-vision-ocr-server/</a></p>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44310944">https://news.ycombinator.com/item?id=44310944</a></p>
+<p>Points: 443</p>
+<p># Comments: 186</p>
+]]></description><pubDate>Wed, 18 Jun 2025 15:49:53 +0000</pubDate><link>https://terminalbytes.com/iphone-8-solar-powered-vision-ocr-server/</link><dc:creator>hemant6488</dc:creator><comments>https://news.ycombinator.com/item?id=44310944</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44310944</guid></item><item><title><![CDATA[Airpass – Easily overcome WiFi time limits]]></title><description><![CDATA[
+<p>Article URL: <a href="https://airpass.tiagoalves.me/">https://airpass.tiagoalves.me/</a></p>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44310763">https://news.ycombinator.com/item?id=44310763</a></p>
+<p>Points: 384</p>
+<p># Comments: 258</p>
+]]></description><pubDate>Wed, 18 Jun 2025 15:29:30 +0000</pubDate><link>https://airpass.tiagoalves.me/</link><dc:creator>herbertl</dc:creator><comments>https://news.ycombinator.com/item?id=44310763</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44310763</guid></item><item><title><![CDATA[Show HN: Workout.cool – Open-source fitness coaching platform]]></title><description><![CDATA[
+<p>I was the main contributor to workout.lol, an open-source fitness app to easily build a workout routine. The project had traction (1.4k GitHub stars, 95 forks, ~20K visits/month), but was eventually sold due to video licensing hurdles. 
+The new owner stopped maintaining it, and the repo went abandoned.<p>Over the next 9 months, I sent 15 emails to try to save it : no replies. Feature requests & issues were ignored. The community was left with a "broken" tool let's say.<p>I couldn't just let it die So I built the new version from scratch with the same open-source spirit, but a better architecture long-term vision, more features and no license problems.<p>It's called : Workout.cool (<a href="https://workout.cool" rel="nofollow">https://workout.cool</a>). What it offers: 100% open-source, MIT-licensed - 1200+ exercises (with videos, attributes, translations) - Progress tracking - Multilingual-ready - Self-hostable<p>I'm not doing this for money. I'm doing it because I believe in open fitness tools, and I’ve been passionate about strength training for 15+ years.<p>If this resonates with you, feel free to: - Star the repo - Share with fitness/tech friends - Suggest features - Contribute code/design/docs<p>Together, we can build the open-source fitness platform we all wanted to easily build a workout routine and get in shape<p>Website: <a href="https://workout.cool" rel="nofollow">https://workout.cool</a>
+GitHub: <a href="https://github.com/Snouzy/workout-cool">https://github.com/Snouzy/workout-cool</a></p>
+<hr>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44309320">https://news.ycombinator.com/item?id=44309320</a></p>
+<p>Points: 815</p>
+<p># Comments: 232</p>
+]]></description><pubDate>Wed, 18 Jun 2025 12:33:49 +0000</pubDate><link>https://github.com/Snouzy/workout-cool</link><dc:creator>surgomat</dc:creator><comments>https://news.ycombinator.com/item?id=44309320</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44309320</guid></item><item><title><![CDATA[Scrappy – Make little apps for you and your friends]]></title><description><![CDATA[
+<p>Article URL: <a href="https://pontus.granstrom.me/scrappy/">https://pontus.granstrom.me/scrappy/</a></p>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44306859">https://news.ycombinator.com/item?id=44306859</a></p>
+<p>Points: 457</p>
+<p># Comments: 145</p>
+]]></description><pubDate>Wed, 18 Jun 2025 05:16:12 +0000</pubDate><link>https://pontus.granstrom.me/scrappy/</link><dc:creator>8organicbits</dc:creator><comments>https://news.ycombinator.com/item?id=44306859</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44306859</guid></item><item><title><![CDATA[The Grug Brained Developer (2022)]]></title><description><![CDATA[
+<p>Article URL: <a href="https://grugbrain.dev/">https://grugbrain.dev/</a></p>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44303542">https://news.ycombinator.com/item?id=44303542</a></p>
+<p>Points: 1085</p>
+<p># Comments: 567</p>
+]]></description><pubDate>Tue, 17 Jun 2025 20:24:36 +0000</pubDate><link>https://grugbrain.dev/</link><dc:creator>smartmic</dc:creator><comments>https://news.ycombinator.com/item?id=44303542</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44303542</guid></item><item><title><![CDATA[Building Effective AI Agents]]></title><description><![CDATA[
+<p>Article URL: <a href="https://www.anthropic.com/engineering/building-effective-agents">https://www.anthropic.com/engineering/building-effective-agents</a></p>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44301809">https://news.ycombinator.com/item?id=44301809</a></p>
+<p>Points: 540</p>
+<p># Comments: 87</p>
+]]></description><pubDate>Tue, 17 Jun 2025 17:50:05 +0000</pubDate><link>https://www.anthropic.com/engineering/building-effective-agents</link><dc:creator>Anon84</dc:creator><comments>https://news.ycombinator.com/item?id=44301809</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44301809</guid></item><item><title><![CDATA[Resurrecting a dead torrent tracker and finding 3M peers]]></title><description><![CDATA[
+<p>Article URL: <a href="https://kianbradley.com/2025/06/15/resurrecting-a-dead-tracker.html">https://kianbradley.com/2025/06/15/resurrecting-a-dead-tracker.html</a></p>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44301686">https://news.ycombinator.com/item?id=44301686</a></p>
+<p>Points: 649</p>
+<p># Comments: 203</p>
+]]></description><pubDate>Tue, 17 Jun 2025 17:40:19 +0000</pubDate><link>https://kianbradley.com/2025/06/15/resurrecting-a-dead-tracker.html</link><dc:creator>k-ian</dc:creator><comments>https://news.ycombinator.com/item?id=44301686</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44301686</guid></item><item><title><![CDATA[Honda conducts successful launch and landing of experimental reusable rocket]]></title><description><![CDATA[
+<p>Article URL: <a href="https://global.honda/en/topics/2025/c_2025-06-17ceng.html">https://global.honda/en/topics/2025/c_2025-06-17ceng.html</a></p>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44300102">https://news.ycombinator.com/item?id=44300102</a></p>
+<p>Points: 1343</p>
+<p># Comments: 421</p>
+]]></description><pubDate>Tue, 17 Jun 2025 15:02:12 +0000</pubDate><link>https://global.honda/en/topics/2025/c_2025-06-17ceng.html</link><dc:creator>LorenDB</dc:creator><comments>https://news.ycombinator.com/item?id=44300102</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44300102</guid></item><item><title><![CDATA[Fossify – A suite of open-source, ad-free apps]]></title><description><![CDATA[
+<p>Article URL: <a href="https://github.com/FossifyOrg">https://github.com/FossifyOrg</a></p>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44296564">https://news.ycombinator.com/item?id=44296564</a></p>
+<p>Points: 436</p>
+<p># Comments: 130</p>
+]]></description><pubDate>Tue, 17 Jun 2025 07:32:07 +0000</pubDate><link>https://github.com/FossifyOrg</link><dc:creator>jalict</dc:creator><comments>https://news.ycombinator.com/item?id=44296564</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44296564</guid></item><item><title><![CDATA[Generative AI coding tools and agents do not work for me]]></title><description><![CDATA[
+<p>Article URL: <a href="https://blog.miguelgrinberg.com/post/why-generative-ai-coding-tools-and-agents-do-not-work-for-me">https://blog.miguelgrinberg.com/post/why-generative-ai-coding-tools-and-agents-do-not-work-for-me</a></p>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44294633">https://news.ycombinator.com/item?id=44294633</a></p>
+<p>Points: 398</p>
+<p># Comments: 448</p>
+]]></description><pubDate>Tue, 17 Jun 2025 00:33:45 +0000</pubDate><link>https://blog.miguelgrinberg.com/post/why-generative-ai-coding-tools-and-agents-do-not-work-for-me</link><dc:creator>nomdep</dc:creator><comments>https://news.ycombinator.com/item?id=44294633</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44294633</guid></item><item><title><![CDATA[Show HN: Chawan TUI web browser]]></title><description><![CDATA[
+<p>A terminal-based web browser in Nim.[1]  Has acceptable (YMMV) CSS
+rendering, some JS support, and inline images (sixel/kitty).  It can
+also use various protocols other than http(s) such as (s)ftp, gopher,
+gemini, ...<p>Chawan started out as a w3m clone, and the UI still resembles it.
+However, the architecture has turned out quite different, with pages
+loaded in separate processes, and protocol/file type handling separated
+out into external binaries.  An interesting result is that you can even
+register decoders for custom inline image formats, although practical
+use cases of this are rather minimal.<p>There is a gallery showcasing some websites being rendered here:
+<a href="https://chawan.net/gallery/index.html" rel="nofollow">https://chawan.net/gallery/index.html</a><p>[1]: <a href="https://nim-lang.org" rel="nofollow">https://nim-lang.org</a></p>
+<hr>
+<p>Comments URL: <a href="https://news.ycombinator.com/item?id=44293260">https://news.ycombinator.com/item?id=44293260</a></p>
+<p>Points: 387</p>
+<p># Comments: 70</p>
+]]></description><pubDate>Mon, 16 Jun 2025 20:48:43 +0000</pubDate><link>https://chawan.net/news/chawan-0-2-0.html</link><dc:creator>shiomiru</dc:creator><comments>https://news.ycombinator.com/item?id=44293260</comments><guid isPermaLink="false">https://news.ycombinator.com/item?id=44293260</guid></item></channel></rss>
